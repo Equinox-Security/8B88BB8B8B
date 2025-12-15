@@ -2271,6 +2271,18 @@
                     <p class="form-hint">Minimum 8 characters. Use a mix of letters, numbers, and symbols.</p>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label">Password Hint (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="setupPasswordHint" 
+                        class="form-input"
+                        placeholder="Something to help you remember"
+                        maxlength="100"
+                    >
+                    <p class="form-hint">This hint will be shown if you forget your password</p>
+                </div>
+
                 <p id="setupError" class="lock-error"></p>
 
                 <div class="setup-actions">
@@ -3811,8 +3823,14 @@ setupBookmarklet();
 
         async function completeSetup() {
             const password = document.getElementById('setupPassword').value;
-            const timeout = document.getElementById('setupTimeout').value;
-            const clipboard = document.getElementById('setupClipboard').value;
+const timeout = document.getElementById('setupTimeout').value;
+const clipboard = document.getElementById('setupClipboard').value;
+const hint = document.getElementById('setupPasswordHint').value.trim();
+
+// Save password hint if provided
+if (hint) {
+    localStorage.setItem('vaultPasswordHint', hint);
+}
             
             try {
                 // Generate salt
