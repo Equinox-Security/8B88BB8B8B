@@ -2079,6 +2079,34 @@
     margin-bottom: 8px;
     opacity: 0.5;
 }
+/* Forgot Password Link */
+.forgot-password-link {
+    text-align: center;
+    margin-top: var(--space-md);
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.link-btn:hover {
+    color: var(--accent-primary);
+}
+/* Forgot Password Modal - Higher z-index for lock screen */
+#forgotPasswordModal {
+    z-index: 9999;
+}
+
+#forgotPasswordModal.active {
+    opacity: 1;
+    visibility: visible;
+}
     </style>
 </head>
 <body>
@@ -2137,6 +2165,12 @@
     Unlock with Biometrics
 </button>
             </form>
+
+            <div class="forgot-password-link">
+                <button type="button" class="link-btn" onclick="showForgotPassword()">
+                    Forgot your password?
+                </button>
+            </div>
 
             <div class="lock-footer">
                 <p class="lock-footer-text">Don't have a vault yet?</p>
@@ -3268,6 +3302,48 @@
          JAVASCRIPT
     ======================================== -->
     <script>
+	// ========== FORGOT PASSWORD FUNCTIONS ==========
+function showForgotPassword() {
+    const hint = localStorage.getItem('vaultPasswordHint');
+    const hintDisplay = document.getElementById('passwordHintDisplay');
+    const hintText = document.getElementById('hintText');
+    
+    if (hint) {
+        hintText.textContent = hint;
+        hintDisplay.classList.remove('hidden');
+    } else {
+        hintDisplay.classList.add('hidden');
+    }
+    
+    const modal = document.getElementById('forgotPasswordModal');
+    modal.setAttribute('style', 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:99999; opacity:1; visibility:visible; display:flex; align-items:center; justify-content:center;');
+}
+
+function closeForgotPassword() {
+    const modal = document.getElementById('forgotPasswordModal');
+    modal.setAttribute('style', '');
+}
+function confirmResetVault() {
+    if (confirm('Are you sure? This will DELETE all locally saved passwords.')) {
+        if (confirm('FINAL WARNING: This cannot be undone. Continue?')) {
+            resetVaultCompletely();
+        }
+    }
+}
+
+function resetVaultCompletely() {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        keysToRemove.push(key);
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    showToast('success', 'Vault Reset', 'Your vault has been reset.');
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
         // ========================================
         // APPLICATION STATE
         // ========================================
@@ -5465,5 +5541,62 @@ if (isBiometricsEnabled()) {
             }, 4000);
         }
     </script>
+	<!-- ========================================
+         FORGOT PASSWORD MODAL
+    ======================================== -->
+    <div id="forgotPasswordModal" class="modal-overlay">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2 class="modal-title">Forgot Password</h2>
+                <button class="modal-close" onclick="closeForgotPassword()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="empty-state-icon" style="background: var(--accent-light); margin-bottom: var(--space-md);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                
+                <div id="passwordHintDisplay" class="hidden" style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); text-align: left;">
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Your Password Hint</div>
+                    <div id="hintText" style="font-weight: 600; color: var(--text-primary);"></div>
+                </div>
+                
+                <h3 style="margin-bottom: var(--space-sm);">Can't remember your password?</h3>
+                
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-md); font-size: 0.9rem;">
+                    Your vault is encrypted and cannot be recovered without the master password.
+                </p>
+                
+                <div style="background: var(--accent-light); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); text-align: left;">
+                    <strong style="color: var(--accent-primary);">Used Regenerator?</strong>
+<p style="color: var(--text-secondary); margin-top: var(--space-xs); font-size: 0.85rem;">
+    Remember: Your master password is part of the recipe. Use the same master password after reset to regenerate your passwords.
+</p>
+                </div>
+                
+                <div style="background: var(--accent-light); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); text-align: left;">
+    <strong style="color: var(--accent-primary);">Have an export file?</strong>
+                    <p style="color: var(--text-secondary); margin-top: var(--space-xs); font-size: 0.85rem;">
+                        Reset the vault, create a new master password, then import your backup.
+                    </p>
+                </div>
+                
+                <p style="color: var(--danger); font-size: 0.85rem;">
+                    ⚠️ Resetting will delete all locally stored passwords.
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-secondary" onclick="closeForgotPassword()">I Remember Now</button>
+                <button type="button" class="btn btn-danger" onclick="confirmResetVault()">Reset Vault</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
