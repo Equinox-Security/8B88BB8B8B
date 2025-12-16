@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -3385,6 +3386,7 @@ function resetVaultCompletely() {
             autoLockTimer: null,
             clipboardTimer: null,
             clipboardCountdown: null,
+            lastActivity: null,
             
             // Flags
             isUnlocked: false,
@@ -3967,7 +3969,10 @@ setupBiometricsUI();
         
         function resetAutoLockTimer() {
             clearAutoLockTimer();
-            
+    
+            // Save current timestamp
+            AppState.lastActivity = Date.now();
+    
             const timeout = AppState.settings.autoLockTimeout;
             if (timeout > 0 && AppState.isUnlocked) {
                 AppState.autoLockTimer = setTimeout(() => {
@@ -3983,6 +3988,35 @@ setupBiometricsUI();
                 AppState.autoLockTimer = null;
             }
         }
+        function checkAutoLockOnResume() {
+            if (!AppState.isUnlocked || !AppState.lastActivity) return;
+    
+            const timeout = AppState.settings.autoLockTimeout;
+            if (timeout <= 0) return;
+    
+            const elapsed = Date.now() - AppState.lastActivity;
+            const timeoutMs = timeout * 60 * 1000;
+    
+            if (elapsed >= timeoutMs) {
+                lockVault();
+                showToast('warning', 'Auto-Locked', 'Vault locked due to inactivity');
+            } else {
+                // Reset timer for remaining time
+                resetAutoLockTimer();
+            }
+        }
+
+        // Check when page becomes visible again
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                checkAutoLockOnResume();
+            }
+        });
+
+        // Also check when window gets focus
+        window.addEventListener('focus', function() {
+            checkAutoLockOnResume();
+        });
 
         // ========================================
         // THEME FUNCTIONS
