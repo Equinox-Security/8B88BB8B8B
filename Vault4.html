@@ -3344,12 +3344,11 @@ function confirmResetVault() {
 }
 
 function resetVaultCompletely() {
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        keysToRemove.push(key);
-    }
-    keysToRemove.forEach(key => localStorage.removeItem(key));
+    // Clear all localStorage
+    localStorage.clear();
+    
+    // Also clear sessionStorage just in case
+    sessionStorage.clear();
     
     showToast('success', 'Vault Reset', 'Your vault has been reset.');
     setTimeout(() => {
