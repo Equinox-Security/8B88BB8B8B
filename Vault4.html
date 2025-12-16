@@ -239,7 +239,7 @@
     bottom: 0;
     background: var(--bg-primary);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: 10000;
     padding: var(--space-md);
@@ -248,15 +248,16 @@
 }
 
         .lock-container {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            padding: var(--space-2xl);
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: var(--space-2xl);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    margin: auto;
+}
 
         .lock-logo {
             width: 80px;
