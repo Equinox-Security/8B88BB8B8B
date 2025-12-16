@@ -2111,6 +2111,158 @@
     opacity: 1;
     visibility: visible;
 }
+/* ========================================
+   TUTORIAL MODAL STYLES
+======================================== */
+.tutorial-container {
+    min-height: 300px;
+}
+
+.tutorial-step {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.tutorial-step.active {
+    display: block;
+}
+
+@keyframes tutorialFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tutorial-step.active {
+    animation: tutorialFadeIn 0.3s ease;
+}
+
+.tutorial-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto var(--space-md);
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-icon svg {
+    width: 32px;
+    height: 32px;
+    color: var(--accent-primary);
+}
+
+.tutorial-icon-success {
+    background: var(--success-light);
+}
+
+.tutorial-icon-success svg {
+    color: var(--success);
+}
+
+.tutorial-step h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+}
+
+.tutorial-step > p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+}
+
+.tutorial-list {
+    list-style: none;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+.tutorial-list li {
+    padding: var(--space-sm) 0;
+    padding-left: var(--space-lg);
+    position: relative;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tutorial-list li:last-child {
+    border-bottom: none;
+}
+
+.tutorial-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: bold;
+}
+
+.tutorial-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    text-align: left;
+}
+
+.tutorial-option {
+    background: var(--bg-tertiary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+}
+
+.tutorial-option h4 {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-xs);
+    color: var(--accent-primary);
+}
+
+.tutorial-option p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.tutorial-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.tutorial-progress {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+}
+
+.tutorial-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tutorial-dot:hover {
+    background: var(--text-muted);
+}
+
+.tutorial-dot.active {
+    background: var(--accent-primary);
+    transform: scale(1.2);
+}
+
+@media (max-width: 500px) {
+    .tutorial-comparison {
+        grid-template-columns: 1fr;
+    }
+}
     </style>
 </head>
 <body>
@@ -3151,7 +3303,23 @@
                         </button>
                     </div>
                 </div>
-
+<div class="settings-section">
+    <h3 class="settings-section-title">Help</h3>
+    <div class="settings-item">
+        <div class="settings-item-info">
+            <div class="settings-item-title">View Tutorial</div>
+            <div class="settings-item-desc">Learn how to use SecureVault</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="showTutorial()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Show Tutorial
+        </button>
+    </div>
+</div>
                 <!-- About Section -->
                 <div class="settings-section">
                     <h3 class="settings-section-title">About</h3>
@@ -3943,6 +4111,8 @@ if (hint) {
 checkSearchParam();
 // Setup biometrics UI in settings
 setupBiometricsUI();
+// Show tutorial for first-time users
+checkFirstVisit();
         }
 
         function applySettings() {
@@ -4017,6 +4187,96 @@ setupBiometricsUI();
         window.addEventListener('focus', function() {
             checkAutoLockOnResume();
         });
+		
+		// ========================================
+// TUTORIAL FUNCTIONS
+// ========================================
+
+let currentTutorialStep = 1;
+const totalTutorialSteps = 6;
+
+function showTutorial() {
+    currentTutorialStep = 1;
+    updateTutorialStep();
+    const modal = document.getElementById('tutorialModal');
+    modal.setAttribute('style', 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:99999; opacity:1; visibility:visible; display:flex; align-items:center; justify-content:center;');
+}
+
+function closeTutorial() {
+    const modal = document.getElementById('tutorialModal');
+    modal.setAttribute('style', '');
+    localStorage.setItem('tutorialSeen', 'true');
+}
+
+function updateTutorialStep() {
+    // Hide all steps
+    document.querySelectorAll('.tutorial-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Show current step
+    document.querySelector(`.tutorial-step[data-step="${currentTutorialStep}"]`).classList.add('active');
+    
+    // Update dots
+    document.querySelectorAll('.tutorial-dot').forEach(dot => {
+        dot.classList.remove('active');
+        if (parseInt(dot.dataset.step) === currentTutorialStep) {
+            dot.classList.add('active');
+        }
+    });
+    
+    // Update buttons
+    const prevBtn = document.getElementById('tutorialPrevBtn');
+    const nextBtn = document.getElementById('tutorialNextBtn');
+    
+    prevBtn.style.visibility = currentTutorialStep === 1 ? 'hidden' : 'visible';
+    
+    if (currentTutorialStep === totalTutorialSteps) {
+        nextBtn.innerHTML = `
+            Get Started
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        `;
+    } else {
+        nextBtn.innerHTML = `
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        `;
+    }
+}
+
+function tutorialNext() {
+    if (currentTutorialStep < totalTutorialSteps) {
+        currentTutorialStep++;
+        updateTutorialStep();
+    } else {
+        closeTutorial();
+    }
+}
+
+function tutorialPrev() {
+    if (currentTutorialStep > 1) {
+        currentTutorialStep--;
+        updateTutorialStep();
+    }
+}
+
+// Click on dots to jump to step
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('tutorial-dot')) {
+        currentTutorialStep = parseInt(e.target.dataset.step);
+        updateTutorialStep();
+    }
+});
+
+function checkFirstVisit() {
+    if (!localStorage.getItem('tutorialSeen')) {
+        setTimeout(showTutorial, 500);
+    }
+}
 
         // ========================================
         // THEME FUNCTIONS
@@ -5652,5 +5912,158 @@ if (isBiometricsEnabled()) {
             </div>
         </div>
     </div>
+	<!-- ========================================
+     TUTORIAL MODAL
+======================================== -->
+<div id="tutorialModal" class="modal-overlay">
+    <div class="modal modal-lg">
+        <div class="modal-header">
+            <h2 class="modal-title">Welcome to SecureVault</h2>
+            <button class="modal-close" onclick="closeTutorial()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-container">
+                
+                <!-- Step 1 -->
+                <div class="tutorial-step active" data-step="1">
+                    <div class="tutorial-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <h3>Your Secure Password Vault</h3>
+                    <p>SecureVault keeps all your passwords safe with military-grade AES-256 encryption. Everything is stored locally on your device - your data never leaves your control.</p>
+                    <ul class="tutorial-list">
+                        <li>Works offline - no internet required</li>
+                        <li>Unlock with fingerprint or Face ID</li>
+                        <li>Auto-locks after inactivity</li>
+                    </ul>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="tutorial-step" data-step="2">
+                    <div class="tutorial-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3>Adding Passwords</h3>
+                    <p>Click <strong>"Add Entry"</strong> to save a new password. Organize by category for easy access.</p>
+                    <ul class="tutorial-list">
+                        <li>Categories: Social, Banking, Email, Work, and more</li>
+                        <li>Star your favorites for quick access</li>
+                        <li>Search to find any entry instantly</li>
+                    </ul>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="tutorial-step" data-step="3">
+                    <div class="tutorial-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                        </svg>
+                    </div>
+                    <h3>Two Ways to Generate Passwords</h3>
+                    <div class="tutorial-comparison">
+                        <div class="tutorial-option">
+                            <h4>Random</h4>
+                            <p>Creates a unique password each time. Save it in your vault.</p>
+                        </div>
+                        <div class="tutorial-option">
+                            <h4>Regenerator</h4>
+                            <p>Creates the <strong>same password</strong> every time using your master password as the recipe. Regenerate anytime!</p>
+                        </div>
+                    </div>
+                    <p class="tutorial-note">Both always start with a letter for site compatibility.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="tutorial-step" data-step="4">
+                    <div class="tutorial-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                    </div>
+                    <h3>Regenerator Version Control</h3>
+                    <p>If a password gets compromised, increase the <strong>version number</strong>. This creates a completely new password while keeping the same account details.</p>
+                    <ul class="tutorial-list">
+                        <li>Version 1, Version 2, Version 3...</li>
+                        <li>Each version = different password</li>
+                        <li>Same master + same details = same result</li>
+                    </ul>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="tutorial-step" data-step="5">
+                    <div class="tutorial-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3>Backup Your Vault</h3>
+                    <p>Your vault is stored locally. Use <strong>Export</strong> to create an encrypted backup file.</p>
+                    <ul class="tutorial-list">
+                        <li>Export creates encrypted backup file</li>
+                        <li>Import restores on any device</li>
+                        <li>Save backup to USB, cloud, or email yourself</li>
+                    </ul>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="tutorial-step" data-step="6">
+                    <div class="tutorial-icon tutorial-icon-success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3>You're All Set!</h3>
+                    <p>Quick tips to remember:</p>
+                    <ul class="tutorial-list">
+                        <li>Use <strong>Add to Home Screen</strong> in Settings for app-like access</li>
+                        <li>Your master password is part of the Regenerator recipe - don't forget it!</li>
+                        <li>Export your vault regularly as a backup</li>
+                        <li>Set a password hint during setup in case you forget</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Progress Dots -->
+            <div class="tutorial-progress">
+                <span class="tutorial-dot active" data-step="1"></span>
+                <span class="tutorial-dot" data-step="2"></span>
+                <span class="tutorial-dot" data-step="3"></span>
+                <span class="tutorial-dot" data-step="4"></span>
+                <span class="tutorial-dot" data-step="5"></span>
+                <span class="tutorial-dot" data-step="6"></span>
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content: space-between;">
+            <button type="button" class="btn btn-secondary" id="tutorialPrevBtn" onclick="tutorialPrev()" style="visibility: hidden;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Back
+            </button>
+            <button type="button" class="btn btn-primary" id="tutorialNextBtn" onclick="tutorialNext()">
+                Next
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+
