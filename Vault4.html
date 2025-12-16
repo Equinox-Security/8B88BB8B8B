@@ -232,18 +232,20 @@
            LOCK SCREEN STYLES
         ======================================== */
         .lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: var(--space-md);
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: var(--space-md);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
 
         .lock-container {
             background: var(--bg-secondary);
