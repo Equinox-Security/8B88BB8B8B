@@ -4195,11 +4195,28 @@ checkFirstVisit();
 let currentTutorialStep = 1;
 const totalTutorialSteps = 6;
 
-function showTutorial() {
-    currentTutorialStep = 1;
-    updateTutorialStep();
-    const modal = document.getElementById('tutorialModal');
-    modal.setAttribute('style', 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:99999; opacity:1; visibility:visible; display:flex; align-items:center; justify-content:center;');
+function updateTutorialStep() {
+    // Hide all steps
+    document.querySelectorAll('.tutorial-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Show current step
+    document.querySelector(`.tutorial-step[data-step="${currentTutorialStep}"]`).classList.add('active');
+    
+    // Update dots
+    document.querySelectorAll('.tutorial-dot').forEach(dot => {
+        dot.classList.remove('active');
+        if (parseInt(dot.dataset.step) === currentTutorialStep) {
+            dot.classList.add('active');
+        }
+    });
+    
+    // Update buttons
+    const prevBtn = document.getElementById('tutorialPrevBtn');
+    prevBtn.style.visibility = currentTutorialStep === 1 ? 'hidden' : 'visible';
+    
+    updateTutorialButtons();
 }
 
 function closeTutorial() {
@@ -6048,20 +6065,23 @@ if (isBiometricsEnabled()) {
                 <span class="tutorial-dot" data-step="6"></span>
             </div>
         </div>
-        <div class="modal-footer" style="justify-content: space-between;">
-            <button type="button" class="btn btn-secondary" id="tutorialPrevBtn" onclick="tutorialPrev()" style="visibility: hidden;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-                Back
-            </button>
-            <button type="button" class="btn btn-primary" id="tutorialNextBtn" onclick="tutorialNext()">
-                Next
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-        </div>
+        <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+    <button type="button" class="btn btn-secondary" id="tutorialPrevBtn" onclick="tutorialPrev()" style="visibility: hidden;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTutorialLanguage()" id="langToggleBtn" style="font-size: 12px; padding: 6px 12px;">
+        🇳🇱 NL
+    </button>
+    <button type="button" class="btn btn-primary" id="tutorialNextBtn" onclick="tutorialNext()">
+        Next
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </button>
+</div>
     </div>
 </div>
 </body>
