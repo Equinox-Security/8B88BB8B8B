@@ -6112,16 +6112,16 @@ if (isBiometricsEnabled()) {
 ======================================== -->
 <div id="tutorialModal" class="modal-overlay">
     <div class="modal modal-lg">
-        <div class="modal-header">
-            <h2 class="modal-title" id="tutorialTitle">Welcome to SecureVault</h2>
-            <button class="modal-close" onclick="closeTutorial()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-        <div class="modal-body">
+        <div class="modal-header" style="justify-content: flex-end;">
+    <button class="modal-close" onclick="closeTutorial()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+</div>
+<div class="modal-body">
+    <h2 id="tutorialTitle" style="text-align: center; margin-bottom: var(--space-md);">Welcome to SecureVault</h2>
             <div class="tutorial-container">
                 
                 <!-- Step 1 -->
@@ -6264,6 +6264,7 @@ if (isBiometricsEnabled()) {
 </div>
 </body>
 </html>
+
 
 
 
