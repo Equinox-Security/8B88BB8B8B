@@ -3915,7 +3915,6 @@ setupBookmarklet();
                 // Show app
                 hideLockScreen();
                 showApp();
-                updateVersionDisplay();
                 showToast('success', 'Welcome Back', 'Vault unlocked successfully');
                 
             } catch (error) {
@@ -4133,6 +4132,7 @@ setupBiometricsUI();
 checkFirstVisit();
 // Check for updates
 checkForUpdates();
+updateVersionDisplay();  // Runs every time showApp() is called
         }
 
         function applySettings() {
@@ -6363,6 +6363,7 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
 
