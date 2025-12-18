@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -13,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#3469ab">
 <link rel="manifest" href="#" id="manifestLink">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%233469ab' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='Arial'>🔐</text></svg>">
+<link rel="apple-touch-icon" href="web-app-manifest-192x192.png">
     <style>
         /* ========================================
            CSS VARIABLES - LIGHT/DARK THEMES
@@ -3134,6 +3135,22 @@
             </div>
             <div class="modal-body">
 			<!-- Quick Access Section -->
+			<div class="settings-item">
+    <div class="settings-item-info">
+        <div class="settings-item-title">Share SecureVault</div>
+        <div class="settings-item-desc">Invite others to use this app</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="shareApp()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        Share
+    </button>
+</div>
 <div class="settings-section">
     <h3 class="settings-section-title">Quick Access</h3>
     
@@ -3486,6 +3503,45 @@
          JAVASCRIPT
     ======================================== -->
     <script>
+	// ========================================
+// SHARE FUNCTION
+// ========================================
+
+async function shareApp() {
+    const shareUrl = 'https://equinox-security.github.io/8B88BB8B8B/';
+    
+    const shareData = {
+        title: 'SecureVault',
+        text: 'Check out SecureVault - a free, secure, offline password manager!',
+        url: shareUrl
+    };
+    
+    // Check if Web Share API is available (mostly mobile)
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            showToast('success', 'Thanks!', 'Thanks for sharing SecureVault');
+        } catch (err) {
+            // User cancelled - do nothing
+            if (err.name !== 'AbortError') {
+                // Fallback to copy
+                copyShareLink(shareUrl);
+            }
+        }
+    } else {
+        // Desktop fallback - copy link
+        copyShareLink(shareUrl);
+    }
+}
+
+function copyShareLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('success', 'Link Copied', 'Share link copied to clipboard');
+    }).catch(() => {
+        // Final fallback - show the link
+        prompt('Copy this link:', url);
+    });
+}
 	// ========== FORGOT PASSWORD FUNCTIONS ==========
 function showForgotPassword() {
     const hint = localStorage.getItem('vaultPasswordHint');
@@ -6264,6 +6320,7 @@ if (isBiometricsEnabled()) {
 </div>
 </body>
 </html>
+
 
 
 
