@@ -4976,7 +4976,7 @@ function setupBookmarklet() {
     const savedUrl = localStorage.getItem('securevault_url');
     const input = document.getElementById('vaultUrl');
     
-    if (savedUrl) {
+    if (false) {
         input.value = savedUrl;
     } else if (window.location.protocol !== 'file:') {
         input.value = window.location.href.split('?')[0];
@@ -6363,6 +6363,7 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
 
