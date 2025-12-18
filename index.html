@@ -3344,7 +3344,7 @@
                         <div class="settings-item-info">
                             <div class="settings-item-title">SecureVault</div>
 							<div class="settings-item-desc" style="opacity: 0.5; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Powered by Equinox</div>
-                            <div class="settings-item-desc">Version 1.0.0 • Offline Password Manager</div>
+                            <div class="settings-item-desc"><span id="appVersionDisplay">Version 1.0.0</span> • Offline Password Manager</div>
                         </div>
                     </div>
                     <div class="settings-item">
@@ -3915,7 +3915,7 @@ setupBookmarklet();
                 // Show app
                 hideLockScreen();
                 showApp();
-                
+                updateVersionDisplay();
                 showToast('success', 'Welcome Back', 'Vault unlocked successfully');
                 
             } catch (error) {
@@ -6113,7 +6113,12 @@ function copyShareLink(url) {
 // ========================================
 
 const CURRENT_VERSION = "1.0.1";
-
+function updateVersionDisplay() {
+    const versionEl = document.getElementById('appVersionDisplay');
+    if (versionEl) {
+        versionEl.textContent = 'Version ' + CURRENT_VERSION;
+    }
+}
 async function checkForUpdates() {
     try {
         const response = await fetch('version.json?t=' + Date.now());
@@ -6358,6 +6363,7 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
 
