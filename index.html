@@ -4972,28 +4972,35 @@ async function installPwa() {
 // ========================================
 
 function setupBookmarklet() {
-    // Try to get saved URL or use current location
-    const savedUrl = localStorage.getItem('securevault_url');
     const input = document.getElementById('vaultUrl');
-    
-    if (savedUrl) {
-        input.value = savedUrl;
-    } else if (window.location.protocol !== 'file:') {
+    // Always show current URL - never load from cache
+    if (window.location.protocol !== 'file:') {
         input.value = window.location.href.split('?')[0];
     }
-    
     updateBookmarklet();
 }
 
 function updateBookmarklet() {
     const input = document.getElementById('vaultUrl');
-    const url = input.value.trim() || window.location.href.split('?')[0];
+    // Always use current location
+    const url = window.location.href.split('?')[0];
     const bookmarkletLink = document.getElementById('vaultBookmarklet');
     
-    // Save for later
-    if (input.value.trim()) {
-        localStorage.setItem('securevault_url', url);
+    // Update the input to show current URL
+    if (window.location.protocol !== 'file:') {
+        input.value = url;
     }
+    
+    // Create bookmarklet code
+    const code = `javascript:(function(){
+        var domain = window.location.hostname.replace('www.','');
+        var vaultUrl = '${url}';
+        var searchParam = '?search=' + encodeURIComponent(domain);
+        window.open(vaultUrl + searchParam, 'SecureVault', 'width=500,height=700,menubar=no,toolbar=no');
+    })();`;
+    
+    bookmarkletLink.href = code.replace(/\s+/g, ' ');
+}
     
     // Create bookmarklet code
     // When clicked: gets current domain, opens vault with search param
@@ -6363,6 +6370,7 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
 
