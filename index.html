@@ -5067,11 +5067,11 @@ function checkSearchParam() {
             return 'entry_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        function openAddEntryModal() {
+                function openAddEntryModal() {
             // Reset form
             document.getElementById('entryForm').reset();
             document.getElementById('entryId').value = '';
-            document.getElementById('entryModalTitle').textContent = t('addNewEntry');
+            document.getElementById('entryModalTitle').textContent = (typeof t === 'function') ? t('addNewEntry') : 'Add New Entry';
             document.getElementById('generatorPanel').classList.add('hidden');
             
             // Remove any existing category hints
