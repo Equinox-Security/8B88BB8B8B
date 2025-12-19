@@ -1246,6 +1246,8 @@
             opacity: 0;
             visibility: hidden;
             transition: var(--transition);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .modal-overlay.active {
@@ -1259,7 +1261,7 @@
             box-shadow: var(--shadow-xl);
             width: 100%;
             max-width: 560px;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -1285,6 +1287,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .modal-title {
@@ -1319,6 +1322,8 @@
             padding: var(--space-lg);
             overflow-y: auto;
             flex: 1;
+            min-height: 0;
+            -webkit-overflow-scrolling: touch;
         }
 
         .modal-footer {
@@ -1327,6 +1332,8 @@
             display: flex;
             justify-content: flex-end;
             gap: var(--space-sm);
+            flex-shrink: 0;
+            background: var(--bg-secondary);
         }
 
         /* ========================================
@@ -2038,8 +2045,19 @@
             }
 
             .modal {
-                max-height: 100vh;
+                max-height: calc(100vh - 20px);
+                max-height: calc(100dvh - 20px);
                 border-radius: var(--radius-md);
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+            
+            .modal-body {
+                padding: var(--space-md);
+            }
+            
+            .modal-footer {
+                padding: var(--space-sm) var(--space-md);
             }
 
             .toast-container {
@@ -2051,6 +2069,22 @@
             .toast {
                 min-width: auto;
                 max-width: none;
+            }
+        }
+
+        /* Category Suggestion Hint */
+        .category-suggestion-hint {
+            animation: fadeInHint 0.3s ease;
+        }
+        
+        @keyframes fadeInHint {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -5037,8 +5071,15 @@ function checkSearchParam() {
             // Reset form
             document.getElementById('entryForm').reset();
             document.getElementById('entryId').value = '';
-            document.getElementById('entryModalTitle').textContent = 'Add New Entry';
+            document.getElementById('entryModalTitle').textContent = t('addNewEntry');
             document.getElementById('generatorPanel').classList.add('hidden');
+            
+            // Remove any existing category hints
+            const existingHint = document.querySelector('.category-suggestion-hint');
+            if (existingHint) existingHint.remove();
+            
+            // Setup category suggestion for this session
+            setupCategorySuggestion();
             
             // Show modal
             document.getElementById('entryModal').classList.add('active');
@@ -5536,6 +5577,213 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
             updateCounts();
             
             showToast('success', entry.favorite ? 'Added to Favorites' : 'Removed from Favorites', entry.title);
+        }
+
+        // ========================================
+        // SMART CATEGORY SUGGESTION
+        // ========================================
+        
+        const CATEGORY_PATTERNS = {
+            social: [
+                'facebook', 'twitter', 'instagram', 'linkedin', 'tiktok', 'snapchat',
+                'pinterest', 'reddit', 'tumblr', 'discord', 'slack', 'telegram',
+                'whatsapp', 'messenger', 'wechat', 'signal', 'mastodon', 'threads',
+                'x.com', 'bsky', 'bluesky', 'nextdoor', 'meetup', 'clubhouse'
+            ],
+            banking: [
+                'bank', 'chase', 'wellsfargo', 'bankofamerica', 'citi', 'capitalone',
+                'paypal', 'venmo', 'zelle', 'wise', 'revolut', 'n26', 'monzo',
+                'schwab', 'fidelity', 'vanguard', 'etrade', 'robinhood', 'coinbase',
+                'kraken', 'binance', 'crypto', 'tdameritrade', 'ally', 'sofi',
+                'marcus', 'discover', 'amex', 'americanexpress', 'creditcard',
+                'ing', 'rabobank', 'abn', 'bunq', 'knab', 'triodos', 'sns'
+            ],
+            email: [
+                'gmail', 'outlook', 'hotmail', 'yahoo', 'mail', 'proton', 'protonmail',
+                'icloud', 'zoho', 'fastmail', 'tutanota', 'mailfence', 'posteo',
+                'runbox', 'startmail', 'hushmail', 'aol', 'gmx', 'yandex',
+                'mailbox', 'hey.com', 'pm.me', 'inbox'
+            ],
+            work: [
+                'jira', 'confluence', 'atlassian', 'asana', 'monday', 'trello',
+                'notion', 'basecamp', 'clickup', 'airtable', 'smartsheet',
+                'salesforce', 'hubspot', 'zendesk', 'freshdesk', 'intercom',
+                'zoom', 'teams', 'webex', 'gotomeeting', 'bluejeans',
+                'dropbox', 'box.com', 'onedrive', 'sharepoint', 'google.com/drive',
+                'docs.google', 'sheets.google', 'slides.google', 'drive.google',
+                'github', 'gitlab', 'bitbucket', 'azure', 'aws', 'digitalocean',
+                'heroku', 'netlify', 'vercel', 'cloudflare', 'godaddy', 'namecheap',
+                'quickbooks', 'xero', 'freshbooks', 'wave', 'gusto', 'adp',
+                'workday', 'bamboohr', 'greenhouse', 'lever', 'docusign', 'hellosign'
+            ],
+            shopping: [
+                'amazon', 'ebay', 'etsy', 'walmart', 'target', 'bestbuy',
+                'costco', 'aliexpress', 'alibaba', 'wish', 'shein', 'temu',
+                'wayfair', 'overstock', 'newegg', 'bhphoto', 'adorama',
+                'zappos', 'nike', 'adidas', 'nordstrom', 'macys', 'kohls',
+                'homedepot', 'lowes', 'ikea', 'chewy', 'petco', 'petsmart',
+                'shop', 'store', 'cart', 'checkout', 'buy',
+                'bol.com', 'coolblue', 'mediamarkt', 'zalando', 'asos',
+                'hm.com', 'zara', 'uniqlo', 'gap', 'oldnavy'
+            ],
+            travel: [
+                'booking', 'airbnb', 'vrbo', 'expedia', 'hotels', 'trivago',
+                'kayak', 'skyscanner', 'google.com/travel', 'google.com/flights',
+                'tripadvisor', 'lonely', 'lonelyplanet', 'viator', 'getyourguide',
+                'united', 'delta', 'american', 'southwest', 'jetblue', 'spirit',
+                'ryanair', 'easyjet', 'lufthansa', 'klm', 'airfrance', 'emirates',
+                'hilton', 'marriott', 'hyatt', 'ihg', 'wyndham', 'accor',
+                'hertz', 'avis', 'enterprise', 'budget', 'national', 'sixt',
+                'uber', 'lyft', 'grab', 'bolt', 'freeow', 'didi',
+                'amtrak', 'eurostar', 'trainline', 'renfe', 'sncf', 'ns.nl',
+                'carnival', 'royalcaribbean', 'norwegian', 'celebrity', 'princess',
+                'airline', 'flight', 'hotel', 'travel', 'vacation', 'trip'
+            ],
+            entertainment: [
+                'netflix', 'hulu', 'disney', 'disneyplus', 'hbomax', 'max.com',
+                'primevideo', 'amazon.com/video', 'peacock', 'paramount', 'appletv',
+                'spotify', 'apple.com/music', 'music.apple', 'pandora', 'tidal',
+                'deezer', 'soundcloud', 'bandcamp', 'audiomack', 'youtube',
+                'twitch', 'crunchyroll', 'funimation', 'viki', 'curiosity',
+                'steam', 'epicgames', 'origin', 'ubisoft', 'gog', 'humble',
+                'playstation', 'xbox', 'nintendo', 'roblox', 'minecraft',
+                'imdb', 'rottentomatoes', 'letterboxd', 'goodreads', 'audible',
+                'kindle', 'kobo', 'scribd', 'medium', 'substack', 'patreon',
+                'onlyfans', 'fandom', 'wiki', 'fandango', 'ticketmaster',
+                'eventbrite', 'stubhub', 'seatgeek', 'livenation', 'bandsintown',
+                'videoland', 'viaplay', 'npo', 'rtl', 'kijk'
+            ],
+            health: [
+                'myfitnesspal', 'fitbit', 'strava', 'nike', 'garmin', 'whoop',
+                'peloton', 'apple.com/health', 'health.google', 'samsung.com/health',
+                'headspace', 'calm', 'betterhelp', 'talkspace', 'cerebral',
+                'zocdoc', 'healthgrades', 'webmd', 'mayoclinic', 'drugs.com',
+                'cvs', 'walgreens', 'rite', 'pharmacy', 'rx', 'prescription',
+                'medicare', 'medicaid', 'cigna', 'aetna', 'unitedhealth', 'anthem',
+                'bluecross', 'kaiser', 'humana', 'centene', 'molina',
+                'hospital', 'clinic', 'doctor', 'patient', 'medical', 'health',
+                'teladoc', 'mdlive', 'amwell', 'doctor', '23andme', 'ancestry',
+                'noom', 'weight', 'diet', 'nutrition', 'vitamins', 'supplements'
+            ],
+            education: [
+                'coursera', 'udemy', 'udacity', 'edx', 'skillshare', 'linkedin.com/learning',
+                'masterclass', 'pluralsight', 'treehouse', 'codecademy', 'freecodecamp',
+                'khanacademy', 'brilliant', 'duolingo', 'babbel', 'rosettastone',
+                'chegg', 'quizlet', 'studyblue', 'anki', 'memrise',
+                'canvas', 'blackboard', 'moodle', 'd2l', 'schoology', 'edmodo',
+                '.edu', 'university', 'college', 'school', 'academy', 'institute',
+                'student', 'learn', 'course', 'class', 'lecture', 'professor',
+                'library', 'jstor', 'researchgate', 'academia.edu', 'scholar.google',
+                'grammarly', 'turnitin', 'easybib', 'citation', 'research',
+                'mit.edu', 'stanford', 'harvard', 'oxford', 'cambridge', 'yale'
+            ]
+        };
+        
+        function suggestCategory(url) {
+            if (!url) return 'other';
+            
+            const urlLower = url.toLowerCase();
+            
+            // Check each category's patterns
+            for (const [category, patterns] of Object.entries(CATEGORY_PATTERNS)) {
+                for (const pattern of patterns) {
+                    if (urlLower.includes(pattern)) {
+                        return category;
+                    }
+                }
+            }
+            
+            return 'other';
+        }
+        
+        function setupCategorySuggestion() {
+            const urlInput = document.getElementById('entryUrl');
+            const categorySelect = document.getElementById('entryCategory');
+            
+            if (!urlInput || !categorySelect) return;
+            
+            // Track if user manually changed category
+            let userChangedCategory = false;
+            
+            categorySelect.addEventListener('change', function() {
+                userChangedCategory = true;
+            });
+            
+            // Suggest category when URL changes
+            urlInput.addEventListener('input', debounce(function() {
+                // Don't override if user already picked a category
+                if (userChangedCategory) return;
+                
+                const url = urlInput.value.trim();
+                if (url.length < 5) return; // Wait for meaningful input
+                
+                const suggestedCategory = suggestCategory(url);
+                
+                if (suggestedCategory !== 'other') {
+                    categorySelect.value = suggestedCategory;
+                    
+                    // Visual feedback
+                    showCategorySuggestionHint(suggestedCategory);
+                }
+            }, 300));
+            
+            // Also check on paste
+            urlInput.addEventListener('paste', function() {
+                if (userChangedCategory) return;
+                
+                setTimeout(() => {
+                    const url = urlInput.value.trim();
+                    const suggestedCategory = suggestCategory(url);
+                    
+                    if (suggestedCategory !== 'other') {
+                        categorySelect.value = suggestedCategory;
+                        showCategorySuggestionHint(suggestedCategory);
+                    }
+                }, 100);
+            });
+        }
+        
+        function showCategorySuggestionHint(category) {
+            // Remove existing hint
+            const existingHint = document.querySelector('.category-suggestion-hint');
+            if (existingHint) existingHint.remove();
+            
+            const categorySelect = document.getElementById('entryCategory');
+            const categoryGroup = categorySelect.closest('.form-group');
+            
+            if (!categoryGroup) return;
+            
+            const categoryName = CATEGORIES[category]?.name || category;
+            
+            // Safe translation - works with or without translations.js
+            const autoDetectedText = (typeof t === 'function') ? t('autoDetected') : 'Auto-detected';
+            
+            const hint = document.createElement('p');
+            hint.className = 'form-hint category-suggestion-hint';
+            hint.innerHTML = `<span style="color: var(--success);">✓</span> ${autoDetectedText}: <strong>${categoryName}</strong>`;
+            hint.style.marginTop = 'var(--space-xs)';
+            
+            categoryGroup.appendChild(hint);
+            
+            // Remove hint after 3 seconds
+            setTimeout(() => {
+                hint.style.opacity = '0';
+                hint.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => hint.remove(), 300);
+            }, 3000);
+        }
+        
+        // Debounce helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
 
         // ========================================
@@ -6363,6 +6611,7 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
 
