@@ -991,7 +991,17 @@ if (viewEntryFooterBtns[2]) setButtonTextOnly(viewEntryFooterBtns[2], t('editBtn
     setPlaceholder('#entryUrl', t('urlPlaceholder'));
     setLabelByFor('entryNotes', t('notes'));
     setPlaceholder('#entryNotes', t('notesPlaceholder'));
-    setLabelByFor('entryFavorite', t('addToFavorites'));
+        // Add to Favorites - target by checkbox ID to be specific
+    const favoriteCheckbox = document.getElementById('entryFavorite');
+    if (favoriteCheckbox) {
+        const wrapper = favoriteCheckbox.closest('.generator-option');
+        if (wrapper) {
+            const textLabel = wrapper.querySelector('label:not(.checkbox-custom)');
+            if (textLabel) {
+                textLabel.textContent = t('addToFavorites');
+            }
+        }
+    }
     setButtonByOnclick('closeEntryModal()', t('cancel'));
     setButtonByOnclick('saveEntry()', t('saveEntry'), true);
     
