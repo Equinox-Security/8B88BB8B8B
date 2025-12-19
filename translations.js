@@ -154,6 +154,7 @@ const translations = {
         notesPlaceholder: "Additional information...",
         addToFavorites: "Add to Favorites",
         saveEntry: "Save Entry",
+		autoDetected: "Auto-detected",
         
         // ===== PASSWORD GENERATOR =====
         passwordGenerator: "Password Generator",
@@ -559,7 +560,8 @@ const translations = {
         notesPlaceholder: "Extra informatie...",
         addToFavorites: "Aan Favorieten Toevoegen",
         saveEntry: "Item Opslaan",
-        
+        autoDetected: "Automatisch gedetecteerd",
+		
         // ===== PASSWORD GENERATOR =====
         passwordGenerator: "Wachtwoord Generator",
         clickToGenerate: "Klik genereer om wachtwoord te maken",
