@@ -28,6 +28,17 @@ const translations = {
         install: "Install",
         installed: "Installed",
         or: "or",
+
+        // View Entry Modal
+        viewEntryTitle: 'Entry Details',
+        usernameEmail: 'Username / Email',
+        password: 'Password',
+        website: 'Website',
+        notes: 'Notes',
+        lastModified: 'Last Modified',
+        deleteBtn: 'Delete',
+        closeBtn: 'Close',
+        editBtn: 'Edit',
         
         // ===== LOCK SCREEN =====
         lockSubtitle: "Enter your master password to unlock",
@@ -431,6 +442,17 @@ const translations = {
         forgotPassword: "Wachtwoord vergeten?",
         noVaultYet: "Nog geen kluis?",
         createNew: "Nieuwe Maken",
+
+        // View Entry Modal
+        viewEntryTitle: 'Itemgegevens',
+        usernameEmail: 'Gebruikersnaam / E-mail',
+        password: 'Wachtwoord',
+        website: 'Website',
+        notes: 'Notities',
+        lastModified: 'Laatst gewijzigd',
+        deleteBtn: 'Verwijderen',
+        closeBtn: 'Sluiten',
+        editBtn: 'Bewerken',
         
         // ===== SETUP WIZARD =====
         createYourVault: "Maak Je Kluis",
@@ -935,6 +957,22 @@ function applyTranslations() {
     
     // ----- SORT OPTIONS -----
     translateSortOptions();
+
+// ----- VIEW ENTRY MODAL -----
+setText('#viewEntryModal .modal-title', t('viewEntryTitle'));
+setText('#viewUsernameField .entry-field-label', t('usernameEmail'));
+setText('#viewEntryModal .entry-field-label:nth-of-type(1)', t('password'));
+const viewEntryLabels = document.querySelectorAll('#viewEntryModal .entry-field-label');
+if (viewEntryLabels[0]) viewEntryLabels[0].textContent = t('usernameEmail');
+if (viewEntryLabels[1]) viewEntryLabels[1].textContent = t('password');
+if (viewEntryLabels[2]) viewEntryLabels[2].textContent = t('website');
+if (viewEntryLabels[3]) viewEntryLabels[3].textContent = t('notes');
+if (viewEntryLabels[4]) viewEntryLabels[4].textContent = t('lastModified');
+
+const viewEntryFooterBtns = document.querySelectorAll('#viewEntryModal .modal-footer .btn');
+if (viewEntryFooterBtns[0]) setButtonTextOnly(viewEntryFooterBtns[0], t('deleteBtn'));
+if (viewEntryFooterBtns[1]) viewEntryFooterBtns[1].textContent = t('closeBtn');
+if (viewEntryFooterBtns[2]) setButtonTextOnly(viewEntryFooterBtns[2], t('editBtn'));
     
     // ----- ENTRY MODAL -----
     // Title is set dynamically
@@ -1394,4 +1432,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Also expose a function to reapply after dynamic content changes
+
 window.refreshTranslations = applyTranslations;
