@@ -5605,7 +5605,7 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
             showToast('success', entry.favorite ? 'Added to Favorites' : 'Removed from Favorites', entry.title);
         }
 		
-		        // ========================================
+	    // ========================================
         // SMART CATEGORY SUGGESTION
         // ========================================
         
@@ -5614,7 +5614,7 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'facebook', 'twitter', 'instagram', 'linkedin', 'tiktok', 'snapchat',
                 'pinterest', 'reddit', 'tumblr', 'discord', 'slack', 'telegram',
                 'whatsapp', 'messenger', 'wechat', 'signal', 'mastodon', 'threads',
-                'x.com', 'bsky', 'bluesky', 'nextdoor', 'meetup', 'clubhouse'
+                'x.com', 'bsky', 'bluesky', 'nextdoor', 'meetup', 'clubhouse', 'marktplaats'
             ],
             banking: [
                 'bank', 'chase', 'wellsfargo', 'bankofamerica', 'citi', 'capitalone',
@@ -5622,7 +5622,9 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'schwab', 'fidelity', 'vanguard', 'etrade', 'robinhood', 'coinbase',
                 'kraken', 'binance', 'crypto', 'tdameritrade', 'ally', 'sofi',
                 'marcus', 'discover', 'amex', 'americanexpress', 'creditcard',
-                'ing', 'rabobank', 'abn', 'bunq', 'knab', 'triodos', 'sns'
+                'ing', 'rabobank', 'abn', 'bunq', 'knab', 'triodos', 'sns', 'tikkie', 
+				'ideal', 'mollie', 'adyen', 'betaalverzoek', 'asn', 'regiobank', 'handelsbanken', 
+				'ovchipkaart'
             ],
             email: [
                 'gmail', 'outlook', 'hotmail', 'yahoo', 'mail', 'proton', 'protonmail',
@@ -5640,7 +5642,9 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'github', 'gitlab', 'bitbucket', 'azure', 'aws', 'digitalocean',
                 'heroku', 'netlify', 'vercel', 'cloudflare', 'godaddy', 'namecheap',
                 'quickbooks', 'xero', 'freshbooks', 'wave', 'gusto', 'adp',
-                'workday', 'bamboohr', 'greenhouse', 'lever', 'docusign', 'hellosign'
+                'workday', 'bamboohr', 'greenhouse', 'lever', 'docusign', 'hellosign', 
+				'snowworld', 'mijnoverheid', 'digid', 'duo.nl', 'belastingdienst',
+                'uwv', 'kvk', 'rijksoverheid', 'gemeente', 'overheid'
             ],
             shopping: [
                 'amazon', 'ebay', 'etsy', 'walmart', 'target', 'bestbuy',
@@ -5648,9 +5652,13 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'wayfair', 'overstock', 'newegg', 'bhphoto', 'adorama',
                 'zappos', 'nike', 'adidas', 'nordstrom', 'macys', 'kohls',
                 'homedepot', 'lowes', 'ikea', 'chewy', 'petco', 'petsmart',
-                'shop', 'store', 'cart', 'checkout', 'buy',
+                'shop', 'store', 'cart', 'checkout', 'buy', 
                 'bol.com', 'coolblue', 'mediamarkt', 'zalando', 'asos',
-                'hm.com', 'zara', 'uniqlo', 'gap', 'oldnavy'
+                'hm.com', 'zara', 'uniqlo', 'gap', 'oldnavy',
+                'albert', 'albertheijn', 'ah.nl', 'jumbo', 'hema', 'blokker',
+                'kruidvat', 'etos', 'action', 'wehkamp', 'thuisbezorgd',
+                'picnic', 'crisp', 'flink', 'greetz', 'fonq', 'praxis',
+                'gamma', 'karwei', 'intratuin', 'tuincentrum', 'decathlon'
             ],
             travel: [
                 'booking', 'airbnb', 'vrbo', 'expedia', 'hotels', 'trivago',
@@ -5663,7 +5671,10 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'uber', 'lyft', 'grab', 'bolt', 'freeow', 'didi',
                 'amtrak', 'eurostar', 'trainline', 'renfe', 'sncf', 'ns.nl',
                 'carnival', 'royalcaribbean', 'norwegian', 'celebrity', 'princess',
-                'airline', 'flight', 'hotel', 'travel', 'vacation', 'trip'
+                'airline', 'flight', 'hotel', 'travel', 'vacation', 'trip', '9292', 
+				'ov-chipkaart', 'schiphol', 'transavia', 'corendon',
+                'tui.nl', 'anwb', 'flixbus', 'blablacar', 'arriva',
+                'connexxion', 'gvb', 'ret', 'htm', 'qbuzz'
             ],
             entertainment: [
                 'netflix', 'hulu', 'disney', 'disneyplus', 'hbomax', 'max.com',
@@ -5676,8 +5687,11 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'imdb', 'rottentomatoes', 'letterboxd', 'goodreads', 'audible',
                 'kindle', 'kobo', 'scribd', 'medium', 'substack', 'patreon',
                 'onlyfans', 'fandom', 'wiki', 'fandango', 'ticketmaster',
-                'eventbrite', 'stubhub', 'seatgeek', 'livenation', 'bandsintown',
-                'videoland', 'viaplay', 'npo', 'rtl', 'kijk'
+                'eventbrite', 'stubhub', 'seatgeek', 'livenation', 'bandsintown', 
+                'videoland', 'viaplay', 'npo', 'rtl', 'kijk',
+                'ziggo', 'pathe', 'vue', 'kinepolis', 'dumpert',
+                'tweakers', 'geenstijl', 'nos.nl', 'studielink', 'osiris', 'surf.nl', 
+				'samenvattingen'
             ],
             health: [
                 'myfitnesspal', 'fitbit', 'strava', 'nike', 'garmin', 'whoop',
@@ -5689,7 +5703,10 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'bluecross', 'kaiser', 'humana', 'centene', 'molina',
                 'hospital', 'clinic', 'doctor', 'patient', 'medical', 'health',
                 'teladoc', 'mdlive', 'amwell', 'doctor', '23andme', 'ancestry',
-                'noom', 'weight', 'diet', 'nutrition', 'vitamins', 'supplements'
+                'noom', 'weight', 'diet', 'nutrition', 'vitamins', 'supplements', 
+				'zilveren', 'zilverenkruis', 'cz.nl', 'vgz', 'menzis',
+                'onvz', 'ohra', 'thuisarts', 'apotheek', 'huisarts',
+                'hollandbarrett', 'degrotevitaminewinkel'
             ],
             education: [
                 'coursera', 'udemy', 'udacity', 'edx', 'skillshare', 'linkedin.com/learning',
@@ -6639,5 +6656,6 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
 
 
