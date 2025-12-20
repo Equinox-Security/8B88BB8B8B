@@ -1,1 +1,4 @@
-{"version": "1.0.2"}
+{
+    "version": "1.0.2",
+    "_note": "Also update CURRENT_VERSION in index.html (search for it)"
+}
