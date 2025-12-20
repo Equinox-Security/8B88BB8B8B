@@ -2318,8 +2318,9 @@
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
             </div>
-            <h1 class="lock-title">SecureVault</h1>
+                        <h1 class="lock-title">SecureVault</h1>
 <span class="powered-by">Powered by Equinox</span>
+<span class="powered-by" id="lockVersionDisplay"></span>
 <p class="lock-subtitle">Enter your master password to unlock</p>
             
             <form id="unlockForm" class="lock-form">
@@ -3821,6 +3822,9 @@ function resetVaultCompletely() {
         function init() {
             // Load theme preference
             loadThemePreference();
+            
+            // Show version on lock screen
+            updateVersionDisplay();
             
             // Check if vault exists
             AppState.hasVault = checkVaultExists();
@@ -6380,6 +6384,11 @@ function updateVersionDisplay() {
     if (versionEl) {
         versionEl.textContent = 'Version ' + CURRENT_VERSION;
     }
+    
+    const lockVersionEl = document.getElementById('lockVersionDisplay');
+    if (lockVersionEl) {
+        lockVersionEl.textContent = 'Version ' + CURRENT_VERSION;
+    }
 }
 async function checkForUpdates() {
     try {
@@ -6625,4 +6634,3 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
-
