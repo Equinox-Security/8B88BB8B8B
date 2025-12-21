@@ -295,7 +295,7 @@ const translations = {
         toastClipboardCleared: "Clipboard Cleared",
         toastClipboardClearedMsg: "For your security",
 		downloadOffline: "Download for Offline",
-        downloadOfflineDesc: "Save SecureVault to your computer",
+        downloadOfflineDesc: "Save SecureVault to your device or external storage",
         download: "Download",
         preparing: "Preparing",
         preparingDownload: "Creating offline package...",
@@ -710,7 +710,7 @@ const translations = {
         toastClipboardCleared: "Klembord Gewist",
         toastClipboardClearedMsg: "Voor je veiligheid",
         downloadOffline: "Download voor Offline",
-        downloadOfflineDesc: "Sla SecureVault op je computer op",
+        downloadOfflineDesc: "Sla SecureVault op je apparaat of externe opslag op",
         download: "Downloaden",
         preparing: "Voorbereiden",
         preparingDownload: "Offline pakket maken...",
@@ -1465,4 +1465,5 @@ document.addEventListener('DOMContentLoaded', function() {
 // Also expose a function to reapply after dynamic content changes
 
 window.refreshTranslations = applyTranslations;
+
 
