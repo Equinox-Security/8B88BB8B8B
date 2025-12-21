@@ -294,6 +294,15 @@ const translations = {
         toastCopyFailedMsg: "Could not copy to clipboard",
         toastClipboardCleared: "Clipboard Cleared",
         toastClipboardClearedMsg: "For your security",
+		downloadOffline: "Download for Offline",
+        downloadOfflineDesc: "Save SecureVault to your computer",
+        download: "Download",
+        preparing: "Preparing",
+        preparingDownload: "Creating offline package...",
+        downloadComplete: "Download Complete",
+        downloadCompleteMsg: "Offline package ready",
+        downloadFailed: "Download Failed",
+        downloadFailedMsg: "Could not create offline package",
         toastExportComplete: "Export Complete",
         toastExportCompleteMsg: "Vault backup saved successfully",
         toastExportDownloaded: "Vault backup downloaded",
@@ -700,6 +709,15 @@ const translations = {
         toastCopyFailedMsg: "Kon niet naar klembord kopiëren",
         toastClipboardCleared: "Klembord Gewist",
         toastClipboardClearedMsg: "Voor je veiligheid",
+        downloadOffline: "Download voor Offline",
+        downloadOfflineDesc: "Sla SecureVault op je computer op",
+        download: "Downloaden",
+        preparing: "Voorbereiden",
+        preparingDownload: "Offline pakket maken...",
+        downloadComplete: "Download Compleet",
+        downloadCompleteMsg: "Offline pakket klaar",
+        downloadFailed: "Download Mislukt",
+        downloadFailedMsg: "Kon offline pakket niet maken",
         toastExportComplete: "Export Compleet",
         toastExportCompleteMsg: "Kluis backup succesvol opgeslagen",
         toastExportDownloaded: "Kluis backup gedownload",
@@ -1055,6 +1073,7 @@ if (viewEntryFooterBtns[2]) setButtonTextOnly(viewEntryFooterBtns[2], t('editBtn
     
     // Settings items - using title matching
     setSettingsItem('Share SecureVault', 'shareSecureVault', 'inviteOthers');
+	setSettingsItem('Download for Offline', 'downloadOffline', 'downloadOfflineDesc');
     setSettingsItem('Install App', 'installApp', 'addToHomeScreen');
     setSettingsItem('Bookmarklet', 'bookmarklet', 'bookmarkletDesc');
     setSettingsItem('Auto-Lock Timeout', 'autoLockTimeout', 'lockVaultAfterInactivity');
@@ -1446,3 +1465,4 @@ document.addEventListener('DOMContentLoaded', function() {
 // Also expose a function to reapply after dynamic content changes
 
 window.refreshTranslations = applyTranslations;
+
