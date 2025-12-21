@@ -3181,7 +3181,7 @@
     <div class="settings-item">
         <div class="settings-item-info">
             <div class="settings-item-title">Download for Offline</div>
-            <div class="settings-item-desc">Save SecureVault to your device</div>
+            <div class="settings-item-desc">Save SecureVault to your device or external storage</div>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="downloadOfflinePackage()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
@@ -4785,7 +4785,7 @@ function setupPwa() {
         deferredInstallPrompt = null;
         document.getElementById('installPwaBtn').style.display = 'none';
         document.getElementById('pwaInstalledText').style.display = 'inline';
-        showToast('success', 'App Installed', 'SecureVault added to your device');
+        showToast('success', 'App Installed', 'SecureVault added to your device or external storage');
     });
     
     // Check standalone mode
@@ -6199,7 +6199,7 @@ const CURRENT_VERSION = "1.0.3";
 ======================================
 
 How to use:
-1. Extract this folder to your device
+1. Extract this folder to your device or external storage such as a USB drive
 2. Double-click SecureVault.html to open in your browser
 3. Bookmark it for easy access
 
@@ -6481,3 +6481,4 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
+
