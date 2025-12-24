@@ -90,6 +90,7 @@
             --cat-entertainment: #f44336;
             --cat-health: #8bc34a;
             --cat-education: #3f51b5;
+			--cat-utilities: #795548;
             --cat-other: #607d8b;
         }
 
@@ -1097,6 +1098,7 @@
         .entry-icon.cat-entertainment { background: rgba(244, 67, 54, 0.15); color: var(--cat-entertainment); }
         .entry-icon.cat-health { background: rgba(139, 195, 74, 0.15); color: var(--cat-health); }
         .entry-icon.cat-education { background: rgba(63, 81, 181, 0.15); color: var(--cat-education); }
+		.entry-icon.cat-utilities { background: rgba(121, 85, 72, 0.15); color: var(--cat-utilities); }
         .entry-icon.cat-other { background: rgba(96, 125, 139, 0.15); color: var(--cat-other); }
 
         .entry-info {
@@ -2658,6 +2660,11 @@
                         <span class="nav-item-text">Education</span>
                         <span class="nav-item-count" id="countEducation">0</span>
                     </div>
+					<div class="nav-item" data-category="utilites" onclick="filterByCategory('utilities')">
+                        <span class="category-dot" style="background: var(--cat-utilities)"></span>
+                        <span class="nav-item-text">Utilities</span>
+                        <span class="nav-item-count" id="countUtilities">0</span>
+                        </div>
                     <div class="nav-item" data-category="other" onclick="filterByCategory('other')">
                         <span class="category-dot" style="background: var(--cat-other)"></span>
                         <span class="nav-item-text">Other</span>
@@ -2962,6 +2969,7 @@
                             <option value="entertainment">Entertainment</option>
                             <option value="health">Health</option>
                             <option value="education">Education</option>
+							<option value="utilities">Utilities</option><button class="nav-item" data-category="utilities">
                             <option value="other">Other</option>
                         </select>
                     </div>
@@ -3663,6 +3671,7 @@ function resetVaultCompletely() {
             entertainment: { get name() { return typeof t !== 'undefined' ? t('catEntertainment') : 'Entertainment'; }, color: 'var(--cat-entertainment)' },
             health: { get name() { return typeof t !== 'undefined' ? t('catHealth') : 'Health'; }, color: 'var(--cat-health)' },
             education: { get name() { return typeof t !== 'undefined' ? t('catEducation') : 'Education'; }, color: 'var(--cat-education)' },
+			utilities: { get name() { return typeof t !== 'undefined' ? t('catUtilities') : 'Utilities'; }, color: 'var(--cat-utilities)' },
             other: { get name() { return typeof t !== 'undefined' ? t('catOther') : 'Other'; }, color: 'var(--cat-other)' }
         };
 
@@ -5735,6 +5744,21 @@ document.getElementById('lengthValue').textContent = entry.passwordLength || 16;
                 'library', 'jstor', 'researchgate', 'academia.edu', 'scholar.google',
                 'grammarly', 'turnitin', 'easybib', 'citation', 'research',
                 'mit.edu', 'stanford', 'harvard', 'oxford', 'cambridge', 'yale'
+            ],
+			utilities: [
+                'electric', 'power', 'energy', 'gas', 'water', 'sewer', 'utility', 
+				'utilities', 'pge', 'sce', 'conedison', 'duke', 'xcel', 'dominion', 
+				'entergy', 'dte', 'pseg', 'eversource', 'nationalgrid', 'fpl', 
+				'georgia power', 'pepco', 'bgande', 'sdge', 'ladwp', 'comcast', 
+				'xfinity', 'spectrum', 'att', 'verizon', 'tmobile', 'cox', 'centurylink', 
+				'frontier', 'windstream', 'trash', 'waste', 'garbage', 'recycling', 
+				'republic', 'wm.com', 'internet', 'broadband', 'isp', 'telecom', 'phone', 
+				'cellular', 'mobile', 'cable', 'fiber', 'Unitil', 'Eversource', 'City of Dover'
+				, 'vattenfall', 'eneco', 'essent', 'nuon', 'greenchoice', 'budgetenergie', 
+				'oxxio', 'engie', 'vandebron', 'energiedirect', 'vitens', 'waternet', 'evides', 
+				'brabantwater', 'pwn', 'dunea', 'kpn', 'ziggo', 'vodafone', 'tele2', 'simyo', 
+				'youfone', 'lebara', 'odido', 'afvaldienst', 'renewi'
+
             ]
         };
         
@@ -6416,7 +6440,7 @@ function copyShareLink(url) {
 // VERSION CHECK FOR UPDATES
 // ========================================
 
-const CURRENT_VERSION = "1.0.3";
+const CURRENT_VERSION = "1.0.4";
                 // ========================================
         // DOWNLOAD FOR OFFLINE
         // ========================================
@@ -6755,6 +6779,3 @@ function showUpdateToast(newVersion) {
 </div>
 </body>
 </html>
-
-
-
