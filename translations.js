@@ -106,6 +106,7 @@ const translations = {
         catEntertainment: "Entertainment",
         catHealth: "Health",
         catEducation: "Education",
+		catUtilities: 'Utilities',
         catOther: "Other",
         
         // ===== SEARCH & HEADER =====
@@ -521,6 +522,7 @@ const translations = {
         catEntertainment: "Entertainment",
         catHealth: "Gezondheid",
         catEducation: "Onderwijs",
+		catUtilities: 'Nutsvoorzieningen',
         catOther: "Overig",
         
         // ===== SEARCH & HEADER =====
@@ -1465,5 +1467,3 @@ document.addEventListener('DOMContentLoaded', function() {
 // Also expose a function to reapply after dynamic content changes
 
 window.refreshTranslations = applyTranslations;
-
-
