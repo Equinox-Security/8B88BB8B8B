@@ -40,12 +40,15 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="date"], select {
+        input[type="date"], select, input[type="number"] {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+        }
+        input[type="number"] {
+            font-family: Arial, sans-serif;
         }
         button {
             background: #3498db;
@@ -150,10 +153,17 @@
             background: #f39c12;
             color: white;
         }
+        .custom-plow {
+            background: #9b59b6;
+            color: white;
+        }
         h2 {
             color: #2c3e50;
             border-bottom: 2px solid #3498db;
             padding-bottom: 5px;
+        }
+        #customAmountGroup {
+            display: none;
         }
     </style>
 </head>
@@ -185,10 +195,16 @@
         
         <div class="form-group">
             <label for="plowType">Type:</label>
-            <select id="plowType">
+            <select id="plowType" onchange="toggleCustomAmount()">
                 <option value="first">First Plow of Storm ($50.00)</option>
                 <option value="additional">Additional Plow ($25.00)</option>
+                <option value="custom">Custom Amount</option>
             </select>
+        </div>
+        
+        <div class="form-group" id="customAmountGroup">
+            <label for="customAmount">Enter Custom Amount ($):</label>
+            <input type="number" id="customAmount" placeholder="0.00" step="0.01" min="0">
         </div>
         
         <button onclick="addEntry()">Add Entry</button>
@@ -221,16 +237,44 @@
         // Load data from localStorage
         let plowEntries = JSON.parse(localStorage.getItem('plowEntries')) || [];
         
+        function toggleCustomAmount() {
+            const type = document.getElementById('plowType').value;
+            const customGroup = document.getElementById('customAmountGroup');
+            const customInput = document.getElementById('customAmount');
+            
+            if (type === 'custom') {
+                customGroup.style.display = 'block';
+                customInput.required = true;
+                customInput.focus();
+            } else {
+                customGroup.style.display = 'none';
+                customInput.required = false;
+                customInput.value = '';
+            }
+        }
+        
         function addEntry() {
             const date = document.getElementById('plowDate').value;
             const type = document.getElementById('plowType').value;
+            let cost;
             
             if (!date) {
                 alert('Please select a date');
                 return;
             }
             
-            const cost = type === 'first' ? 50.00 : 25.00;
+            if (type === 'first') {
+                cost = 50.00;
+            } else if (type === 'additional') {
+                cost = 25.00;
+            } else if (type === 'custom') {
+                const customAmount = parseFloat(document.getElementById('customAmount').value);
+                if (isNaN(customAmount) || customAmount < 0) {
+                    alert('Please enter a valid custom amount');
+                    return;
+                }
+                cost = customAmount;
+            }
             
             const entry = {
                 id: Date.now(),
@@ -247,6 +291,8 @@
             // Reset form
             document.getElementById('plowDate').valueAsDate = new Date();
             document.getElementById('plowType').value = 'first';
+            document.getElementById('customAmount').value = '';
+            document.getElementById('customAmountGroup').style.display = 'none';
             
             // Show reminder to share
             alert('Entry added! Don\'t forget to click "Copy All Data to Share" to update your partner.');
@@ -291,8 +337,18 @@
                 
                 const typeCell = row.insertCell(1);
                 const badge = document.createElement('span');
-                badge.className = entry.type === 'first' ? 'storm-badge first-plow' : 'storm-badge additional-plow';
-                badge.textContent = entry.type === 'first' ? 'First Plow' : 'Additional';
+                
+                if (entry.type === 'first') {
+                    badge.className = 'storm-badge first-plow';
+                    badge.textContent = 'First Plow';
+                } else if (entry.type === 'additional') {
+                    badge.className = 'storm-badge additional-plow';
+                    badge.textContent = 'Additional';
+                } else {
+                    badge.className = 'storm-badge custom-plow';
+                    badge.textContent = 'Custom: $' + entry.cost.toFixed(2);
+                }
+                
                 typeCell.appendChild(badge);
                 
                 const costCell = row.insertCell(2);
