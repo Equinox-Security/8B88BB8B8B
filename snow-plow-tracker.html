@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snow Plow Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f8ff;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="date"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            padding: 5px 10px;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .copy-btn {
+            background: #27ae60;
+        }
+        .copy-btn:hover {
+            background: #229954;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #34495e;
+            color: white;
+        }
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .sync-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .sync-code {
+            background: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 10px 0;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .storm-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .first-plow {
+            background: #e74c3c;
+            color: white;
+        }
+        .additional-plow {
+            background: #f39c12;
+            color: white;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>❄️ Snow Plow Tracker ❄️</h1>
+    
+    <!-- SYNC SECTION - Always visible at top -->
+    <div class="sync-box">
+        <h2>📱 Share Updates</h2>
+        <p><strong>After adding entries, click below to copy and text to your partner:</strong></p>
+        <button class="copy-btn" onclick="copyToClipboard()">📋 Copy All Data to Share</button>
+        <div class="success" id="copySuccess">✅ Copied! Now text/email it to your partner!</div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <p><strong>Got an update from your partner? Paste it here:</strong></p>
+        <textarea id="importData" placeholder="Paste the data your partner sent you here..."></textarea>
+        <button onclick="importData()">⬇️ Update My List</button>
+        <div class="success" id="importSuccess">✅ List updated!</div>
+    </div>
+
+    <!-- ADD NEW ENTRY -->
+    <div class="container">
+        <h2>➕ Add New Plow</h2>
+        <div class="form-group">
+            <label for="plowDate">Date:</label>
+            <input type="date" id="plowDate" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="plowType">Type:</label>
+            <select id="plowType">
+                <option value="first">First Plow of Storm ($50.00)</option>
+                <option value="additional">Additional Plow ($25.00)</option>
+            </select>
+        </div>
+        
+        <button onclick="addEntry()">Add Entry</button>
+    </div>
+
+    <!-- ENTRIES LIST -->
+    <div class="container">
+        <h2>📋 Plow History</h2>
+        <div id="entries">
+            <table id="plowTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Cost</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="plowTableBody"></tbody>
+            </table>
+            <div class="total" id="totalCost"></div>
+        </div>
+        <p id="noEntries" style="text-align:center; color:#999;">No entries yet. Add your first plow above!</p>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('plowDate').valueAsDate = new Date();
+        
+        // Load data from localStorage
+        let plowEntries = JSON.parse(localStorage.getItem('plowEntries')) || [];
+        
+        function addEntry() {
+            const date = document.getElementById('plowDate').value;
+            const type = document.getElementById('plowType').value;
+            
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            const cost = type === 'first' ? 50.00 : 25.00;
+            
+            const entry = {
+                id: Date.now(),
+                date: date,
+                type: type,
+                cost: cost
+            };
+            
+            plowEntries.push(entry);
+            plowEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            saveAndRender();
+            
+            // Reset form
+            document.getElementById('plowDate').valueAsDate = new Date();
+            document.getElementById('plowType').value = 'first';
+            
+            // Show reminder to share
+            alert('Entry added! Don\'t forget to click "Copy All Data to Share" to update your partner.');
+        }
+        
+        function deleteEntry(id) {
+            if (confirm('Delete this entry?')) {
+                plowEntries = plowEntries.filter(entry => entry.id !== id);
+                saveAndRender();
+            }
+        }
+        
+        function saveAndRender() {
+            localStorage.setItem('plowEntries', JSON.stringify(plowEntries));
+            renderEntries();
+        }
+        
+        function renderEntries() {
+            const tbody = document.getElementById('plowTableBody');
+            const table = document.getElementById('plowTable');
+            const totalDiv = document.getElementById('totalCost');
+            const noEntries = document.getElementById('noEntries');
+            
+            if (plowEntries.length === 0) {
+                table.style.display = 'none';
+                totalDiv.innerHTML = '';
+                noEntries.style.display = 'block';
+                return;
+            }
+            
+            table.style.display = 'table';
+            noEntries.style.display = 'none';
+            tbody.innerHTML = '';
+            
+            let total = 0;
+            
+            plowEntries.forEach(entry => {
+                const row = tbody.insertRow();
+                
+                const dateCell = row.insertCell(0);
+                dateCell.textContent = new Date(entry.date + 'T00:00:00').toLocaleDateString();
+                
+                const typeCell = row.insertCell(1);
+                const badge = document.createElement('span');
+                badge.className = entry.type === 'first' ? 'storm-badge first-plow' : 'storm-badge additional-plow';
+                badge.textContent = entry.type === 'first' ? 'First Plow' : 'Additional';
+                typeCell.appendChild(badge);
+                
+                const costCell = row.insertCell(2);
+                costCell.textContent = '$' + entry.cost.toFixed(2);
+                
+                const actionCell = row.insertCell(3);
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => deleteEntry(entry.id);
+                actionCell.appendChild(deleteBtn);
+                
+                total += entry.cost;
+            });
+            
+            totalDiv.innerHTML = `Total: $${total.toFixed(2)}`;
+        }
+        
+        function copyToClipboard() {
+            const data = JSON.stringify(plowEntries);
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(data).then(() => {
+                    showSuccess('copySuccess');
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = data;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showSuccess('copySuccess');
+            }
+        }
+        
+        function importData() {
+            const data = document.getElementById('importData').value.trim();
+            
+            if (!data) {
+                alert('Please paste the data from your partner first');
+                return;
+            }
+            
+            try {
+                const importedEntries = JSON.parse(data);
+                
+                // Merge and remove duplicates
+                const merged = [...plowEntries, ...importedEntries];
+                const uniqueEntries = merged.filter((entry, index, self) =>
+                    index === self.findIndex(e => e.id === entry.id)
+                );
+                
+                plowEntries = uniqueEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+                saveAndRender();
+                
+                document.getElementById('importData').value = '';
+                showSuccess('importSuccess');
+            } catch (e) {
+                alert('Hmm, that doesn\'t look right. Make sure you copied the entire message from your partner.');
+            }
+        }
+        
+        function showSuccess(id) {
+            const elem = document.getElementById(id);
+            elem.style.display = 'block';
+            setTimeout(() => {
+                elem.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Initial render
+        renderEntries();
+    </script>
+</body>
+</html>
