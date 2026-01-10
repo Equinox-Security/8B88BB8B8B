@@ -52,6 +52,10 @@
             line-height: 1;
         }
         
+        .header-icon img {
+            display: block;
+        }
+        
         .header-text h1 {
             margin: 0;
             font-size: 28px;
@@ -407,13 +411,20 @@
             }
             
             .app-header {
-                padding: 20px;
+                padding: 16px 20px;
                 flex-direction: column;
                 text-align: center;
+                gap: 8px;
             }
             
             .header-text h1 {
                 font-size: 24px;
+                margin: 0;
+            }
+            
+            .header-text p {
+                margin: 2px 0 0;
+                font-size: 13px;
             }
             
             .card {
@@ -441,11 +452,15 @@
     </style>
 </head>
 <body>
-    <div class="app-container"><!-- Header --><header class="app-header">
-<div class="header-icon"><img src="https://equinox-security.github.io/8B88BB8B8B/PlowLOGO.png" alt="PlowLOGO" width="72" height="64" /></div>
-<div class="header-text">
-<h1>Snow Plow Tracker</h1>
-<p>Track your snow plowing expenses</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-icon">
+                <img src="https://equinox-security.github.io/8B88BB8B8B/PlowLOGO.png" alt="PlowLOGO" width="72" height="64" />
+            </div>
+            <div class="header-text">
+                <h1>Snow Plow Tracker</h1>
+                <p>Track your snow plowing expenses</p>
             </div>
         </header>
         
