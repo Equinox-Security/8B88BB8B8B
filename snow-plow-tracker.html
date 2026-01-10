@@ -6,228 +6,551 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Plow Tracker">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#f0f8ff">
+    <meta name="theme-color" content="#1a365d">
     <title>Plow Tracker</title>
     
     <!-- Custom App Icons (Plow Truck Emoji) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232c3e50' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232c3e50' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a365d' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a365d' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
     
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 20px auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
             padding: 20px;
-            background: #f0f8ff;
         }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
+        
+        /* Header */
+        .app-header {
+            background: #1a365d;
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(26, 54, 93, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        .container {
+        
+        .header-icon {
+            font-size: 48px;
+            line-height: 1;
+        }
+        
+        .header-text h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-text p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        
+        /* Cards */
+        .card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 24px;
             margin-bottom: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
         }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .card-header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        /* Sync Card Special Styling */
+        .sync-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+        }
+        
+        .sync-card .card-header {
+            border-bottom-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        .sync-card .card-header-icon {
+            background: rgba(245, 158, 11, 0.2);
+        }
+        
+        .sync-card h2 {
+            color: #92400e;
+        }
+        
+        .sync-card p {
+            color: #78350f;
+        }
+        
+        /* Form Elements */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="date"], select, input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        input[type="number"] {
-            font-family: Arial, sans-serif;
-        }
-        button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        button:hover {
-            background: #2980b9;
-        }
-        .delete-btn {
-            background: #e74c3c;
-            padding: 5px 10px;
             font-size: 14px;
-            width: auto;
-            margin: 0;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
         }
-        .delete-btn:hover {
-            background: #c0392b;
+        
+        input[type="date"], 
+        select, 
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #334155;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
-        .copy-btn {
-            background: #27ae60;
+        
+        input:focus, 
+        select:focus, 
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
-        .copy-btn:hover {
-            background: #229954;
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 44px;
         }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.4);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #34495e;
-            color: white;
-        }
-        .total {
-            font-size: 24px;
-            font-weight: bold;
-            color: #27ae60;
-            text-align: right;
-            margin-top: 10px;
-        }
-        .sync-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .sync-code {
             background: white;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
+        }
+        
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
             font-size: 14px;
-            word-break: break-all;
-            margin: 10px 0;
-            max-height: 100px;
-            overflow-y: auto;
+            font-weight: 600;
+            white-space: nowrap;
         }
-        textarea {
-            width: 100%;
-            height: 80px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 14px;
+        
+        th:first-child {
+            border-radius: 7px 0 0 0;
         }
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+        
+        th:last-child {
+            border-radius: 0 7px 0 0;
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: #f8fafc;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .badge-first {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+        
+        .badge-additional {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        
+        .badge-custom {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            color: #5b21b6;
+        }
+        
+        /* Total Section */
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px 0 0;
+            margin-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+        
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #475569;
+            margin-right: 16px;
+        }
+        
+        .total-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #16a34a;
+        }
+        
+        /* Success Messages */
+        .success-message {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            margin: 16px 0;
             display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
         }
-        .storm-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
+        
+        .success-message.show {
+            display: flex;
         }
-        .first-plow {
-            background: #e74c3c;
-            color: white;
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .additional-plow {
-            background: #f39c12;
-            color: white;
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #94a3b8;
         }
-        .custom-plow {
-            background: #9b59b6;
-            color: white;
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
-        h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 5px;
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 16px;
         }
-        #customAmountGroup {
-            display: none;
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: rgba(245, 158, 11, 0.3);
+            margin: 20px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 12px;
+            }
+            
+            .app-header {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-text h1 {
+                font-size: 24px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+            }
+            
+            .total-section {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .total-amount {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>❄️ Plow Tracker ❄️</h1>
-    
-    <!-- SYNC SECTION - Always visible at top -->
-    <div class="sync-box">
-        <h2>📱 Share Updates</h2>
-        <p><strong>After adding entries, click below to copy and text to your partner:</strong></p>
-        <button class="copy-btn" onclick="copyToClipboard()">📋 Copy All Data to Share</button>
-        <div class="success" id="copySuccess">✅ Copied! Now text/email it to your partner!</div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-icon">🚜</div>
+            <div class="header-text">
+                <h1>Plow Tracker</h1>
+                <p>Track your snow plowing expenses</p>
+            </div>
+        </header>
         
-        <hr style="margin: 20px 0;">
-        
-        <p><strong>Got an update from your partner? Paste it here:</strong></p>
-        <textarea id="importData" placeholder="Paste the data your partner sent you here..."></textarea>
-        <button onclick="importData()">⬇️ Update My List</button>
-        <div class="success" id="importSuccess">✅ List updated!</div>
-    </div>
-
-    <!-- ADD NEW ENTRY -->
-    <div class="container">
-        <h2>➕ Add New Plow</h2>
-        <div class="form-group">
-            <label for="plowDate">Date:</label>
-            <input type="date" id="plowDate" required>
+        <!-- Sync Section -->
+        <div class="card sync-card">
+            <div class="card-header">
+                <div class="card-header-icon">📱</div>
+                <h2>Share Updates</h2>
+            </div>
+            
+            <p><strong>After adding entries, click below to copy and text to your partner:</strong></p>
+            
+            <button class="btn btn-success" onclick="copyToClipboard()">
+                <span>📋</span> Copy All Data to Share
+            </button>
+            
+            <div class="success-message" id="copySuccess">
+                <span>✅</span> Copied! Now text/email it to your partner!
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p><strong>Got an update from your partner? Paste it here:</strong></p>
+            
+            <textarea id="importData" placeholder="Paste the data your partner sent you here..."></textarea>
+            
+            <div style="margin-top: 16px;">
+                <button class="btn btn-primary" onclick="importData()">
+                    <span>⬇️</span> Update My List
+                </button>
+            </div>
+            
+            <div class="success-message" id="importSuccess">
+                <span>✅</span> List updated successfully!
+            </div>
         </div>
         
-        <div class="form-group">
-            <label for="plowType">Type:</label>
-            <select id="plowType" onchange="toggleCustomAmount()">
-                <option value="first">First Plow of Storm ($50.00)</option>
-                <option value="additional">Additional Plow ($25.00)</option>
-                <option value="custom">Custom Amount</option>
-            </select>
+        <!-- Add New Entry -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon">➕</div>
+                <h2>Add New Plow</h2>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="plowDate">Date</label>
+                    <input type="date" id="plowDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plowType">Plow Type</label>
+                    <select id="plowType" onchange="toggleCustomAmount()">
+                        <option value="first">First Plow of Storm</option>
+                        <option value="additional">Additional Plow</option>
+                        <option value="custom">Custom Amount</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group" id="customAmountGroup" style="display: none;">
+                <label for="customAmount">Custom Amount ($)</label>
+                <input type="number" id="customAmount" placeholder="0.00" step="0.01" min="0">
+            </div>
+            
+            <button class="btn btn-primary" onclick="addEntry()">
+                <span>💾</span> Add Entry
+            </button>
         </div>
         
-        <div class="form-group" id="customAmountGroup">
-            <label for="customAmount">Enter Custom Amount ($):</label>
-            <input type="number" id="customAmount" placeholder="0.00" step="0.01" min="0">
+        <!-- Plow History -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon">📋</div>
+                <h2>Plow History</h2>
+            </div>
+            
+            <div id="entriesContainer">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <p>No entries yet. Add your first plow above!</p>
+                </div>
+                
+                <div class="table-container" id="tableContainer" style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Cost</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plowTableBody"></tbody>
+                    </table>
+                </div>
+                
+                <div class="total-section" id="totalSection" style="display: none;">
+                    <span class="total-label">Total:</span>
+                    <span class="total-amount" id="totalCost">$0.00</span>
+                </div>
+            </div>
         </div>
-        
-        <button onclick="addEntry()">Add Entry</button>
-    </div>
-
-    <!-- ENTRIES LIST -->
-    <div class="container">
-        <h2>📋 Plow History</h2>
-        <div id="entries">
-            <table id="plowTable" style="display:none;">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Cost</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="plowTableBody"></tbody>
-            </table>
-            <div class="total" id="totalCost"></div>
-        </div>
-        <p id="noEntries" style="text-align:center; color:#999;">No entries yet. Add your first plow above!</p>
     </div>
 
     <script>
@@ -312,19 +635,20 @@
         
         function renderEntries() {
             const tbody = document.getElementById('plowTableBody');
-            const table = document.getElementById('plowTable');
-            const totalDiv = document.getElementById('totalCost');
-            const noEntries = document.getElementById('noEntries');
+            const tableContainer = document.getElementById('tableContainer');
+            const totalSection = document.getElementById('totalSection');
+            const emptyState = document.querySelector('.empty-state');
             
             if (plowEntries.length === 0) {
-                table.style.display = 'none';
-                totalDiv.innerHTML = '';
-                noEntries.style.display = 'block';
+                tableContainer.style.display = 'none';
+                totalSection.style.display = 'none';
+                emptyState.style.display = 'block';
                 return;
             }
             
-            table.style.display = 'table';
-            noEntries.style.display = 'none';
+            tableContainer.style.display = 'block';
+            totalSection.style.display = 'flex';
+            emptyState.style.display = 'none';
             tbody.innerHTML = '';
             
             let total = 0;
@@ -339,32 +663,35 @@
                 const badge = document.createElement('span');
                 
                 if (entry.type === 'first') {
-                    badge.className = 'storm-badge first-plow';
-                    badge.textContent = 'First Plow';
+                    badge.className = 'badge badge-first';
+                    badge.innerHTML = '🚜 First Plow';
                 } else if (entry.type === 'additional') {
-                    badge.className = 'storm-badge additional-plow';
-                    badge.textContent = 'Additional';
+                    badge.className = 'badge badge-additional';
+                    badge.innerHTML = '❄️ Additional';
                 } else {
-                    badge.className = 'storm-badge custom-plow';
-                    badge.textContent = 'Custom: $' + entry.cost.toFixed(2);
+                    badge.className = 'badge badge-custom';
+                    badge.innerHTML = '⭐ Custom';
                 }
                 
                 typeCell.appendChild(badge);
                 
                 const costCell = row.insertCell(2);
-                costCell.textContent = '$' + entry.cost.toFixed(2);
+                costCell.innerHTML = `<strong>$${entry.cost.toFixed(2)}</strong>`;
                 
                 const actionCell = row.insertCell(3);
                 const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.textContent = 'Delete';
+                deleteBtn.className = 'btn btn-danger';
+                deleteBtn.style.width = 'auto';
+                deleteBtn.style.padding = '8px 16px';
+                deleteBtn.style.fontSize = '14px';
+                deleteBtn.textContent = '🗑️ Delete';
                 deleteBtn.onclick = () => deleteEntry(entry.id);
                 actionCell.appendChild(deleteBtn);
                 
                 total += entry.cost;
             });
             
-            totalDiv.innerHTML = `Total: $${total.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `$${total.toFixed(2)}`;
         }
         
         function copyToClipboard() {
@@ -416,9 +743,9 @@
         
         function showSuccess(id) {
             const elem = document.getElementById(id);
-            elem.style.display = 'block';
+            elem.classList.add('show');
             setTimeout(() => {
-                elem.style.display = 'none';
+                elem.classList.remove('show');
             }, 3000);
         }
         
