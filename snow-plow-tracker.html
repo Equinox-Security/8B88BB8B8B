@@ -435,7 +435,7 @@
             color: #16a34a;
         }
         
-        /* Total Section (legacy, keeping for payment history) */
+        /* Total Section */
         .total-section {
             display: flex;
             justify-content: flex-end;
@@ -458,7 +458,7 @@
             color: #16a34a;
         }
         
-        /* Success Messages */
+        /* Success/Info Messages */
         .success-message {
             background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
             color: #166534;
@@ -474,6 +474,24 @@
         }
         
         .success-message.show {
+            display: flex;
+        }
+        
+        .import-result {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #1e40af;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 16px 0;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .import-result.show {
             display: flex;
         }
         
@@ -620,6 +638,10 @@
             
             <div class="success-message" id="importSuccess">
                 <span>✅</span> List updated successfully!
+            </div>
+            
+            <div class="import-result" id="importResult">
+                <span id="importResultText"></span>
             </div>
         </div>
         
@@ -1093,20 +1115,117 @@
             document.getElementById('totalPayments').textContent = `$${totalPayments.toFixed(2)}`;
         }
         
+        // ============================================
+        // SMART MERGE FUNCTIONS - Content-based deduplication
+        // ============================================
+        
+        // Create a unique signature for an entry based on its content
+        function getEntrySignature(entry) {
+            return `${entry.date}|${entry.type}|${entry.cost.toFixed(2)}`;
+        }
+        
+        // Create a unique signature for a payment based on its content
+        function getPaymentSignature(payment) {
+            return `${payment.startDate}|${payment.endDate}|${payment.amount.toFixed(2)}|${payment.paymentDate}`;
+        }
+        
+        // Smart merge entries - keeps maximum count of each unique entry type
+        // This allows legitimate duplicates (2 plows same day) while preventing sync duplicates
+        function smartMergeEntries(currentEntries, importedEntries) {
+            // Group current entries by signature
+            const currentBySignature = {};
+            currentEntries.forEach(entry => {
+                const sig = getEntrySignature(entry);
+                if (!currentBySignature[sig]) {
+                    currentBySignature[sig] = [];
+                }
+                currentBySignature[sig].push(entry);
+            });
+            
+            // Group imported entries by signature
+            const importedBySignature = {};
+            importedEntries.forEach(entry => {
+                const sig = getEntrySignature(entry);
+                if (!importedBySignature[sig]) {
+                    importedBySignature[sig] = [];
+                }
+                importedBySignature[sig].push(entry);
+            });
+            
+            // Start with all current entries
+            const result = [...currentEntries];
+            let addedCount = 0;
+            
+            // For each signature in imported, add entries if imported has MORE than current
+            Object.keys(importedBySignature).forEach(sig => {
+                const currentCount = currentBySignature[sig] ? currentBySignature[sig].length : 0;
+                const importedCount = importedBySignature[sig].length;
+                
+                if (importedCount > currentCount) {
+                    // Add only the extra entries from imported (the difference)
+                    const entriesToAdd = importedBySignature[sig].slice(0, importedCount - currentCount);
+                    result.push(...entriesToAdd);
+                    addedCount += entriesToAdd.length;
+                }
+            });
+            
+            // Sort by date
+            const sorted = result.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            return { entries: sorted, added: addedCount };
+        }
+        
+        // Smart merge payments - same logic as entries
+        function smartMergePayments(currentPayments, importedPayments) {
+            const currentBySignature = {};
+            currentPayments.forEach(payment => {
+                const sig = getPaymentSignature(payment);
+                if (!currentBySignature[sig]) {
+                    currentBySignature[sig] = [];
+                }
+                currentBySignature[sig].push(payment);
+            });
+            
+            const importedBySignature = {};
+            importedPayments.forEach(payment => {
+                const sig = getPaymentSignature(payment);
+                if (!importedBySignature[sig]) {
+                    importedBySignature[sig] = [];
+                }
+                importedBySignature[sig].push(payment);
+            });
+            
+            const result = [...currentPayments];
+            let addedCount = 0;
+            
+            Object.keys(importedBySignature).forEach(sig => {
+                const currentCount = currentBySignature[sig] ? currentBySignature[sig].length : 0;
+                const importedCount = importedBySignature[sig].length;
+                
+                if (importedCount > currentCount) {
+                    const paymentsToAdd = importedBySignature[sig].slice(0, importedCount - currentCount);
+                    result.push(...paymentsToAdd);
+                    addedCount += paymentsToAdd.length;
+                }
+            });
+            
+            const sorted = result.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+            
+            return { payments: sorted, added: addedCount };
+        }
+        
         function copyToClipboard() {
             const data = JSON.stringify({
                 entries: plowEntries,
                 payments: payments,
-                version: 2  // Version flag for compatibility
+                version: 2
             });
             
-            // Try modern clipboard API first
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(data).then(() => {
                     showSuccess('copySuccess');
                 });
             } else {
-                // Fallback for older browsers
                 const textarea = document.createElement('textarea');
                 textarea.value = data;
                 document.body.appendChild(textarea);
@@ -1143,25 +1262,39 @@
                     throw new Error('Unknown format');
                 }
                 
-                // Merge entries and remove duplicates
-                const mergedEntries = [...plowEntries, ...importedEntries];
-                const uniqueEntries = mergedEntries.filter((entry, index, self) =>
-                    index === self.findIndex(e => e.id === entry.id)
-                );
+                // Use smart merge to handle duplicates properly
+                const entryResult = smartMergeEntries(plowEntries, importedEntries);
+                const paymentResult = smartMergePayments(payments, importedPayments);
                 
-                // Merge payments and remove duplicates
-                const mergedPayments = [...payments, ...importedPayments];
-                const uniquePayments = mergedPayments.filter((payment, index, self) =>
-                    index === self.findIndex(p => p.id === payment.id)
-                );
-                
-                plowEntries = uniqueEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-                payments = uniquePayments.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+                plowEntries = entryResult.entries;
+                payments = paymentResult.payments;
                 
                 saveAndRender();
                 
                 document.getElementById('importData').value = '';
-                showSuccess('importSuccess');
+                
+                // Show detailed result
+                const resultText = document.getElementById('importResultText');
+                const resultDiv = document.getElementById('importResult');
+                
+                if (entryResult.added === 0 && paymentResult.added === 0) {
+                    resultText.innerHTML = `✅ <strong>Already up to date!</strong><br>No new entries or payments to add.`;
+                } else {
+                    let message = '✅ <strong>Import complete!</strong><br>';
+                    if (entryResult.added > 0) {
+                        message += `• Added ${entryResult.added} new plow entr${entryResult.added === 1 ? 'y' : 'ies'}<br>`;
+                    }
+                    if (paymentResult.added > 0) {
+                        message += `• Added ${paymentResult.added} new payment${paymentResult.added === 1 ? '' : 's'}`;
+                    }
+                    resultText.innerHTML = message;
+                }
+                
+                resultDiv.classList.add('show');
+                setTimeout(() => {
+                    resultDiv.classList.remove('show');
+                }, 5000);
+                
             } catch (e) {
                 alert('Hmm, that doesn\'t look right. Make sure you copied the entire message from your partner.');
             }
