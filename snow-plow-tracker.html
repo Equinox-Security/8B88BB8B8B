@@ -105,7 +105,7 @@
             color: #1e293b;
         }
         
-        /* Sync Card Special Styling - Changed from Yellow to Gray */
+        /* Sync Card Special Styling */
         .sync-card {
             background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             border: 1px solid #9ca3af;
@@ -125,6 +125,24 @@
         
         .sync-card p {
             color: #4b5563;
+        }
+        
+        /* Payment Card Special Styling */
+        .payment-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #6ee7b7;
+        }
+        
+        .payment-card .card-header {
+            border-bottom-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        .payment-card .card-header-icon {
+            background: rgba(16, 185, 129, 0.2);
+        }
+        
+        .payment-card h2 {
+            color: #065f46;
         }
         
         /* Form Elements */
@@ -233,6 +251,17 @@
             box-shadow: 0 4px 6px rgba(75, 85, 99, 0.4);
         }
         
+        .btn-payment {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-payment:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.4);
+        }
+        
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
@@ -300,6 +329,14 @@
             background: #f8fafc;
         }
         
+        tr.paid-row {
+            background: #f0fdf4;
+        }
+        
+        tr.paid-row:hover {
+            background: #dcfce7;
+        }
+        
         /* Badges */
         .badge {
             display: inline-flex;
@@ -327,7 +364,78 @@
             color: #5b21b6;
         }
         
-        /* Total Section */
+        .badge-paid {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+        
+        .badge-owed {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        
+        /* Summary Section */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+            margin-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        
+        .summary-item.total-services {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .summary-item.total-paid {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+        
+        .summary-item.balance-owed {
+            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+        }
+        
+        .summary-item.balance-owed.zero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .summary-amount {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .summary-item.total-services .summary-amount {
+            color: #2563eb;
+        }
+        
+        .summary-item.total-paid .summary-amount {
+            color: #16a34a;
+        }
+        
+        .summary-item.balance-owed .summary-amount {
+            color: #d97706;
+        }
+        
+        .summary-item.balance-owed.zero .summary-amount {
+            color: #16a34a;
+        }
+        
+        /* Total Section (legacy, keeping for payment history) */
         .total-section {
             display: flex;
             justify-content: flex-end;
@@ -404,6 +512,19 @@
             margin: 20px 0;
         }
         
+        /* Payment History Table */
+        .payment-table th {
+            background: #065f46;
+        }
+        
+        /* Info text */
+        .info-text {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
         /* Responsive */
         @media (max-width: 600px) {
             .app-container {
@@ -448,6 +569,10 @@
             .total-amount {
                 font-size: 28px;
             }
+            
+            .summary-amount {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -460,7 +585,7 @@
             </div>
             <div class="header-text">
                 <h1>Snow Plow Tracker</h1>
-                <p>Track your snow plowing expenses</p>
+                <p>Track your snow plowing expenses & payments</p>
             </div>
         </header>
         
@@ -471,7 +596,7 @@
                 <h2>Share Updates</h2>
             </div>
             
-            <p><strong>After adding entries, click below to copy and text to your partner:</strong></p>
+            <p><strong>After adding entries or payments, click below to copy and text to your partner:</strong></p>
             
             <button class="btn btn-success" onclick="copyToClipboard()">
                 <span>📋</span> Copy All Data to Share
@@ -531,6 +656,50 @@
             </button>
         </div>
         
+        <!-- Record Payment -->
+        <div class="card payment-card">
+            <div class="card-header">
+                <div class="card-header-icon">💳</div>
+                <h2>Record Payment</h2>
+            </div>
+            
+            <p style="margin-top: 0; color: #065f46;">Record a payment for services within a date range (e.g., paying an invoice for December)</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="paymentStartDate">Services From</label>
+                    <input type="date" id="paymentStartDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentEndDate">Services To</label>
+                    <input type="date" id="paymentEndDate" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="paymentAmount">Amount Paid ($)</label>
+                    <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentDate">Payment Date</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+            </div>
+            
+            <div id="paymentPreview" class="info-text"></div>
+            
+            <button class="btn btn-payment" onclick="recordPayment()">
+                <span>✅</span> Record Payment
+            </button>
+            
+            <div class="success-message" id="paymentSuccess">
+                <span>✅</span> Payment recorded successfully!
+            </div>
+        </div>
+        
         <!-- Plow History -->
         <div class="card">
             <div class="card-header">
@@ -539,7 +708,7 @@
             </div>
             
             <div id="entriesContainer">
-                <div class="empty-state">
+                <div class="empty-state" id="emptyState">
                     <div class="empty-state-icon">📭</div>
                     <p>No entries yet. Add your first plow above!</p>
                 </div>
@@ -551,6 +720,7 @@
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Cost</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -558,10 +728,47 @@
                     </table>
                 </div>
                 
-                <div class="total-section" id="totalSection" style="display: none;">
-                    <span class="total-label">Total:</span>
-                    <span class="total-amount" id="totalCost">$0.00</span>
+                <div class="summary-section" id="summarySection" style="display: none;">
+                    <div class="summary-item total-services">
+                        <div class="summary-label">Total Services</div>
+                        <div class="summary-amount" id="totalServices">$0.00</div>
+                    </div>
+                    <div class="summary-item total-paid">
+                        <div class="summary-label">Total Paid</div>
+                        <div class="summary-amount" id="totalPaid">$0.00</div>
+                    </div>
+                    <div class="summary-item balance-owed" id="balanceOwedContainer">
+                        <div class="summary-label">Balance Owed</div>
+                        <div class="summary-amount" id="balanceOwed">$0.00</div>
+                    </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Payment History -->
+        <div class="card" id="paymentHistoryCard" style="display: none;">
+            <div class="card-header">
+                <div class="card-header-icon">💰</div>
+                <h2>Payment History</h2>
+            </div>
+            
+            <div class="table-container">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Payment Date</th>
+                            <th>Period Covered</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody"></tbody>
+                </table>
+            </div>
+            
+            <div class="total-section">
+                <span class="total-label">Total Payments:</span>
+                <span class="total-amount" id="totalPayments">$0.00</span>
             </div>
         </div>
     </div>
@@ -569,9 +776,57 @@
     <script>
         // Set today's date as default
         document.getElementById('plowDate').valueAsDate = new Date();
+        document.getElementById('paymentDate').valueAsDate = new Date();
         
         // Load data from localStorage
         let plowEntries = JSON.parse(localStorage.getItem('plowEntries')) || [];
+        let payments = JSON.parse(localStorage.getItem('plowPayments')) || [];
+        
+        // Update payment preview when dates change
+        document.getElementById('paymentStartDate').addEventListener('change', updatePaymentPreview);
+        document.getElementById('paymentEndDate').addEventListener('change', updatePaymentPreview);
+        
+        function updatePaymentPreview() {
+            const startDate = document.getElementById('paymentStartDate').value;
+            const endDate = document.getElementById('paymentEndDate').value;
+            const preview = document.getElementById('paymentPreview');
+            
+            if (startDate && endDate) {
+                const entriesInRange = getEntriesInDateRange(startDate, endDate);
+                const unpaidEntries = entriesInRange.filter(e => !isEntryPaid(e));
+                const totalUnpaid = unpaidEntries.reduce((sum, e) => sum + e.cost, 0);
+                
+                if (unpaidEntries.length > 0) {
+                    preview.innerHTML = `📊 Found <strong>${unpaidEntries.length}</strong> unpaid service(s) in this range totaling <strong>$${totalUnpaid.toFixed(2)}</strong>`;
+                } else if (entriesInRange.length > 0) {
+                    preview.innerHTML = `✅ All ${entriesInRange.length} service(s) in this range are already paid`;
+                } else {
+                    preview.innerHTML = `ℹ️ No services found in this date range`;
+                }
+            } else {
+                preview.innerHTML = '';
+            }
+        }
+        
+        function getEntriesInDateRange(startDate, endDate) {
+            const start = new Date(startDate + 'T00:00:00');
+            const end = new Date(endDate + 'T23:59:59');
+            
+            return plowEntries.filter(entry => {
+                const entryDate = new Date(entry.date + 'T00:00:00');
+                return entryDate >= start && entryDate <= end;
+            });
+        }
+        
+        function isEntryPaid(entry) {
+            const entryDate = new Date(entry.date + 'T00:00:00');
+            
+            return payments.some(payment => {
+                const startDate = new Date(payment.startDate + 'T00:00:00');
+                const endDate = new Date(payment.endDate + 'T23:59:59');
+                return entryDate >= startDate && entryDate <= endDate;
+            });
+        }
         
         function toggleCustomAmount() {
             const type = document.getElementById('plowType').value;
@@ -634,6 +889,55 @@
             alert('Entry added! Don\'t forget to click "Copy All Data to Share" to update your partner.');
         }
         
+        function recordPayment() {
+            const startDate = document.getElementById('paymentStartDate').value;
+            const endDate = document.getElementById('paymentEndDate').value;
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const paymentDate = document.getElementById('paymentDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select the service date range');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date must be before end date');
+                return;
+            }
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid payment amount');
+                return;
+            }
+            
+            if (!paymentDate) {
+                alert('Please select the payment date');
+                return;
+            }
+            
+            const payment = {
+                id: Date.now(),
+                startDate: startDate,
+                endDate: endDate,
+                amount: amount,
+                paymentDate: paymentDate
+            };
+            
+            payments.push(payment);
+            payments.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+            
+            saveAndRender();
+            
+            // Reset form
+            document.getElementById('paymentStartDate').value = '';
+            document.getElementById('paymentEndDate').value = '';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentDate').valueAsDate = new Date();
+            document.getElementById('paymentPreview').innerHTML = '';
+            
+            showSuccess('paymentSuccess');
+        }
+        
         function deleteEntry(id) {
             if (confirm('Delete this entry?')) {
                 plowEntries = plowEntries.filter(entry => entry.id !== id);
@@ -641,33 +945,48 @@
             }
         }
         
+        function deletePayment(id) {
+            if (confirm('Delete this payment? Services covered by this payment will show as unpaid.')) {
+                payments = payments.filter(payment => payment.id !== id);
+                saveAndRender();
+            }
+        }
+        
         function saveAndRender() {
             localStorage.setItem('plowEntries', JSON.stringify(plowEntries));
+            localStorage.setItem('plowPayments', JSON.stringify(payments));
             renderEntries();
+            renderPayments();
         }
         
         function renderEntries() {
             const tbody = document.getElementById('plowTableBody');
             const tableContainer = document.getElementById('tableContainer');
-            const totalSection = document.getElementById('totalSection');
-            const emptyState = document.querySelector('.empty-state');
+            const summarySection = document.getElementById('summarySection');
+            const emptyState = document.getElementById('emptyState');
             
             if (plowEntries.length === 0) {
                 tableContainer.style.display = 'none';
-                totalSection.style.display = 'none';
+                summarySection.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
             
             tableContainer.style.display = 'block';
-            totalSection.style.display = 'flex';
+            summarySection.style.display = 'grid';
             emptyState.style.display = 'none';
             tbody.innerHTML = '';
             
-            let total = 0;
+            let totalServices = 0;
+            let totalPaidAmount = 0;
             
             plowEntries.forEach(entry => {
+                const isPaid = isEntryPaid(entry);
                 const row = tbody.insertRow();
+                
+                if (isPaid) {
+                    row.className = 'paid-row';
+                }
                 
                 const dateCell = row.insertCell(0);
                 dateCell.textContent = new Date(entry.date + 'T00:00:00').toLocaleDateString();
@@ -691,24 +1010,95 @@
                 const costCell = row.insertCell(2);
                 costCell.innerHTML = `<strong>$${entry.cost.toFixed(2)}</strong>`;
                 
+                const statusCell = row.insertCell(3);
+                const statusBadge = document.createElement('span');
+                if (isPaid) {
+                    statusBadge.className = 'badge badge-paid';
+                    statusBadge.innerHTML = '✅ PAID';
+                    totalPaidAmount += entry.cost;
+                } else {
+                    statusBadge.className = 'badge badge-owed';
+                    statusBadge.innerHTML = '⏳ OWED';
+                }
+                statusCell.appendChild(statusBadge);
+                
+                const actionCell = row.insertCell(4);
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-danger';
+                deleteBtn.style.width = 'auto';
+                deleteBtn.style.padding = '8px 16px';
+                deleteBtn.style.fontSize = '14px';
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.onclick = () => deleteEntry(entry.id);
+                actionCell.appendChild(deleteBtn);
+                
+                totalServices += entry.cost;
+            });
+            
+            const balanceOwed = totalServices - totalPaidAmount;
+            
+            document.getElementById('totalServices').textContent = `$${totalServices.toFixed(2)}`;
+            document.getElementById('totalPaid').textContent = `$${totalPaidAmount.toFixed(2)}`;
+            document.getElementById('balanceOwed').textContent = `$${balanceOwed.toFixed(2)}`;
+            
+            const balanceContainer = document.getElementById('balanceOwedContainer');
+            if (balanceOwed <= 0) {
+                balanceContainer.classList.add('zero');
+            } else {
+                balanceContainer.classList.remove('zero');
+            }
+        }
+        
+        function renderPayments() {
+            const tbody = document.getElementById('paymentTableBody');
+            const card = document.getElementById('paymentHistoryCard');
+            
+            if (payments.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+            
+            card.style.display = 'block';
+            tbody.innerHTML = '';
+            
+            let totalPayments = 0;
+            
+            payments.forEach(payment => {
+                const row = tbody.insertRow();
+                
+                const dateCell = row.insertCell(0);
+                dateCell.textContent = new Date(payment.paymentDate + 'T00:00:00').toLocaleDateString();
+                
+                const periodCell = row.insertCell(1);
+                const startFormatted = new Date(payment.startDate + 'T00:00:00').toLocaleDateString();
+                const endFormatted = new Date(payment.endDate + 'T00:00:00').toLocaleDateString();
+                periodCell.textContent = `${startFormatted} - ${endFormatted}`;
+                
+                const amountCell = row.insertCell(2);
+                amountCell.innerHTML = `<strong>$${payment.amount.toFixed(2)}</strong>`;
+                
                 const actionCell = row.insertCell(3);
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-danger';
                 deleteBtn.style.width = 'auto';
                 deleteBtn.style.padding = '8px 16px';
                 deleteBtn.style.fontSize = '14px';
-                deleteBtn.textContent = '🗑️ Delete';
-                deleteBtn.onclick = () => deleteEntry(entry.id);
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.onclick = () => deletePayment(payment.id);
                 actionCell.appendChild(deleteBtn);
                 
-                total += entry.cost;
+                totalPayments += payment.amount;
             });
             
-            document.getElementById('totalCost').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('totalPayments').textContent = `$${totalPayments.toFixed(2)}`;
         }
         
         function copyToClipboard() {
-            const data = JSON.stringify(plowEntries);
+            const data = JSON.stringify({
+                entries: plowEntries,
+                payments: payments,
+                version: 2  // Version flag for compatibility
+            });
             
             // Try modern clipboard API first
             if (navigator.clipboard) {
@@ -736,15 +1126,38 @@
             }
             
             try {
-                const importedEntries = JSON.parse(data);
+                const parsed = JSON.parse(data);
                 
-                // Merge and remove duplicates
-                const merged = [...plowEntries, ...importedEntries];
-                const uniqueEntries = merged.filter((entry, index, self) =>
+                // Handle both old format (array) and new format (object with entries & payments)
+                let importedEntries, importedPayments;
+                
+                if (Array.isArray(parsed)) {
+                    // Old format - just entries
+                    importedEntries = parsed;
+                    importedPayments = [];
+                } else if (parsed.version === 2) {
+                    // New format with payments
+                    importedEntries = parsed.entries || [];
+                    importedPayments = parsed.payments || [];
+                } else {
+                    throw new Error('Unknown format');
+                }
+                
+                // Merge entries and remove duplicates
+                const mergedEntries = [...plowEntries, ...importedEntries];
+                const uniqueEntries = mergedEntries.filter((entry, index, self) =>
                     index === self.findIndex(e => e.id === entry.id)
                 );
                 
+                // Merge payments and remove duplicates
+                const mergedPayments = [...payments, ...importedPayments];
+                const uniquePayments = mergedPayments.filter((payment, index, self) =>
+                    index === self.findIndex(p => p.id === payment.id)
+                );
+                
                 plowEntries = uniqueEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+                payments = uniquePayments.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+                
                 saveAndRender();
                 
                 document.getElementById('importData').value = '';
@@ -764,6 +1177,7 @@
         
         // Initial render
         renderEntries();
+        renderPayments();
     </script>
 </body>
 </html>
