@@ -824,7 +824,7 @@ Vragen? Vraag gerust! 😊
         </div>
     </div>
 	
-	    <script>
+    <script>
         // Gegevensopslag
         let orders = JSON.parse(localStorage.getItem('orders')) || [];
         let customers = JSON.parse(localStorage.getItem('customers')) || [];
@@ -879,7 +879,7 @@ Vragen? Vraag gerust! 😊
         }
 
         function renderRecentOrders() {
-            const recentOrders = orders
+            const recentOrders = [...orders]
                 .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
                 .slice(0, 5);
 
@@ -938,7 +938,7 @@ Vragen? Vraag gerust! 😊
                 return;
             }
 
-            const sortedOrders = orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+            const sortedOrders = [...orders].sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
             tbody.innerHTML = sortedOrders.map(order => {
                 const customer = customers.find(c => c.id === order.customerId);
@@ -974,6 +974,12 @@ Vragen? Vraag gerust! 😊
             });
 
             const tbody = document.getElementById('orders-tbody');
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">Geen bestellingen gevonden.</td></tr>';
+                return;
+            }
+
             tbody.innerHTML = filtered.map(order => {
                 const customer = customers.find(c => c.id === order.customerId);
                 return `
@@ -993,11 +999,17 @@ Vragen? Vraag gerust! 😊
             }).join('');
         }
 
+        // ✅ FIXED: Explicitly clear hidden ID field
         function openOrderModal(orderId = null) {
             const modal = document.getElementById('order-modal');
             const form = document.getElementById('order-form');
             form.reset();
+            
+            // ✅ FIX: Always clear the hidden ID field first!
+            document.getElementById('order-id').value = '';
+            
             setDefaultDate();
+            updateCustomerDropdown();
 
             if (orderId) {
                 const order = orders.find(o => o.id === orderId);
@@ -1022,8 +1034,11 @@ Vragen? Vraag gerust! 😊
 
         function closeOrderModal() {
             document.getElementById('order-modal').classList.remove('active');
+            // ✅ FIX: Clear the hidden ID field when closing
+            document.getElementById('order-id').value = '';
         }
 
+        // ✅ FIXED: Added index validation
         function saveOrder(event) {
             event.preventDefault();
 
@@ -1042,7 +1057,14 @@ Vragen? Vraag gerust! 😊
 
             if (orderId) {
                 const index = orders.findIndex(o => o.id === orderId);
-                orders[index] = orderData;
+                // ✅ FIX: Check if index is valid
+                if (index !== -1) {
+                    orders[index] = orderData;
+                } else {
+                    // ID was set but not found - treat as new
+                    orderData.id = generateId();
+                    orders.push(orderData);
+                }
             } else {
                 orders.push(orderData);
             }
@@ -1108,6 +1130,12 @@ Vragen? Vraag gerust! 😊
             });
 
             const tbody = document.getElementById('customers-tbody');
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999;">Geen klanten gevonden.</td></tr>';
+                return;
+            }
+
             tbody.innerHTML = filtered.map(customer => {
                 const customerOrders = orders.filter(o => o.customerId === customer.id).length;
                 const location = [customer.city, customer.state].filter(Boolean).join(', ') || 'N.v.t.';
@@ -1128,10 +1156,14 @@ Vragen? Vraag gerust! 😊
             }).join('');
         }
 
+        // ✅ FIXED: Explicitly clear hidden ID field
         function openCustomerModal(customerId = null) {
             const modal = document.getElementById('customer-modal');
             const form = document.getElementById('customer-form');
             form.reset();
+            
+            // ✅ FIX: Always clear the hidden ID field first!
+            document.getElementById('customer-id').value = '';
 
             if (customerId) {
                 const customer = customers.find(c => c.id === customerId);
@@ -1156,8 +1188,11 @@ Vragen? Vraag gerust! 😊
 
         function closeCustomerModal() {
             document.getElementById('customer-modal').classList.remove('active');
+            // ✅ FIX: Clear the hidden ID field when closing
+            document.getElementById('customer-id').value = '';
         }
 
+        // ✅ FIXED: Added index validation
         function saveCustomer(event) {
             event.preventDefault();
 
@@ -1176,7 +1211,14 @@ Vragen? Vraag gerust! 😊
 
             if (customerId) {
                 const index = customers.findIndex(c => c.id === customerId);
-                customers[index] = customerData;
+                // ✅ FIX: Check if index is valid
+                if (index !== -1) {
+                    customers[index] = customerData;
+                } else {
+                    // ID was set but not found - treat as new
+                    customerData.id = generateId();
+                    customers.push(customerData);
+                }
             } else {
                 customers.push(customerData);
             }
@@ -1309,6 +1351,12 @@ Vragen? Vraag gerust! 😊
             });
 
             const tbody = document.getElementById('materials-tbody');
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">Geen materialen gevonden.</td></tr>';
+                return;
+            }
+
             tbody.innerHTML = filtered.map(material => {
                 const totalValue = (parseFloat(material.quantity) * parseFloat(material.cost)).toFixed(2);
                 const isLowStock = material.reorderLevel && parseFloat(material.quantity) <= parseFloat(material.reorderLevel);
@@ -1333,10 +1381,14 @@ Vragen? Vraag gerust! 😊
             }).join('');
         }
 
+        // ✅ FIXED: Explicitly clear hidden ID field
         function openMaterialModal(materialId = null) {
             const modal = document.getElementById('material-modal');
             const form = document.getElementById('material-form');
             form.reset();
+            
+            // ✅ FIX: Always clear the hidden ID field first!
+            document.getElementById('material-id').value = '';
 
             if (materialId) {
                 const material = materials.find(m => m.id === materialId);
@@ -1361,8 +1413,11 @@ Vragen? Vraag gerust! 😊
 
         function closeMaterialModal() {
             document.getElementById('material-modal').classList.remove('active');
+            // ✅ FIX: Clear the hidden ID field when closing
+            document.getElementById('material-id').value = '';
         }
 
+        // ✅ FIXED: Added index validation
         function saveMaterial(event) {
             event.preventDefault();
 
@@ -1382,7 +1437,14 @@ Vragen? Vraag gerust! 😊
 
             if (materialId) {
                 const index = materials.findIndex(m => m.id === materialId);
-                materials[index] = materialData;
+                // ✅ FIX: Check if index is valid
+                if (index !== -1) {
+                    materials[index] = materialData;
+                } else {
+                    // ID was set but not found - treat as new
+                    materialData.id = generateId();
+                    materials.push(materialData);
+                }
             } else {
                 materials.push(materialData);
             }
@@ -1416,7 +1478,6 @@ Vragen? Vraag gerust! 😊
         function renderRevenueChart() {
             const ctx = document.getElementById('revenue-chart');
             
-            // Gegevens ophalen voor huidig jaar en vorig jaar
             const currentYear = new Date().getFullYear();
             const lastYear = currentYear - 1;
             
@@ -1680,12 +1741,18 @@ Vragen? Vraag gerust! 😊
             document.getElementById('order-date').value = today;
         }
 
-        // Modals sluiten bij klikken buiten
+        // ✅ FIXED: Also clear hidden fields when clicking outside modals
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
+                // Clear all hidden ID fields when closing any modal by clicking outside
+                document.getElementById('order-id').value = '';
+                document.getElementById('customer-id').value = '';
+                document.getElementById('material-id').value = '';
             }
         }
     </script>
+</body>
+</html>
 </body>
 </html>
