@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Electrode Dresser</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            margin: 0;
+            padding: 10px;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #58a6ff;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .job-selector {
+            background: #161b22;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .job-dropdown {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+            margin-bottom: 10px;
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary { background: #238636; color: white; }
+        .btn-secondary { background: #30363d; color: #e6edf3; }
+        .btn-danger { background: #da3633; color: white; }
+        .btn-warning { background: #9e6a03; color: white; }
+        .btn-sync { background: #1f6feb; color: white; }
+        .btn-small { padding: 8px 12px; font-size: 12px; }
+        .btn-icon { padding: 10px; font-size: 18px; }
+        
+        .electrode-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .electrode-item {
+            background: #161b22;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #30363d;
+        }
+        
+        .electrode-item.rougher { border-color: #f85149; }
+        .electrode-item.finisher { border-color: #3fb950; }
+        .electrode-item.pair-full { border-color: #a371f7; }
+        .electrode-item.pair-sides { border-color: #f0883e; }
+        
+        .electrode-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #21262d;
+        }
+        
+        .electrode-header:active { background: #30363d; }
+        
+        .electrode-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+        }
+        
+        .electrode-meta {
+            font-size: 12px;
+            color: #8b949e;
+        }
+        
+        .electrode-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        
+        .electrode-badge.rougher { background: #f8514933; color: #f85149; }
+        .electrode-badge.finisher { background: #3fb95033; color: #3fb950; }
+        .electrode-badge.pair-full { background: #a371f733; color: #a371f7; }
+        .electrode-badge.pair-sides { background: #f0883e33; color: #f0883e; }
+        
+        .expand-icon {
+            font-size: 20px;
+            transition: transform 0.2s;
+            color: #8b949e;
+            margin-left: 10px;
+        }
+        
+        .electrode-item.expanded .expand-icon { transform: rotate(180deg); }
+        
+        .electrode-body {
+            display: none;
+            padding: 0 16px 16px 16px;
+        }
+        
+        .electrode-item.expanded .electrode-body { display: block; }
+        
+        .surface-section {
+            margin-top: 16px;
+        }
+        
+        .surface-section-title {
+            font-size: 14px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .surface-section-title.tops { color: #a371f7; border-color: #a371f7; }
+        .surface-section-title.sides { color: #f0883e; border-color: #f0883e; }
+        .surface-section-title.rough-tops { color: #f85149; border-color: #f85149; }
+        .surface-section-title.finish-tops { color: #3fb950; border-color: #3fb950; }
+        
+        .surface-card {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .surface-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .surface-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .surface-edit-btn {
+            background: none;
+            border: none;
+            color: #58a6ff;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        
+        .height-display {
+            text-align: center;
+            padding: 20px;
+            background: #161b22;
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+        
+        .height-label {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 6px;
+        }
+        
+        .height-value {
+            font-size: 42px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            color: #58a6ff;
+            letter-spacing: -1px;
+        }
+        
+        .height-value.negative { color: #f0883e; }
+        
+        .increment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .increment-btn {
+            padding: 16px 8px;
+            background: #238636;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            cursor: pointer;
+        }
+        
+        .increment-btn:active {
+            background: #2ea043;
+            transform: scale(0.98);
+        }
+        
+        .increment-btn.custom {
+            background: #30363d;
+            grid-column: span 3;
+            font-family: inherit;
+        }
+        
+        .custom-input-row {
+            display: none;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .custom-input-row.show { display: flex; }
+        
+        .custom-input-row input {
+            flex: 1;
+            padding: 14px;
+            font-size: 18px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+        
+        .custom-input-row input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+        
+        .sync-bar {
+            background: #1f6feb22;
+            border: 1px solid #1f6feb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .sync-bar-text {
+            font-size: 13px;
+            color: #58a6ff;
+        }
+        
+        .sync-bar .btn {
+            flex-shrink: 0;
+        }
+        
+        .history-toggle {
+            margin-top: 16px;
+            padding: 10px;
+            background: #21262d;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b949e;
+            cursor: pointer;
+        }
+        
+        .history-panel {
+            display: none;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .history-panel.show { display: block; }
+        
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid #21262d;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+        
+        .history-item:last-child { border-bottom: none; }
+        .history-time { color: #8b949e; }
+        .history-change { color: #58a6ff; }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal-overlay.show { display: block; }
+        
+        .modal {
+            background: #161b22;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .modal h2 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            color: #58a6ff;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #8b949e;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons .btn { flex: 1; }
+        
+        .surface-inputs {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        .surface-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .surface-input-row input { flex: 1; }
+        .surface-input-row:last-child { margin-bottom: 0; }
+        
+        .surface-input-label {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+        
+        .type-option {
+            display: block;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .type-option:hover { border-color: #58a6ff; }
+        .type-option.selected { border-color: #58a6ff; background: #58a6ff11; }
+        
+        .type-option input {
+            display: none;
+        }
+        
+        .type-option-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .type-option-desc {
+            font-size: 12px;
+            color: #8b949e;
+        }
+        
+        .settings-panel {
+            background: #161b22;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .settings-panel.show { display: block; }
+        
+        .preset-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .preset-row input {
+            width: 100px;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8b949e;
+        }
+        
+        .empty-state h3 {
+            color: #e6edf3;
+            margin-bottom: 10px;
+        }
+        
+        .electrode-delete {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid #da3633;
+            color: #da3633;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #30363d;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 400px) {
+            .height-value { font-size: 36px; }
+            .increment-btn { padding: 14px 6px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 Electrode Dresser</h1>
+        <div class="header-buttons">
+            <button class="btn btn-secondary btn-icon" onclick="exportData()" title="Export">📤</button>
+            <button class="btn btn-secondary btn-icon" onclick="document.getElementById('importFile').click()" title="Import">📥</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+    </div>
+    
+    <div class="job-selector">
+        <select class="job-dropdown" id="jobDropdown" onchange="selectJob(this.value)">
+            <option value="">-- Select Job --</option>
+        </select>
+        <div class="job-actions">
+            <button class="btn btn-primary" onclick="showNewJobModal()">+ New Job</button>
+            <button class="btn btn-secondary" onclick="toggleSettings()" id="settingsBtn" style="display:none">⚙ Settings</button>
+            <button class="btn btn-secondary" onclick="showAddElectrodeModal()" id="addElectrodeBtn" style="display:none">+ Electrode</button>
+        </div>
+    </div>
+    
+    <div class="settings-panel" id="settingsPanel">
+        <h3 style="margin: 0 0 15px 0; font-size: 16px;">Job Settings</h3>
+        <div class="form-row" style="margin-bottom: 15px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Job Status</label>
+                <select id="jobStatusSelect" onchange="updateJobStatus(this.value)">
+                    <option value="active">Active</option>
+                    <option value="complete">Complete</option>
+                    <option value="archived">Archived</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>&nbsp;</label>
+                <button class="btn btn-danger" style="width: 100%;" onclick="deleteCurrentJob()">Delete Job</button>
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <label style="font-size: 13px; color: #8b949e;">Top Presets</label>
+                <div id="topPresetsContainer"></div>
+                <button class="btn btn-secondary btn-small" onclick="addPreset('top')" style="margin-top: 8px;">+ Add</button>
+            </div>
+            <div>
+                <label style="font-size: 13px; color: #8b949e;">Side Presets</label>
+                <div id="sidePresetsContainer"></div>
+                <button class="btn btn-secondary btn-small" onclick="addPreset('side')" style="margin-top: 8px;">+ Add</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="electrode-list" id="electrodeList">
+        <div class="empty-state">
+            <h3>No Job Selected</h3>
+            <p>Select a job above or create a new one</p>
+        </div>
+    </div>
+    
+    <!-- New Job Modal -->
+    <div class="modal-overlay" id="newJobModal">
+        <div class="modal">
+            <h2>Create New Job</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Job Number</label>
+                    <input type="text" id="newJobNumber" placeholder="P8">
+                </div>
+                <div class="form-group">
+                    <label>Job Name</label>
+                    <input type="text" id="newJobName" placeholder="Chasses">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('newJobModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="createJob()">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Electrode Modal -->
+    <div class="modal-overlay" id="addElectrodeModal">
+        <div class="modal">
+            <h2>Add Electrode</h2>
+            
+            <div class="form-group">
+                <label>Electrode Name</label>
+                <input type="text" id="electrodeName" placeholder="e.g., Corner 1">
+            </div>
+            
+            <div class="form-group">
+                <label>Electrode Type</label>
+                <div id="typeOptions">
+                    <label class="type-option" onclick="selectType('rougher')">
+                        <input type="radio" name="electrodeType" value="rougher">
+                        <div class="type-option-title">Rougher Only</div>
+                        <div class="type-option-desc">Standalone roughing electrode</div>
+                    </label>
+                    <label class="type-option" onclick="selectType('finisher')">
+                        <input type="radio" name="electrodeType" value="finisher">
+                        <div class="type-option-title">Finisher Only</div>
+                        <div class="type-option-desc">Standalone finishing electrode</div>
+                    </label>
+                    <label class="type-option" onclick="selectType('pair-full')">
+                        <input type="radio" name="electrodeType" value="pair-full">
+                        <div class="type-option-title">Rough/Finish - Fully Paired</div>
+                        <div class="type-option-desc">All surfaces identical, dress once for both</div>
+                    </label>
+                    <label class="type-option" onclick="selectType('pair-sides')">
+                        <input type="radio" name="electrodeType" value="pair-sides">
+                        <div class="type-option-title">Rough/Finish - Sides Paired</div>
+                        <div class="type-option-desc">Sides shared, tops tracked separately</div>
+                    </label>
+                </div>
+            </div>
+            
+            <div id="surfaceCountInputs" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>How many TOP surfaces?</label>
+                        <select id="topCount" onchange="updateSurfaceInputs()">
+                            <option value="0">0</option>
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>How many SIDE surfaces?</label>
+                        <select id="sideCount" onchange="updateSurfaceInputs()">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="surfaceInputsContainer"></div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('addElectrodeModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addElectrode()">Add Electrode</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Height Modal -->
+    <div class="modal-overlay" id="editHeightModal">
+        <div class="modal">
+            <h2 id="editHeightTitle">Edit Height</h2>
+            <div class="form-group">
+                <label id="editHeightLabel">Height Value</label>
+                <input type="text" id="editHeightInput" inputmode="decimal">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('editHeightModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveHeightEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Surface Name Modal -->
+    <div class="modal-overlay" id="editSurfaceModal">
+        <div class="modal">
+            <h2>Edit Surface Name</h2>
+            <div class="form-group">
+                <label>Surface Name</label>
+                <input type="text" id="editSurfaceName">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('editSurfaceModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSurfaceEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = { jobs: {}, currentJobId: null };
+        let currentEdit = null;
+        let selectedType = null;
+        
+        // ========== STORAGE ==========
+        function loadData() {
+            const saved = localStorage.getItem('electrodeDresserV3');
+            if (saved) data = JSON.parse(saved);
+            renderJobDropdown();
+            if (data.currentJobId && data.jobs[data.currentJobId]) {
+                selectJob(data.currentJobId);
+            }
+        }
+        
+        function saveData() {
+            localStorage.setItem('electrodeDresserV3', JSON.stringify(data));
+        }
+        
+        // ========== EXPORT/IMPORT ==========
+        function exportData() {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `electrode-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.jobs) {
+                        if (confirm('Replace all current data?')) {
+                            data = imported;
+                            saveData();
+                            renderJobDropdown();
+                            if (data.currentJobId) selectJob(data.currentJobId);
+                            alert('Imported successfully!');
+                        }
+                    }
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // ========== MODALS ==========
+        function showModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+        
+        function showNewJobModal() {
+            document.getElementById('newJobNumber').value = '';
+            document.getElementById('newJobName').value = '';
+            showModal('newJobModal');
+        }
+        
+        function showAddElectrodeModal() {
+            document.getElementById('electrodeName').value = '';
+            document.getElementById('topCount').value = '1';
+            document.getElementById('sideCount').value = '2';
+            selectedType = null;
+            document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+            document.getElementById('surfaceCountInputs').style.display = 'none';
+            showModal('addElectrodeModal');
+        }
+        
+        function selectType(type) {
+            selectedType = type;
+            document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector(`input[value="${type}"]`).closest('.type-option').classList.add('selected');
+            document.getElementById('surfaceCountInputs').style.display = 'block';
+            updateSurfaceInputs();
+        }
+        
+        // ========== JOBS ==========
+        function renderJobDropdown() {
+            const dropdown = document.getElementById('jobDropdown');
+            let html = '<option value="">-- Select Job --</option>';
+            const order = { active: 0, complete: 1, archived: 2 };
+            const sorted = Object.values(data.jobs).sort((a, b) => order[a.status] - order[b.status]);
+            sorted.forEach(job => {
+                const status = job.status !== 'active' ? ` [${job.status.toUpperCase()}]` : '';
+                html += `<option value="${job.id}">${job.id}: ${job.name}${status}</option>`;
+            });
+            dropdown.innerHTML = html;
+            if (data.currentJobId) dropdown.value = data.currentJobId;
+        }
+        
+        function selectJob(jobId) {
+            data.currentJobId = jobId;
+            saveData();
+            document.getElementById('settingsBtn').style.display = jobId ? 'inline-flex' : 'none';
+            document.getElementById('addElectrodeBtn').style.display = jobId ? 'inline-flex' : 'none';
+            document.getElementById('jobDropdown').value = jobId;
+            document.getElementById('settingsPanel').classList.remove('show');
+            
+            if (jobId && data.jobs[jobId]) {
+                renderElectrodeList();
+                renderSettings();
+            } else {
+                document.getElementById('electrodeList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Job Selected</h3>
+                        <p>Select a job or create new</p>
+                    </div>`;
+            }
+        }
+        
+        function createJob() {
+            const num = document.getElementById('newJobNumber').value.trim();
+            const name = document.getElementById('newJobName').value.trim() || num;
+            if (!num) return alert('Enter job number');
+            if (data.jobs[num]) return alert('Job exists');
+            
+            data.jobs[num] = {
+                id: num,
+                name: name,
+                status: 'active',
+                createdAt: new Date().toISOString(),
+                presets: { top: [0.005, 0.010, 0.015], side: [0.0015, 0.003, 0.005] },
+                electrodes: []
+            };
+            saveData();
+            closeModal('newJobModal');
+            renderJobDropdown();
+            selectJob(num);
+        }
+        
+        function deleteCurrentJob() {
+            if (!data.currentJobId) return;
+            if (!confirm(`Delete "${data.currentJobId}"?`)) return;
+            delete data.jobs[data.currentJobId];
+            data.currentJobId = null;
+            saveData();
+            renderJobDropdown();
+            selectJob('');
+        }
+        
+        // ========== SETTINGS ==========
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('show');
+        }
+        
+        function renderSettings() {
+            const job = data.jobs[data.currentJobId];
+            if (!job) return;
+            document.getElementById('jobStatusSelect').value = job.status;
+            
+            let topHtml = '';
+            job.presets.top.forEach((val, i) => {
+                topHtml += `<div class="preset-row">
+                    <input type="text" value="${val}" onchange="updatePreset('top',${i},this.value)">
+                    <button class="btn btn-danger btn-small" onclick="removePreset('top',${i})">×</button>
+                </div>`;
+            });
+            document.getElementById('topPresetsContainer').innerHTML = topHtml;
+            
+            let sideHtml = '';
+            job.presets.side.forEach((val, i) => {
+                sideHtml += `<div class="preset-row">
+                    <input type="text" value="${val}" onchange="updatePreset('side',${i},this.value)">
+                    <button class="btn btn-danger btn-small" onclick="removePreset('side',${i})">×</button>
+                </div>`;
+            });
+            document.getElementById('sidePresetsContainer').innerHTML = sideHtml;
+        }
+        
+        function updateJobStatus(status) {
+            if (!data.currentJobId) return;
+            data.jobs[data.currentJobId].status = status;
+            saveData();
+            renderJobDropdown();
+        }
+        
+        function updatePreset(type, index, value) {
+            const num = parseFloat(value);
+            if (!isNaN(num)) {
+                data.jobs[data.currentJobId].presets[type][index] = num;
+                saveData();
+            }
+        }
+        
+        function addPreset(type) {
+            data.jobs[data.currentJobId].presets[type].push(0.001);
+            saveData();
+            renderSettings();
+        }
+        
+        function removePreset(type, index) {
+            data.jobs[data.currentJobId].presets[type].splice(index, 1);
+            saveData();
+            renderSettings();
+        }
+        
+        // ========== SURFACE INPUTS (Add Modal) ==========
+        function updateSurfaceInputs() {
+            const topCount = parseInt(document.getElementById('topCount').value);
+            const sideCount = parseInt(document.getElementById('sideCount').value);
+            const container = document.getElementById('surfaceInputsContainer');
+            
+            let html = '';
+            
+            // TOP surfaces
+            if (topCount > 0) {
+                if (selectedType === 'pair-sides') {
+                    // Separate rough and finish tops
+                    html += `<div style="margin-top: 12px;">
+                        <label style="font-size: 13px; color: #f85149;">ROUGH TOP Surfaces</label>
+                        <div class="surface-inputs">`;
+                    for (let i = 1; i <= topCount; i++) {
+                        html += `<div class="surface-input-row">
+                            <input type="text" id="roughTopName${i}" placeholder="Name" value="Top ${i}">
+                            <input type="text" id="roughTopHeight${i}" placeholder="Height" inputmode="decimal">
+                        </div>`;
+                    }
+                    html += `</div></div>`;
+                    
+                    html += `<div style="margin-top: 12px;">
+                        <label style="font-size: 13px; color: #3fb950;">FINISH TOP Surfaces</label>
+                        <div class="surface-inputs">`;
+                    for (let i = 1; i <= topCount; i++) {
+                        html += `<div class="surface-input-row">
+                            <input type="text" id="finishTopName${i}" placeholder="Name" value="Top ${i}">
+                            <input type="text" id="finishTopHeight${i}" placeholder="Height" inputmode="decimal">
+                        </div>`;
+                    }
+                    html += `</div></div>`;
+                } else {
+                    // Shared tops
+                    html += `<div style="margin-top: 12px;">
+                        <label style="font-size: 13px; color: #a371f7;">TOP Surfaces</label>
+                        <div class="surface-inputs">`;
+                    for (let i = 1; i <= topCount; i++) {
+                        html += `<div class="surface-input-row">
+                            <input type="text" id="topName${i}" placeholder="Name" value="Top ${i}">
+                            <input type="text" id="topHeight${i}" placeholder="Height" inputmode="decimal">
+                        </div>`;
+                    }
+                    html += `</div></div>`;
+                }
+            }
+            
+            // SIDE surfaces (always shared)
+            if (sideCount > 0) {
+                html += `<div style="margin-top: 12px;">
+                    <label style="font-size: 13px; color: #f0883e;">SIDE Surfaces (${selectedType === 'pair-sides' ? 'Shared R/F' : ''})</label>
+                    <div class="surface-inputs">`;
+                for (let i = 1; i <= sideCount; i++) {
+                    html += `<div class="surface-input-row">
+                        <input type="text" id="sideName${i}" placeholder="Name" value="Side ${i}">
+                        <input type="text" id="sideHeight${i}" placeholder="Height" inputmode="decimal">
+                    </div>`;
+                }
+                html += `</div></div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // ========== ADD ELECTRODE ==========
+        function addElectrode() {
+            const name = document.getElementById('electrodeName').value.trim();
+            if (!name) return alert('Enter electrode name');
+            if (!selectedType) return alert('Select electrode type');
+            
+            const topCount = parseInt(document.getElementById('topCount').value);
+            const sideCount = parseInt(document.getElementById('sideCount').value);
+            
+            const electrode = {
+                id: 'e' + Date.now(),
+                name: name,
+                type: selectedType,
+                sides: [],
+                tops: [],
+                roughTops: [],
+                finishTops: []
+            };
+            
+            // Gather sides (always shared)
+            for (let i = 1; i <= sideCount; i++) {
+                const sName = document.getElementById(`sideName${i}`).value.trim() || `Side ${i}`;
+                const sHeight = document.getElementById(`sideHeight${i}`).value.trim();
+                electrode.sides.push({
+                    id: 's' + Date.now() + i,
+                    name: sName,
+                    height: sHeight ? parseFloat(sHeight) : null,
+                    history: []
+                });
+            }
+            
+            // Gather tops based on type
+            if (selectedType === 'pair-sides') {
+                for (let i = 1; i <= topCount; i++) {
+                    const rName = document.getElementById(`roughTopName${i}`).value.trim() || `Top ${i}`;
+                    const rHeight = document.getElementById(`roughTopHeight${i}`).value.trim();
+                    electrode.roughTops.push({
+                        id: 'rt' + Date.now() + i,
+                        name: rName,
+                        height: rHeight ? parseFloat(rHeight) : null,
+                        history: []
+                    });
+                    
+                    const fName = document.getElementById(`finishTopName${i}`).value.trim() || `Top ${i}`;
+                    const fHeight = document.getElementById(`finishTopHeight${i}`).value.trim();
+                    electrode.finishTops.push({
+                        id: 'ft' + Date.now() + i,
+                        name: fName,
+                        height: fHeight ? parseFloat(fHeight) : null,
+                        history: []
+                    });
+                }
+            } else {
+                for (let i = 1; i <= topCount; i++) {
+                    const tName = document.getElementById(`topName${i}`).value.trim() || `Top ${i}`;
+                    const tHeight = document.getElementById(`topHeight${i}`).value.trim();
+                    electrode.tops.push({
+                        id: 't' + Date.now() + i,
+                        name: tName,
+                        height: tHeight ? parseFloat(tHeight) : null,
+                        history: []
+                    });
+                }
+            }
+            
+            data.jobs[data.currentJobId].electrodes.push(electrode);
+            saveData();
+            closeModal('addElectrodeModal');
+            renderElectrodeList();
+        }
+        
+        function deleteElectrode(electrodeId) {
+            if (!confirm('Delete this electrode?')) return;
+            const job = data.jobs[data.currentJobId];
+            job.electrodes = job.electrodes.filter(e => e.id !== electrodeId);
+            saveData();
+            renderElectrodeList();
+        }
+        
+        // ========== RENDER ELECTRODE LIST ==========
+        function renderElectrodeList() {
+            const job = data.jobs[data.currentJobId];
+            if (!job || job.electrodes.length === 0) {
+                document.getElementById('electrodeList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Electrodes</h3>
+                        <p>Tap "+ Electrode" to add one</p>
+                    </div>`;
+                return;
+            }
+            
+            let html = '';
+            job.electrodes.forEach(electrode => {
+                html += renderElectrodeCard(electrode, job);
+            });
+            document.getElementById('electrodeList').innerHTML = html;
+        }
+        
+        function getTypeBadge(type) {
+            switch(type) {
+                case 'rougher': return { text: 'ROUGH', class: 'rougher' };
+                case 'finisher': return { text: 'FINISH', class: 'finisher' };
+                case 'pair-full': return { text: 'R/F PAIRED', class: 'pair-full' };
+                case 'pair-sides': return { text: 'R/F SIDES', class: 'pair-sides' };
+                default: return { text: type, class: '' };
+            }
+        }
+        
+        function renderElectrodeCard(electrode, job) {
+            const badge = getTypeBadge(electrode.type);
+            let surfaceCount = electrode.sides.length;
+            if (electrode.type === 'pair-sides') {
+                surfaceCount += electrode.roughTops.length + electrode.finishTops.length;
+            } else {
+                surfaceCount += electrode.tops.length;
+            }
+            
+            let html = `
+                <div class="electrode-item ${electrode.type}" id="electrode_${electrode.id}">
+                    <div class="electrode-header" onclick="toggleElectrode('${electrode.id}')">
+                        <div class="electrode-info">
+                            <h3>${electrode.name}</h3>
+                            <div class="electrode-meta">${surfaceCount} surface${surfaceCount !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="electrode-badge ${badge.class}">${badge.text}</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="electrode-body">`;
+            
+            // Render based on type
+            if (electrode.type === 'pair-sides') {
+                // ROUGH TOPS section
+                if (electrode.roughTops.length > 0) {
+                    html += `<div class="surface-section">
+                        <div class="surface-section-title rough-tops">ROUGH TOPS</div>`;
+                    electrode.roughTops.forEach(surface => {
+                        html += renderSurfaceCard(electrode.id, surface, 'roughTops', job.presets.top);
+                    });
+                    html += `</div>`;
+                }
+                
+                // FINISH TOPS section
+                if (electrode.finishTops.length > 0) {
+                    html += `<div class="surface-section">
+                        <div class="surface-section-title finish-tops">
+                            FINISH TOPS
+                        </div>`;
+                    electrode.finishTops.forEach(surface => {
+                        html += renderSurfaceCard(electrode.id, surface, 'finishTops', job.presets.top);
+                    });
+                    html += `</div>`;
+                }
+                
+                // Sync bar for rough → finish tops
+                if (electrode.roughTops.length > 0 && electrode.finishTops.length > 0) {
+                    html += `<div class="sync-bar">
+                        <span class="sync-bar-text">Sync rough tops to match finish tops</span>
+                        <button class="btn btn-sync btn-small" onclick="syncRoughToFinish('${electrode.id}')">
+                            Sync All Tops
+                        </button>
+                    </div>`;
+                }
+                
+            } else {
+                // Regular tops section
+                if (electrode.tops.length > 0) {
+                    html += `<div class="surface-section">
+                        <div class="surface-section-title tops">TOP SURFACES</div>`;
+                    electrode.tops.forEach(surface => {
+                        html += renderSurfaceCard(electrode.id, surface, 'tops', job.presets.top);
+                    });
+                    html += `</div>`;
+                }
+            }
+            
+            // SIDES section (always shared)
+            if (electrode.sides.length > 0) {
+                html += `<div class="surface-section">
+                    <div class="surface-section-title sides">SIDE SURFACES ${electrode.type === 'pair-sides' ? '(Shared R/F)' : ''}</div>`;
+                electrode.sides.forEach(surface => {
+                    html += renderSurfaceCard(electrode.id, surface, 'sides', job.presets.side);
+                });
+                html += `</div>`;
+            }
+            
+            html += `<button class="electrode-delete" onclick="deleteElectrode('${electrode.id}')">Delete Electrode</button>`;
+            html += `</div></div>`;
+            
+            return html;
+        }
+        
+        function renderSurfaceCard(electrodeId, surface, category, presets) {
+            const heightClass = surface.height !== null && surface.height < 0 ? 'negative' : '';
+            const displayHeight = surface.height !== null ? formatHeight(surface.height) : '—';
+            const historyCount = surface.history ? surface.history.length : 0;
+            
+            let html = `
+                <div class="surface-card">
+                    <div class="surface-header">
+                        <span class="surface-name">${surface.name}</span>
+                        <button class="surface-edit-btn" onclick="editSurfaceName('${electrodeId}','${surface.id}','${category}')">✎</button>
+                    </div>
+                    
+                    <div class="height-display">
+                        <div class="height-label">Current Height (Z)</div>
+                        <div class="height-value ${heightClass}">${displayHeight}</div>
+                        <button class="btn btn-secondary btn-small" style="margin-top: 10px;"
+                                onclick="editHeight('${electrodeId}','${surface.id}','${category}')">
+                            Manual Edit
+                        </button>
+                    </div>
+                    
+                    <div class="increment-grid">`;
+            
+            presets.forEach(val => {
+                html += `<button class="increment-btn" onclick="applyIncrement('${electrodeId}','${surface.id}','${category}',${val})">
+                    -${val}"
+                </button>`;
+            });
+            
+            html += `
+                        <button class="increment-btn custom" onclick="toggleCustom('${surface.id}')">Custom Amount</button>
+                    </div>
+                    <div class="custom-input-row" id="custom_${surface.id}">
+                        <input type="text" placeholder="0.007" id="customVal_${surface.id}" inputmode="decimal">
+                        <button class="btn btn-primary" onclick="applyCustom('${electrodeId}','${surface.id}','${category}')">Apply</button>
+                    </div>
+                    
+                    <div class="history-toggle" onclick="toggleHistory('${surface.id}')">
+                        📋 History (${historyCount})
+                    </div>
+                    <div class="history-panel" id="history_${surface.id}">`;
+            
+            if (historyCount > 0) {
+                surface.history.slice().reverse().slice(0, 20).forEach(h => {
+                    html += `<div class="history-item">
+                        <span class="history-time">${formatDateTime(h.time)}</span><br>
+                        <span class="history-change">${formatHeight(h.from)} → ${formatHeight(h.to)}</span>
+                    </div>`;
+                });
+            } else {
+                html += `<div class="history-item">No history yet</div>`;
+            }
+            
+            html += `</div></div>`;
+            return html;
+        }
+        
+        // ========== INTERACTIONS ==========
+        function toggleElectrode(electrodeId) {
+            const el = document.getElementById('electrode_' + electrodeId);
+            const wasExpanded = el.classList.contains('expanded');
+            document.querySelectorAll('.electrode-item.expanded').forEach(item => item.classList.remove('expanded'));
+            if (!wasExpanded) el.classList.add('expanded');
+        }
+        
+        function toggleHistory(surfaceId) {
+            document.getElementById('history_' + surfaceId).classList.toggle('show');
+        }
+        
+        function toggleCustom(surfaceId) {
+            document.getElementById('custom_' + surfaceId).classList.toggle('show');
+        }
+        
+        // ========== INCREMENT ==========
+        function applyIncrement(electrodeId, surfaceId, category, amount) {
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === electrodeId);
+            const surface = electrode[category].find(s => s.id === surfaceId);
+            
+            const oldVal = surface.height !== null ? surface.height : 0;
+            const newVal = oldVal - amount;
+            
+            surface.history.push({ time: new Date().toISOString(), from: oldVal, to: newVal });
+            surface.height = newVal;
+            saveData();
+            renderElectrodeList();
+            setTimeout(() => document.getElementById('electrode_' + electrodeId).classList.add('expanded'), 10);
+        }
+        
+        function applyCustom(electrodeId, surfaceId, category) {
+            const input = document.getElementById('customVal_' + surfaceId);
+            const amount = parseFloat(input.value);
+            if (isNaN(amount)) return alert('Enter valid number');
+            applyIncrement(electrodeId, surfaceId, category, amount);
+        }
+        
+        // ========== SYNC ==========
+        function syncRoughToFinish(electrodeId) {
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === electrodeId);
+            
+            electrode.roughTops.forEach(roughSurf => {
+                const finishSurf = electrode.finishTops.find(f => f.name === roughSurf.name);
+                if (finishSurf && finishSurf.height !== null) {
+                    const oldVal = roughSurf.height;
+                    roughSurf.history.push({ time: new Date().toISOString(), from: oldVal, to: finishSurf.height });
+                    roughSurf.height = finishSurf.height;
+                }
+            });
+            
+            saveData();
+            renderElectrodeList();
+            setTimeout(() => document.getElementById('electrode_' + electrodeId).classList.add('expanded'), 10);
+        }
+        
+        // ========== EDIT ==========
+        function editHeight(electrodeId, surfaceId, category) {
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === electrodeId);
+            const surface = electrode[category].find(s => s.id === surfaceId);
+            
+            currentEdit = { electrodeId, surfaceId, category };
+            document.getElementById('editHeightTitle').textContent = `Edit: ${electrode.name}`;
+            document.getElementById('editHeightLabel').textContent = `${surface.name} Height`;
+            document.getElementById('editHeightInput').value = surface.height !== null ? surface.height : '';
+            showModal('editHeightModal');
+        }
+        
+        function saveHeightEdit() {
+            const value = parseFloat(document.getElementById('editHeightInput').value);
+            if (isNaN(value)) return alert('Enter valid number');
+            
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === currentEdit.electrodeId);
+            const surface = electrode[currentEdit.category].find(s => s.id === currentEdit.surfaceId);
+            
+            surface.history.push({ time: new Date().toISOString(), from: surface.height, to: value });
+            surface.height = value;
+            saveData();
+            closeModal('editHeightModal');
+            renderElectrodeList();
+            setTimeout(() => document.getElementById('electrode_' + currentEdit.electrodeId).classList.add('expanded'), 10);
+        }
+        
+        function editSurfaceName(electrodeId, surfaceId, category) {
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === electrodeId);
+            const surface = electrode[category].find(s => s.id === surfaceId);
+            
+            currentEdit = { electrodeId, surfaceId, category };
+            document.getElementById('editSurfaceName').value = surface.name;
+            showModal('editSurfaceModal');
+        }
+        
+        function saveSurfaceEdit() {
+            const name = document.getElementById('editSurfaceName').value.trim();
+            if (!name) return alert('Enter name');
+            
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === currentEdit.electrodeId);
+            const surface = electrode[currentEdit.category].find(s => s.id === currentEdit.surfaceId);
+            
+            surface.name = name;
+            saveData();
+            closeModal('editSurfaceModal');
+            renderElectrodeList();
+            setTimeout(() => document.getElementById('electrode_' + currentEdit.electrodeId).classList.add('expanded'), 10);
+        }
+        
+        // ========== UTILITIES ==========
+        function formatHeight(val) {
+            if (val === null || val === undefined) return '—';
+            const num = parseFloat(val);
+            if (isNaN(num)) return val;
+            return (num >= 0 ? '+' : '') + num.toFixed(4);
+        }
+        
+        function formatDateTime(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // ========== INIT ==========
+        loadData();
+    </script>
+</body>
+</html>
