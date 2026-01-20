@@ -1258,9 +1258,21 @@
         
         function applyCustom(electrodeId, surfaceId, category) {
             const input = document.getElementById('customVal_' + surfaceId);
-            const amount = parseFloat(input.value);
+           const amount = parseFloat(input.value);
             if (isNaN(amount)) return alert('Enter valid number');
-            applyIncrement(electrodeId, surfaceId, category, amount);
+    
+            const job = data.jobs[data.currentJobId];
+            const electrode = job.electrodes.find(e => e.id === electrodeId);
+            const surface = electrode[category].find(s => s.id === surfaceId);
+    
+            const oldVal = surface.height !== null ? surface.height : 0;
+            const newVal = oldVal + amount; // POSITIVE = up, NEGATIVE = down
+    
+            surface.history.push({ time: new Date().toISOString(), from: oldVal, to: newVal });
+            surface.height = newVal;
+            saveData();
+            renderElectrodeList();
+            setTimeout(() => document.getElementById('electrode_' + electrodeId).classList.add('expanded'), 10);
         }
         
         // ========== SYNC ==========
