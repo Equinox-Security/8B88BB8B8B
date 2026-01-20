@@ -515,6 +515,12 @@
             margin-bottom: 10px;
         }
         
+        .electrode-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
         .electrode-delete {
             padding: 8px 12px;
             background: transparent;
@@ -525,14 +531,14 @@
             cursor: pointer;
         }
         
-        .electrode-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        
-        .electrode-actions .btn {
-            flex: 1;
+        .electrode-edit {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid #58a6ff;
+            color: #58a6ff;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
         }
         
         .divider {
@@ -802,6 +808,7 @@
             editingElectrodeId = null;
             document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
             document.getElementById('surfaceCountInputs').style.display = 'none';
+            document.getElementById('surfaceInputsContainer').innerHTML = '';
             document.getElementById('electrodeModalTitle').textContent = 'Add Electrode';
             document.getElementById('saveElectrodeBtn').textContent = 'Add Electrode';
             showModal('addElectrodeModal');
@@ -830,43 +837,9 @@
             }
             document.getElementById('sideCount').value = electrode.sides.length;
             
-            // Show surface inputs
+            // Show surface inputs and populate with existing data
             document.getElementById('surfaceCountInputs').style.display = 'block';
             updateSurfaceInputs();
-            
-            // Populate surface values after inputs are created
-            setTimeout(() => {
-                // Populate sides
-                electrode.sides.forEach((s, i) => {
-                    const nameInput = document.getElementById(`sideName${i + 1}`);
-                    const heightInput = document.getElementById(`sideHeight${i + 1}`);
-                    if (nameInput) nameInput.value = s.name;
-                    if (heightInput) heightInput.value = s.height !== null ? s.height : '';
-                });
-                
-                // Populate tops based on type
-                if (electrode.type === 'pair-sides') {
-                    electrode.roughTops.forEach((s, i) => {
-                        const nameInput = document.getElementById(`roughTopName${i + 1}`);
-                        const heightInput = document.getElementById(`roughTopHeight${i + 1}`);
-                        if (nameInput) nameInput.value = s.name;
-                        if (heightInput) heightInput.value = s.height !== null ? s.height : '';
-                    });
-                    electrode.finishTops.forEach((s, i) => {
-                        const nameInput = document.getElementById(`finishTopName${i + 1}`);
-                        const heightInput = document.getElementById(`finishTopHeight${i + 1}`);
-                        if (nameInput) nameInput.value = s.name;
-                        if (heightInput) heightInput.value = s.height !== null ? s.height : '';
-                    });
-                } else {
-                    electrode.tops.forEach((s, i) => {
-                        const nameInput = document.getElementById(`topName${i + 1}`);
-                        const heightInput = document.getElementById(`topHeight${i + 1}`);
-                        if (nameInput) nameInput.value = s.name;
-                        if (heightInput) heightInput.value = s.height !== null ? s.height : '';
-                    });
-                }
-            }, 50);
             
             // Update modal title and button text
             document.getElementById('electrodeModalTitle').textContent = 'Edit Electrode';
@@ -1003,11 +976,48 @@
             renderSettings();
         }
         
-        // ========== SURFACE INPUTS (Add Modal) ==========
+        // ========== SURFACE INPUTS (Add/Edit Modal) ==========
         function updateSurfaceInputs() {
             const topCount = parseInt(document.getElementById('topCount').value);
             const sideCount = parseInt(document.getElementById('sideCount').value);
             const container = document.getElementById('surfaceInputsContainer');
+            
+            // Get existing electrode data if editing
+            let existingElectrode = null;
+            if (editingElectrodeId && data.currentJobId) {
+                const job = data.jobs[data.currentJobId];
+                existingElectrode = job.electrodes.find(e => e.id === editingElectrodeId);
+            }
+            
+            // Helper to get existing surface data with fallbacks
+            function getExistingSurface(category, index) {
+                if (!existingElectrode) return { name: '', height: '' };
+                
+                let surfaces = existingElectrode[category];
+                
+                // Try fallback categories if primary is empty
+                if (!surfaces || surfaces.length === 0) {
+                    if (category === 'roughTops' || category === 'finishTops') {
+                        surfaces = existingElectrode.tops;
+                    } else if (category === 'tops') {
+                        surfaces = existingElectrode.roughTops || existingElectrode.finishTops;
+                    }
+                }
+                
+                if (!surfaces || index >= surfaces.length) return { name: '', height: '' };
+                
+                const surf = surfaces[index];
+                return {
+                    name: surf.name || '',
+                    height: surf.height !== null && surf.height !== undefined ? surf.height : ''
+                };
+            }
+            
+            // Helper to escape HTML attribute values
+            function escapeAttr(val) {
+                if (val === null || val === undefined) return '';
+                return String(val).replace(/"/g, '&quot;');
+            }
             
             let html = '';
             
@@ -1019,9 +1029,11 @@
                         <label style="font-size: 13px; color: #f85149;">ROUGH TOP Surfaces</label>
                         <div class="surface-inputs">`;
                     for (let i = 1; i <= topCount; i++) {
+                        const existing = getExistingSurface('roughTops', i - 1);
+                        const defaultName = existing.name || `Top ${i}`;
                         html += `<div class="surface-input-row">
-                            <input type="text" id="roughTopName${i}" placeholder="Name" value="Top ${i}">
-                            <input type="text" id="roughTopHeight${i}" placeholder="Height" inputmode="decimal">
+                            <input type="text" id="roughTopName${i}" placeholder="Name" value="${escapeAttr(defaultName)}">
+                            <input type="text" id="roughTopHeight${i}" placeholder="Height" inputmode="decimal" value="${escapeAttr(existing.height)}">
                         </div>`;
                     }
                     html += `</div></div>`;
@@ -1030,9 +1042,11 @@
                         <label style="font-size: 13px; color: #3fb950;">FINISH TOP Surfaces</label>
                         <div class="surface-inputs">`;
                     for (let i = 1; i <= topCount; i++) {
+                        const existing = getExistingSurface('finishTops', i - 1);
+                        const defaultName = existing.name || `Top ${i}`;
                         html += `<div class="surface-input-row">
-                            <input type="text" id="finishTopName${i}" placeholder="Name" value="Top ${i}">
-                            <input type="text" id="finishTopHeight${i}" placeholder="Height" inputmode="decimal">
+                            <input type="text" id="finishTopName${i}" placeholder="Name" value="${escapeAttr(defaultName)}">
+                            <input type="text" id="finishTopHeight${i}" placeholder="Height" inputmode="decimal" value="${escapeAttr(existing.height)}">
                         </div>`;
                     }
                     html += `</div></div>`;
@@ -1042,9 +1056,11 @@
                         <label style="font-size: 13px; color: #a371f7;">TOP Surfaces</label>
                         <div class="surface-inputs">`;
                     for (let i = 1; i <= topCount; i++) {
+                        const existing = getExistingSurface('tops', i - 1);
+                        const defaultName = existing.name || `Top ${i}`;
                         html += `<div class="surface-input-row">
-                            <input type="text" id="topName${i}" placeholder="Name" value="Top ${i}">
-                            <input type="text" id="topHeight${i}" placeholder="Height" inputmode="decimal">
+                            <input type="text" id="topName${i}" placeholder="Name" value="${escapeAttr(defaultName)}">
+                            <input type="text" id="topHeight${i}" placeholder="Height" inputmode="decimal" value="${escapeAttr(existing.height)}">
                         </div>`;
                     }
                     html += `</div></div>`;
@@ -1057,9 +1073,11 @@
                     <label style="font-size: 13px; color: #f0883e;">SIDE Surfaces ${selectedType === 'pair-sides' ? '(Shared R/F)' : ''}</label>
                     <div class="surface-inputs">`;
                 for (let i = 1; i <= sideCount; i++) {
+                    const existing = getExistingSurface('sides', i - 1);
+                    const defaultName = existing.name || `Side ${i}`;
                     html += `<div class="surface-input-row">
-                        <input type="text" id="sideName${i}" placeholder="Name" value="Side ${i}">
-                        <input type="text" id="sideHeight${i}" placeholder="Height" inputmode="decimal">
+                        <input type="text" id="sideName${i}" placeholder="Name" value="${escapeAttr(defaultName)}">
+                        <input type="text" id="sideHeight${i}" placeholder="Height" inputmode="decimal" value="${escapeAttr(existing.height)}">
                     </div>`;
                 }
                 html += `</div></div>`;
@@ -1098,9 +1116,24 @@
             // Helper to find existing surface and preserve history
             function findExistingSurface(category, name) {
                 if (!existingElectrode) return null;
-                const surfaces = existingElectrode[category];
-                if (!surfaces) return null;
-                return surfaces.find(s => s.name === name);
+                
+                // Check primary category
+                let surfaces = existingElectrode[category];
+                if (surfaces) {
+                    const found = surfaces.find(s => s.name === name);
+                    if (found) return found;
+                }
+                
+                // Check fallback categories
+                const allCategories = ['tops', 'roughTops', 'finishTops', 'sides'];
+                for (const cat of allCategories) {
+                    if (cat !== category && existingElectrode[cat]) {
+                        const found = existingElectrode[cat].find(s => s.name === name);
+                        if (found) return found;
+                    }
+                }
+                
+                return null;
             }
             
             // Gather sides
@@ -1111,7 +1144,7 @@
                 electrode.sides.push({
                     id: existing ? existing.id : ('s' + Date.now() + i),
                     name: sName,
-                    height: sHeight ? parseFloat(sHeight) : null,
+                    height: sHeight !== '' ? parseFloat(sHeight) : null,
                     history: existing ? existing.history : []
                 });
             }
@@ -1121,21 +1154,21 @@
                 for (let i = 1; i <= topCount; i++) {
                     const rName = document.getElementById(`roughTopName${i}`).value.trim() || `Top ${i}`;
                     const rHeight = document.getElementById(`roughTopHeight${i}`).value.trim();
-                    const existingR = findExistingSurface('roughTops', rName) || findExistingSurface('tops', rName);
+                    const existingR = findExistingSurface('roughTops', rName);
                     electrode.roughTops.push({
                         id: existingR ? existingR.id : ('rt' + Date.now() + i),
                         name: rName,
-                        height: rHeight ? parseFloat(rHeight) : null,
+                        height: rHeight !== '' ? parseFloat(rHeight) : null,
                         history: existingR ? existingR.history : []
                     });
                     
                     const fName = document.getElementById(`finishTopName${i}`).value.trim() || `Top ${i}`;
                     const fHeight = document.getElementById(`finishTopHeight${i}`).value.trim();
-                    const existingF = findExistingSurface('finishTops', fName) || findExistingSurface('tops', fName);
+                    const existingF = findExistingSurface('finishTops', fName);
                     electrode.finishTops.push({
                         id: existingF ? existingF.id : ('ft' + Date.now() + i),
                         name: fName,
-                        height: fHeight ? parseFloat(fHeight) : null,
+                        height: fHeight !== '' ? parseFloat(fHeight) : null,
                         history: existingF ? existingF.history : []
                     });
                 }
@@ -1143,11 +1176,11 @@
                 for (let i = 1; i <= topCount; i++) {
                     const tName = document.getElementById(`topName${i}`).value.trim() || `Top ${i}`;
                     const tHeight = document.getElementById(`topHeight${i}`).value.trim();
-                    const existing = findExistingSurface('tops', tName) || findExistingSurface('roughTops', tName) || findExistingSurface('finishTops', tName);
+                    const existing = findExistingSurface('tops', tName);
                     electrode.tops.push({
                         id: existing ? existing.id : ('t' + Date.now() + i),
                         name: tName,
-                        height: tHeight ? parseFloat(tHeight) : null,
+                        height: tHeight !== '' ? parseFloat(tHeight) : null,
                         history: existing ? existing.history : []
                     });
                 }
@@ -1155,13 +1188,11 @@
             
             // Save
             if (editingElectrodeId) {
-                // Replace existing electrode
                 const index = job.electrodes.findIndex(e => e.id === editingElectrodeId);
                 if (index !== -1) {
                     job.electrodes[index] = electrode;
                 }
             } else {
-                // Add new
                 job.electrodes.push(electrode);
             }
             
@@ -1233,7 +1264,6 @@
             
             // Render based on type
             if (electrode.type === 'pair-sides') {
-                // ROUGH TOPS section
                 if (electrode.roughTops.length > 0) {
                     html += `<div class="surface-section">
                         <div class="surface-section-title rough-tops">ROUGH TOPS</div>`;
@@ -1243,19 +1273,15 @@
                     html += `</div>`;
                 }
                 
-                // FINISH TOPS section
                 if (electrode.finishTops.length > 0) {
                     html += `<div class="surface-section">
-                        <div class="surface-section-title finish-tops">
-                            FINISH TOPS
-                        </div>`;
+                        <div class="surface-section-title finish-tops">FINISH TOPS</div>`;
                     electrode.finishTops.forEach(surface => {
                         html += renderSurfaceCard(electrode.id, surface, 'finishTops', job.presets.top);
                     });
                     html += `</div>`;
                 }
                 
-                // Sync bar for rough → finish tops
                 if (electrode.roughTops.length > 0 && electrode.finishTops.length > 0) {
                     html += `<div class="sync-bar">
                         <span class="sync-bar-text">Sync rough tops to match finish tops</span>
@@ -1266,7 +1292,6 @@
                 }
                 
             } else {
-                // Regular tops section
                 if (electrode.tops.length > 0) {
                     html += `<div class="surface-section">
                         <div class="surface-section-title tops">TOP SURFACES</div>`;
@@ -1277,7 +1302,6 @@
                 }
             }
             
-            // SIDES section (always shared)
             if (electrode.sides.length > 0) {
                 html += `<div class="surface-section">
                     <div class="surface-section-title sides">SIDE SURFACES ${electrode.type === 'pair-sides' ? '(Shared R/F)' : ''}</div>`;
@@ -1289,7 +1313,7 @@
             
             html += `<div class="electrode-actions">
                 <button class="electrode-delete" onclick="deleteElectrode('${electrode.id}')">Delete Electrode</button>
-                <button class="btn btn-secondary" onclick="showEditElectrodeModal('${electrode.id}')">Edit Electrode</button>
+                <button class="electrode-edit" onclick="showEditElectrodeModal('${electrode.id}')">Edit Electrode</button>
             </div>`;
             html += `</div></div>`;
             
