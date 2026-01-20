@@ -684,9 +684,9 @@
             </div>
             
             <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeModal('addElectrodeModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="addElectrode()">Add Electrode</button>
-            </div>
+    <button class="btn btn-secondary" onclick="closeModal('addElectrodeModal'); editingElectrodeId = null;">Cancel</button>
+    <button class="btn btn-primary" onclick="saveElectrode()" id="saveElectrodeBtn">Add Electrode</button>
+</div>
         </div>
     </div>
     
@@ -791,8 +791,76 @@
             selectedType = null;
             document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
             document.getElementById('surfaceCountInputs').style.display = 'none';
+			document.getElementById('saveElectrodeBtn').textContent = 'Add Electrode';
+editingElectrodeId = null;
             showModal('addElectrodeModal');
         }
+		function showEditElectrodeModal(electrodeId) {
+    const job = data.jobs[data.currentJobId];
+    const electrode = job.electrodes.find(e => e.id === electrodeId);
+    if (!electrode) return;
+    
+    editingElectrodeId = electrodeId;
+    
+    // Set name
+    document.getElementById('electrodeName').value = electrode.name;
+    
+    // Set type
+    selectedType = electrode.type;
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+    document.querySelector(`input[value="${electrode.type}"]`).closest('.type-option').classList.add('selected');
+    
+    // Set surface counts
+    if (electrode.type === 'pair-sides') {
+        document.getElementById('topCount').value = electrode.roughTops.length;
+    } else {
+        document.getElementById('topCount').value = electrode.tops.length;
+    }
+    document.getElementById('sideCount').value = electrode.sides.length;
+    
+    // Show surface inputs
+    document.getElementById('surfaceCountInputs').style.display = 'block';
+    updateSurfaceInputs();
+    
+    // Populate surface values after inputs are created
+    setTimeout(() => {
+        // Populate sides
+        electrode.sides.forEach((s, i) => {
+            const nameInput = document.getElementById(`sideName${i + 1}`);
+            const heightInput = document.getElementById(`sideHeight${i + 1}`);
+            if (nameInput) nameInput.value = s.name;
+            if (heightInput) heightInput.value = s.height !== null ? s.height : '';
+        });
+        
+        // Populate tops based on type
+        if (electrode.type === 'pair-sides') {
+            electrode.roughTops.forEach((s, i) => {
+                const nameInput = document.getElementById(`roughTopName${i + 1}`);
+                const heightInput = document.getElementById(`roughTopHeight${i + 1}`);
+                if (nameInput) nameInput.value = s.name;
+                if (heightInput) heightInput.value = s.height !== null ? s.height : '';
+            });
+            electrode.finishTops.forEach((s, i) => {
+                const nameInput = document.getElementById(`finishTopName${i + 1}`);
+                const heightInput = document.getElementById(`finishTopHeight${i + 1}`);
+                if (nameInput) nameInput.value = s.name;
+                if (heightInput) heightInput.value = s.height !== null ? s.height : '';
+            });
+        } else {
+            electrode.tops.forEach((s, i) => {
+                const nameInput = document.getElementById(`topName${i + 1}`);
+                const heightInput = document.getElementById(`topHeight${i + 1}`);
+                if (nameInput) nameInput.value = s.name;
+                if (heightInput) heightInput.value = s.height !== null ? s.height : '';
+            });
+        }
+    }, 50);
+    
+    // Update button text
+    document.getElementById('saveElectrodeBtn').textContent = 'Save Changes';
+    
+    showModal('addElectrodeModal');
+}
         
         function selectType(type) {
             selectedType = type;
@@ -988,75 +1056,107 @@
         }
         
         // ========== ADD ELECTRODE ==========
-        function addElectrode() {
-            const name = document.getElementById('electrodeName').value.trim();
-            if (!name) return alert('Enter electrode name');
-            if (!selectedType) return alert('Select electrode type');
+        function saveElectrode() {
+    const name = document.getElementById('electrodeName').value.trim();
+    if (!name) return alert('Enter electrode name');
+    if (!selectedType) return alert('Select electrode type');
+    
+    const topCount = parseInt(document.getElementById('topCount').value);
+    const sideCount = parseInt(document.getElementById('sideCount').value);
+    
+    const job = data.jobs[data.currentJobId];
+    
+    // If editing, get existing electrode to preserve history
+    let existingElectrode = null;
+    if (editingElectrodeId) {
+        existingElectrode = job.electrodes.find(e => e.id === editingElectrodeId);
+    }
+    
+    const electrode = {
+        id: editingElectrodeId || ('e' + Date.now()),
+        name: name,
+        type: selectedType,
+        sides: [],
+        tops: [],
+        roughTops: [],
+        finishTops: []
+    };
+    
+    // Helper to find existing surface and preserve history
+    function findExistingSurface(category, name) {
+        if (!existingElectrode) return null;
+        const surfaces = existingElectrode[category];
+        if (!surfaces) return null;
+        return surfaces.find(s => s.name === name);
+    }
+    
+    // Gather sides
+    for (let i = 1; i <= sideCount; i++) {
+        const sName = document.getElementById(`sideName${i}`).value.trim() || `Side ${i}`;
+        const sHeight = document.getElementById(`sideHeight${i}`).value.trim();
+        const existing = findExistingSurface('sides', sName);
+        electrode.sides.push({
+            id: existing ? existing.id : ('s' + Date.now() + i),
+            name: sName,
+            height: sHeight ? parseFloat(sHeight) : null,
+            history: existing ? existing.history : []
+        });
+    }
+    
+    // Gather tops based on type
+    if (selectedType === 'pair-sides') {
+        for (let i = 1; i <= topCount; i++) {
+            const rName = document.getElementById(`roughTopName${i}`).value.trim() || `Top ${i}`;
+            const rHeight = document.getElementById(`roughTopHeight${i}`).value.trim();
+            const existingR = findExistingSurface('roughTops', rName) || findExistingSurface('tops', rName);
+            electrode.roughTops.push({
+                id: existingR ? existingR.id : ('rt' + Date.now() + i),
+                name: rName,
+                height: rHeight ? parseFloat(rHeight) : null,
+                history: existingR ? existingR.history : []
+            });
             
-            const topCount = parseInt(document.getElementById('topCount').value);
-            const sideCount = parseInt(document.getElementById('sideCount').value);
-            
-            const electrode = {
-                id: 'e' + Date.now(),
-                name: name,
-                type: selectedType,
-                sides: [],
-                tops: [],
-                roughTops: [],
-                finishTops: []
-            };
-            
-            // Gather sides (always shared)
-            for (let i = 1; i <= sideCount; i++) {
-                const sName = document.getElementById(`sideName${i}`).value.trim() || `Side ${i}`;
-                const sHeight = document.getElementById(`sideHeight${i}`).value.trim();
-                electrode.sides.push({
-                    id: 's' + Date.now() + i,
-                    name: sName,
-                    height: sHeight ? parseFloat(sHeight) : null,
-                    history: []
-                });
-            }
-            
-            // Gather tops based on type
-            if (selectedType === 'pair-sides') {
-                for (let i = 1; i <= topCount; i++) {
-                    const rName = document.getElementById(`roughTopName${i}`).value.trim() || `Top ${i}`;
-                    const rHeight = document.getElementById(`roughTopHeight${i}`).value.trim();
-                    electrode.roughTops.push({
-                        id: 'rt' + Date.now() + i,
-                        name: rName,
-                        height: rHeight ? parseFloat(rHeight) : null,
-                        history: []
-                    });
-                    
-                    const fName = document.getElementById(`finishTopName${i}`).value.trim() || `Top ${i}`;
-                    const fHeight = document.getElementById(`finishTopHeight${i}`).value.trim();
-                    electrode.finishTops.push({
-                        id: 'ft' + Date.now() + i,
-                        name: fName,
-                        height: fHeight ? parseFloat(fHeight) : null,
-                        history: []
-                    });
-                }
-            } else {
-                for (let i = 1; i <= topCount; i++) {
-                    const tName = document.getElementById(`topName${i}`).value.trim() || `Top ${i}`;
-                    const tHeight = document.getElementById(`topHeight${i}`).value.trim();
-                    electrode.tops.push({
-                        id: 't' + Date.now() + i,
-                        name: tName,
-                        height: tHeight ? parseFloat(tHeight) : null,
-                        history: []
-                    });
-                }
-            }
-            
-            data.jobs[data.currentJobId].electrodes.push(electrode);
-            saveData();
-            closeModal('addElectrodeModal');
-            renderElectrodeList();
+            const fName = document.getElementById(`finishTopName${i}`).value.trim() || `Top ${i}`;
+            const fHeight = document.getElementById(`finishTopHeight${i}`).value.trim();
+            const existingF = findExistingSurface('finishTops', fName) || findExistingSurface('tops', fName);
+            electrode.finishTops.push({
+                id: existingF ? existingF.id : ('ft' + Date.now() + i),
+                name: fName,
+                height: fHeight ? parseFloat(fHeight) : null,
+                history: existingF ? existingF.history : []
+            });
         }
+    } else {
+        for (let i = 1; i <= topCount; i++) {
+            const tName = document.getElementById(`topName${i}`).value.trim() || `Top ${i}`;
+            const tHeight = document.getElementById(`topHeight${i}`).value.trim();
+            const existing = findExistingSurface('tops', tName) || findExistingSurface('roughTops', tName) || findExistingSurface('finishTops', tName);
+            electrode.tops.push({
+                id: existing ? existing.id : ('t' + Date.now() + i),
+                name: tName,
+                height: tHeight ? parseFloat(tHeight) : null,
+                history: existing ? existing.history : []
+            });
+        }
+    }
+    
+    // Save
+    if (editingElectrodeId) {
+        // Replace existing electrode
+        const index = job.electrodes.findIndex(e => e.id === editingElectrodeId);
+        if (index !== -1) {
+            job.electrodes[index] = electrode;
+        }
+    } else {
+        // Add new
+        job.electrodes.push(electrode);
+    }
+    
+    saveData();
+    closeModal('addElectrodeModal');
+    editingElectrodeId = null;
+    renderElectrodeList();
+}
         
         function deleteElectrode(electrodeId) {
             if (!confirm('Delete this electrode?')) return;
@@ -1174,7 +1274,10 @@
                 html += `</div>`;
             }
             
-            html += `<button class="electrode-delete" onclick="deleteElectrode('${electrode.id}')">Delete Electrode</button>`;
+            html += `<div style="display: flex; gap: 10px; margin-top: 16px;">
+    <button class="electrode-delete" onclick="deleteElectrode('${electrode.id}')">Delete Electrode</button>
+    <button class="btn btn-secondary" style="flex: 1;" onclick="showEditElectrodeModal('${electrode.id}')">Edit Electrode</button>
+</div>`;
             html += `</div></div>`;
             
             return html;
