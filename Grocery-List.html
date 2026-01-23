@@ -50,7 +50,7 @@
       gap: 8px;
     }
 
-    .settings-btn {
+    .header-btn {
       background: rgba(255,255,255,0.2);
       border: none;
       color: white;
@@ -65,15 +65,21 @@
       transition: background 0.2s;
     }
 
-    .settings-btn:hover {
+    .header-btn:hover {
       background: rgba(255,255,255,0.3);
     }
 
+    .store-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
     .store-selector {
+      flex: 1;
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
       padding: 10px 14px;
       background: rgba(255,255,255,0.15);
       border-radius: 10px;
@@ -94,6 +100,131 @@
       background: white;
       color: #2d6a4f;
       cursor: pointer;
+    }
+
+    .rewards-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .rewards-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .rewards-btn .badge {
+      background: rgba(255,255,255,0.3);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+
+    .rewards-panel {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+
+    .rewards-panel.open {
+      max-height: 300px;
+    }
+
+    .rewards-panel-content {
+      padding: 14px;
+    }
+
+    .rewards-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .rewards-panel-title {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .rewards-panel-close {
+      background: none;
+      border: none;
+      color: white;
+      opacity: 0.7;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .reward-phone {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.95);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .reward-phone:last-child {
+      margin-bottom: 0;
+    }
+
+    .reward-phone-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reward-phone-number {
+      font-size: 1.3rem;
+      font-weight: 600;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      letter-spacing: 1px;
+      color: #2d6a4f;
+    }
+
+    .reward-phone-label {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .reward-phone-copy {
+      background: #e8f5e9;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #2d6a4f;
+      transition: background 0.2s;
+    }
+
+    .reward-phone-copy:hover {
+      background: #c8e6c9;
+    }
+
+    .no-rewards {
+      text-align: center;
+      padding: 16px;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    .no-rewards a {
+      color: white;
+      text-decoration: underline;
     }
 
     .mode-toggle {
@@ -521,8 +652,8 @@
       padding: 24px;
       border-radius: 16px;
       width: 100%;
-      max-width: 400px;
-      max-height: 80vh;
+      max-width: 440px;
+      max-height: 85vh;
       overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       transform: scale(0.9);
@@ -542,7 +673,8 @@
       gap: 8px;
     }
 
-    .modal input[type="text"] {
+    .modal input[type="text"],
+    .modal input[type="tel"] {
       width: 100%;
       padding: 14px 16px;
       margin-bottom: 12px;
@@ -551,7 +683,8 @@
       font-size: 1rem;
     }
 
-    .modal input[type="text"]:focus {
+    .modal input[type="text"]:focus,
+    .modal input[type="tel"]:focus {
       outline: none;
       border-color: #40916c;
     }
@@ -635,8 +768,24 @@
     }
 
     /* Settings Modal */
+    .settings-section {
+      margin-bottom: 28px;
+    }
+
+    .settings-section:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .settings-section h4 {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     .store-list {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .store-item {
@@ -646,11 +795,12 @@
       background: #f8f8f8;
       border-radius: 10px;
       margin-bottom: 8px;
+      border: 2px solid transparent;
     }
 
     .store-item.active {
       background: #e8f5e9;
-      border: 2px solid #40916c;
+      border-color: #40916c;
     }
 
     .store-item-name {
@@ -681,17 +831,17 @@
       background: rgba(231,76,60,0.2);
     }
 
-    .add-store-form {
+    .add-row {
       display: flex;
       gap: 8px;
     }
 
-    .add-store-form input {
+    .add-row input {
       flex: 1;
       margin-bottom: 0;
     }
 
-    .add-store-form button {
+    .add-row button {
       padding: 14px 20px;
       background: #40916c;
       color: white;
@@ -699,18 +849,101 @@
       border-radius: 10px;
       font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
     }
 
-    .settings-section {
-      margin-bottom: 24px;
-    }
-
-    .settings-section h4 {
-      font-size: 0.9rem;
-      color: #666;
+    /* Rewards Section in Settings */
+    .rewards-section {
+      background: #f8f8f8;
+      border-radius: 10px;
+      padding: 14px;
       margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    }
+
+    .rewards-section-header {
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rewards-list {
+      margin-bottom: 10px;
+    }
+
+    .rewards-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .rewards-item-info {
+      flex: 1;
+    }
+
+    .rewards-item-phone {
+      font-weight: 600;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    }
+
+    .rewards-item-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .rewards-item-delete {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .rewards-item-delete:hover {
+      color: #e74c3c;
+      background: rgba(231,76,60,0.1);
+    }
+
+    .add-reward-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .add-reward-form .form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-reward-form input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .add-reward-form input:focus {
+      outline: none;
+      border-color: #40916c;
+    }
+
+    .add-reward-form button {
+      padding: 10px 16px;
+      background: #40916c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
 
     .shopping-tip {
@@ -730,6 +963,37 @@
       margin-top: 8px;
     }
 
+    .info-note {
+      background: #e3f2fd;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #1565c0;
+      margin-top: 16px;
+      line-height: 1.4;
+    }
+
+    .copied-toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 300;
+      pointer-events: none;
+    }
+
+    .copied-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     @media (max-width: 400px) {
       .mode-btn {
         padding: 10px 14px;
@@ -745,6 +1009,15 @@
         padding: 5px 10px;
         font-size: 0.75rem;
       }
+
+      .store-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .rewards-btn {
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -754,13 +1027,30 @@
   <div class="header-top">
     <h1>🛒 Grocery List</h1>
     <div class="header-actions">
-      <button class="settings-btn" id="btn-settings" title="Settings">⚙️</button>
+      <button class="header-btn" id="btn-settings" title="Settings">⚙️</button>
     </div>
   </div>
   
-  <div class="store-selector">
-    <label>📍 Store:</label>
-    <select id="store-select"></select>
+  <div class="store-row">
+    <div class="store-selector">
+      <label>📍</label>
+      <select id="store-select"></select>
+    </div>
+    <button class="rewards-btn" id="btn-rewards" style="display: none;">
+      <span>💳</span>
+      <span>Rewards</span>
+      <span class="badge" id="rewards-count"></span>
+    </button>
+  </div>
+
+  <div class="rewards-panel" id="rewards-panel">
+    <div class="rewards-panel-content">
+      <div class="rewards-panel-header">
+        <span class="rewards-panel-title">📱 Rewards Phone Numbers</span>
+        <button class="rewards-panel-close" id="rewards-panel-close">×</button>
+      </div>
+      <div id="rewards-display"></div>
+    </div>
   </div>
   
   <div class="mode-toggle">
@@ -825,6 +1115,8 @@
 
 <input type="file" id="file-input" accept=".json,application/json">
 
+<div class="copied-toast" id="copied-toast">📋 Copied to clipboard!</div>
+
 <!-- Edit Item Modal -->
 <div class="modal" id="edit-modal">
   <div class="modal-content">
@@ -862,12 +1154,16 @@
     <h3>⚙️ Settings</h3>
     
     <div class="settings-section">
-      <h4>Manage Stores</h4>
-      <div class="store-list" id="store-list"></div>
-      <div class="add-store-form">
+      <h4>Stores & Rewards</h4>
+      <div id="stores-rewards-list"></div>
+      <div class="add-row">
         <input type="text" id="new-store-name" placeholder="New store name...">
-        <button type="button" id="btn-add-store">Add</button>
+        <button type="button" id="btn-add-store">Add Store</button>
       </div>
+    </div>
+    
+    <div class="info-note">
+      💡 <strong>Import note:</strong> Importing a file only affects that one store. Your other stores remain untouched.
     </div>
     
     <div class="modal-buttons">
@@ -892,20 +1188,18 @@
 (function() {
   'use strict';
 
-  // === Configuration ===
-  const STORAGE_KEY = 'grocery_app_v2';
+  const STORAGE_KEY = 'grocery_app_v3';
   const DEFAULT_DEPARTMENTS = [
     'Produce', 'Dairy', 'Meat', 'Seafood', 'Bakery', 'Deli',
     'Frozen', 'Canned Goods', 'Pasta & Grains', 'Condiments',
     'Snacks', 'Beverages', 'Breakfast', 'Household', 'Personal Care', 'Other'
   ];
 
-  // === State ===
   let state = {
     stores: ['My Store'],
     currentStore: 'My Store',
     storeData: {
-      'My Store': { items: [] }
+      'My Store': { items: [], rewards: [] }
     },
     mode: 'planning'
   };
@@ -914,7 +1208,6 @@
   let editingStatus = 'none';
   let renamingStore = null;
 
-  // === DOM References ===
   function getEl(id) {
     return document.getElementById(id);
   }
@@ -923,6 +1216,11 @@
     btnPlanning: getEl('btn-planning'),
     btnShopping: getEl('btn-shopping'),
     btnSettings: getEl('btn-settings'),
+    btnRewards: getEl('btn-rewards'),
+    rewardsCount: getEl('rewards-count'),
+    rewardsPanel: getEl('rewards-panel'),
+    rewardsPanelClose: getEl('rewards-panel-close'),
+    rewardsDisplay: getEl('rewards-display'),
     storeSelect: getEl('store-select'),
     addForm: getEl('add-form'),
     inputName: getEl('input-name'),
@@ -941,7 +1239,7 @@
     btnExport: getEl('btn-export'),
     btnImport: getEl('btn-import'),
     fileInput: getEl('file-input'),
-    // Edit Modal
+    copiedToast: getEl('copied-toast'),
     editModal: getEl('edit-modal'),
     editName: getEl('edit-name'),
     editDepartment: getEl('edit-department'),
@@ -950,20 +1248,17 @@
     btnEditDelete: getEl('btn-edit-delete'),
     btnEditCancel: getEl('btn-edit-cancel'),
     btnEditSave: getEl('btn-edit-save'),
-    // Settings Modal
     settingsModal: getEl('settings-modal'),
-    storeList: getEl('store-list'),
+    storesRewardsList: getEl('stores-rewards-list'),
     newStoreName: getEl('new-store-name'),
     btnAddStore: getEl('btn-add-store'),
     btnSettingsClose: getEl('btn-settings-close'),
-    // Rename Modal
     renameModal: getEl('rename-modal'),
     renameStoreInput: getEl('rename-store-input'),
     btnRenameCancel: getEl('btn-rename-cancel'),
     btnRenameSave: getEl('btn-rename-save')
   };
 
-  // === Utilities ===
   function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
   }
@@ -978,29 +1273,50 @@
     return name.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_');
   }
 
+  function formatPhoneNumber(phone) {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length === 10) {
+      return '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+    } else if (digits.length === 11 && digits[0] === '1') {
+      return '+1 (' + digits.slice(1,4) + ') ' + digits.slice(4,7) + '-' + digits.slice(7);
+    }
+    return phone;
+  }
+
+  function getCurrentStore() {
+    return state.storeData[state.currentStore] || { items: [], rewards: [] };
+  }
+
   function getCurrentItems() {
-    const store = state.storeData[state.currentStore];
-    return store ? store.items : [];
+    return getCurrentStore().items || [];
+  }
+
+  function getCurrentRewards() {
+    return getCurrentStore().rewards || [];
   }
 
   function setCurrentItems(items) {
     if (!state.storeData[state.currentStore]) {
-      state.storeData[state.currentStore] = { items: [] };
+      state.storeData[state.currentStore] = { items: [], rewards: [] };
     }
     state.storeData[state.currentStore].items = items;
+  }
+
+  function setCurrentRewards(rewards) {
+    if (!state.storeData[state.currentStore]) {
+      state.storeData[state.currentStore] = { items: [], rewards: [] };
+    }
+    state.storeData[state.currentStore].rewards = rewards;
   }
 
   function save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      // Fail silently
-    }
+    } catch (e) {}
   }
 
   function load() {
     try {
-      // Try new format first
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
         const parsed = JSON.parse(data);
@@ -1008,24 +1324,53 @@
           state = {
             stores: parsed.stores || ['My Store'],
             currentStore: parsed.currentStore || parsed.stores[0] || 'My Store',
-            storeData: parsed.storeData || { 'My Store': { items: [] } },
+            storeData: parsed.storeData || { 'My Store': { items: [], rewards: [] } },
             mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
           };
-          // Ensure current store exists
+          
+          // Ensure rewards arrays exist
+          for (const store in state.storeData) {
+            if (!state.storeData[store].rewards) {
+              state.storeData[store].rewards = [];
+            }
+          }
+          
           if (!state.stores.includes(state.currentStore)) {
             state.currentStore = state.stores[0] || 'My Store';
           }
           if (!state.storeData[state.currentStore]) {
-            state.storeData[state.currentStore] = { items: [] };
+            state.storeData[state.currentStore] = { items: [], rewards: [] };
           }
           return;
         }
       }
 
-      // Try migrating from v1 format
-      const oldData = localStorage.getItem('grocery_app_v1');
-      if (oldData) {
-        const parsed = JSON.parse(oldData);
+      // Migration from v2
+      const v2Data = localStorage.getItem('grocery_app_v2');
+      if (v2Data) {
+        const parsed = JSON.parse(v2Data);
+        if (parsed.stores && parsed.storeData) {
+          state = {
+            stores: parsed.stores,
+            currentStore: parsed.currentStore,
+            storeData: {},
+            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
+          };
+          for (const store in parsed.storeData) {
+            state.storeData[store] = {
+              items: parsed.storeData[store].items || [],
+              rewards: []
+            };
+          }
+          save();
+          return;
+        }
+      }
+
+      // Migration from v1
+      const v1Data = localStorage.getItem('grocery_app_v1');
+      if (v1Data) {
+        const parsed = JSON.parse(v1Data);
         if (Array.isArray(parsed.items)) {
           state = {
             stores: ['My Store'],
@@ -1035,7 +1380,8 @@
                 items: parsed.items.map(item => ({
                   ...item,
                   status: item.checked ? 'checked' : 'none'
-                }))
+                })),
+                rewards: []
               }
             },
             mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
@@ -1044,9 +1390,7 @@
           return;
         }
       }
-    } catch (e) {
-      // Fail silently, use defaults
-    }
+    } catch (e) {}
   }
 
   function getUniqueDepartments() {
@@ -1088,11 +1432,67 @@
     return sorted;
   }
 
+  function showCopiedToast() {
+    DOM.copiedToast.classList.add('show');
+    setTimeout(() => {
+      DOM.copiedToast.classList.remove('show');
+    }, 2000);
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showCopiedToast).catch(() => {});
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showCopiedToast();
+      } catch (e) {}
+      document.body.removeChild(textarea);
+    }
+  }
+
   // === Rendering ===
   function updateStoreSelect() {
     DOM.storeSelect.innerHTML = state.stores.map(store => {
       const selected = store === state.currentStore ? ' selected' : '';
       return '<option value="' + escapeHtml(store) + '"' + selected + '>' + escapeHtml(store) + '</option>';
+    }).join('');
+  }
+
+  function updateRewardsButton() {
+    const rewards = getCurrentRewards();
+    if (rewards.length > 0) {
+      DOM.btnRewards.style.display = 'flex';
+      DOM.rewardsCount.textContent = rewards.length;
+    } else {
+      DOM.btnRewards.style.display = 'none';
+      DOM.rewardsPanel.classList.remove('open');
+    }
+  }
+
+  function updateRewardsPanel() {
+    const rewards = getCurrentRewards();
+    if (rewards.length === 0) {
+      DOM.rewardsDisplay.innerHTML = '<div class="no-rewards">No rewards numbers for this store.<br><a href="#" id="link-add-rewards">Add in Settings</a></div>';
+      return;
+    }
+
+    DOM.rewardsDisplay.innerHTML = rewards.map((r, index) => {
+      const formatted = formatPhoneNumber(r.phone);
+      const label = r.label ? '<div class="reward-phone-label">' + escapeHtml(r.label) + '</div>' : '';
+      return '<div class="reward-phone">' +
+        '<div class="reward-phone-info">' +
+          '<div class="reward-phone-number">' + escapeHtml(formatted) + '</div>' +
+          label +
+        '</div>' +
+        '<button class="reward-phone-copy" data-phone="' + escapeHtml(r.phone.replace(/\D/g, '')) + '">Copy</button>' +
+      '</div>';
     }).join('');
   }
 
@@ -1138,8 +1538,6 @@
     }
 
     DOM.statsBar.style.display = 'flex';
-    
-    // Show legend only if there are maybe items
     DOM.legend.style.display = maybe > 0 ? 'flex' : 'none';
 
     if (state.mode === 'shopping') {
@@ -1155,20 +1553,13 @@
 
   function groupItems(items) {
     const groups = {};
-
     items.forEach(item => {
       const dept = item.department || 'Other';
       const aisle = item.aisle || '';
-
-      if (!groups[dept]) {
-        groups[dept] = {};
-      }
-      if (!groups[dept][aisle]) {
-        groups[dept][aisle] = [];
-      }
+      if (!groups[dept]) groups[dept] = {};
+      if (!groups[dept][aisle]) groups[dept][aisle] = [];
       groups[dept][aisle].push(item);
     });
-
     return groups;
   }
 
@@ -1227,12 +1618,9 @@
       html += '<div class="department-header">🏷️ ' + escapeHtml(dept) + '</div>';
 
       sortedAisles.forEach(aisle => {
-        const aisleItems = aisles[aisle].sort((a, b) => 
-          a.name.localeCompare(b.name)
-        );
+        const aisleItems = aisles[aisle].sort((a, b) => a.name.localeCompare(b.name));
 
         html += '<div class="aisle-section">';
-
         if (aisle) {
           html += '<div class="aisle-header">📍 ' + escapeHtml(aisle) + '</div>';
         }
@@ -1247,11 +1635,9 @@
           html += '<div class="item-checkbox ' + checkboxClass + '" data-action="toggle" data-id="' + item.id + '">' + checkboxContent + '</div>';
           html += '<div class="item-content" data-action="edit" data-id="' + item.id + '">';
           html += '<div class="item-name">' + escapeHtml(item.name) + '</div>';
-
           if (!isShoppingMode && item.aisle) {
             html += '<div class="item-meta">' + escapeHtml(item.aisle) + '</div>';
           }
-
           html += '</div>';
           html += '<button class="item-delete" data-action="delete" data-id="' + item.id + '" aria-label="Delete">×</button>';
           html += '</div>';
@@ -1266,25 +1652,68 @@
     DOM.listContainer.innerHTML = html;
   }
 
-  function renderStoreList() {
-    DOM.storeList.innerHTML = state.stores.map(store => {
+  function renderStoresRewardsList() {
+    let html = '';
+
+    state.stores.forEach(store => {
       const activeClass = store === state.currentStore ? ' active' : '';
+      const storeData = state.storeData[store] || { items: [], rewards: [] };
+      const rewards = storeData.rewards || [];
       const canDelete = state.stores.length > 1;
-      
-      let html = '<div class="store-item' + activeClass + '" data-store="' + escapeHtml(store) + '">';
-      html += '<span class="store-item-name">' + escapeHtml(store) + '</span>';
-      html += '<div class="store-item-actions">';
-      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '" title="Rename">✏️</button>';
-      if (canDelete) {
-        html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '" title="Delete">🗑️</button>';
+
+      html += '<div class="rewards-section">';
+      html += '<div class="rewards-section-header">';
+      html += '<span>🏪 ' + escapeHtml(store) + '</span>';
+      if (store === state.currentStore) {
+        html += ' <span style="color: #40916c; font-size: 0.8rem;">(current)</span>';
       }
-      html += '</div></div>';
-      return html;
-    }).join('');
+      html += '</div>';
+
+      // Store actions
+      html += '<div style="display: flex; gap: 8px; margin-bottom: 10px;">';
+      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '" style="background: #f0f0f0; flex: 1;">✏️ Rename</button>';
+      if (canDelete) {
+        html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '" style="background: #fee; flex: 1;">🗑️ Delete</button>';
+      }
+      html += '</div>';
+
+      // Rewards list
+      if (rewards.length > 0) {
+        html += '<div class="rewards-list">';
+        rewards.forEach((r, index) => {
+          const formatted = formatPhoneNumber(r.phone);
+          html += '<div class="rewards-item">';
+          html += '<div class="rewards-item-info">';
+          html += '<div class="rewards-item-phone">' + escapeHtml(formatted) + '</div>';
+          if (r.label) {
+            html += '<div class="rewards-item-label">' + escapeHtml(r.label) + '</div>';
+          }
+          html += '</div>';
+          html += '<button class="rewards-item-delete" data-action="delete-reward" data-store="' + escapeHtml(store) + '" data-index="' + index + '">×</button>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      // Add reward form
+      html += '<div class="add-reward-form">';
+      html += '<div class="form-row">';
+      html += '<input type="tel" placeholder="Phone number" data-reward-phone="' + escapeHtml(store) + '">';
+      html += '<input type="text" placeholder="Label (optional)" data-reward-label="' + escapeHtml(store) + '" style="flex: 0.7;">';
+      html += '</div>';
+      html += '<button type="button" data-action="add-reward" data-store="' + escapeHtml(store) + '">+ Add Rewards #</button>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+
+    DOM.storesRewardsList.innerHTML = html;
   }
 
   function render() {
     updateStoreSelect();
+    updateRewardsButton();
+    updateRewardsPanel();
     updateModeButtons();
     updateStats();
     updateDatalists();
@@ -1304,8 +1733,9 @@
     if (state.stores.includes(storeName)) {
       state.currentStore = storeName;
       if (!state.storeData[storeName]) {
-        state.storeData[storeName] = { items: [] };
+        state.storeData[storeName] = { items: [], rewards: [] };
       }
+      DOM.rewardsPanel.classList.remove('open');
       save();
       render();
     }
@@ -1320,11 +1750,11 @@
     }
 
     state.stores.push(trimmed);
-    state.storeData[trimmed] = { items: [] };
+    state.storeData[trimmed] = { items: [], rewards: [] };
     state.currentStore = trimmed;
     save();
     render();
-    renderStoreList();
+    renderStoresRewardsList();
     return true;
   }
 
@@ -1350,7 +1780,7 @@
 
     save();
     render();
-    renderStoreList();
+    renderStoresRewardsList();
     return true;
   }
 
@@ -1360,12 +1790,12 @@
       return;
     }
 
-    const index = state.stores.indexOf(name);
-    if (index === -1) return;
-
-    if (!confirm('Delete "' + name + '" and all its items? This cannot be undone.')) {
+    if (!confirm('Delete "' + name + '" and all its items and rewards? This cannot be undone.')) {
       return;
     }
+
+    const index = state.stores.indexOf(name);
+    if (index === -1) return;
 
     state.stores.splice(index, 1);
     delete state.storeData[name];
@@ -1376,7 +1806,38 @@
 
     save();
     render();
-    renderStoreList();
+    renderStoresRewardsList();
+  }
+
+  function addReward(storeName, phone, label) {
+    const trimmedPhone = phone.trim();
+    if (!trimmedPhone) return false;
+
+    if (!state.storeData[storeName]) {
+      state.storeData[storeName] = { items: [], rewards: [] };
+    }
+    if (!state.storeData[storeName].rewards) {
+      state.storeData[storeName].rewards = [];
+    }
+
+    state.storeData[storeName].rewards.push({
+      phone: trimmedPhone,
+      label: label.trim()
+    });
+
+    save();
+    render();
+    renderStoresRewardsList();
+    return true;
+  }
+
+  function deleteReward(storeName, index) {
+    if (!state.storeData[storeName] || !state.storeData[storeName].rewards) return;
+    
+    state.storeData[storeName].rewards.splice(index, 1);
+    save();
+    render();
+    renderStoresRewardsList();
   }
 
   function addItem(name, department, aisle) {
@@ -1402,7 +1863,6 @@
 
     const oldStatus = item.status || 'none';
     
-    // Cycle: none -> checked -> maybe -> none
     if (oldStatus === 'none') {
       item.status = 'checked';
     } else if (oldStatus === 'checked') {
@@ -1413,7 +1873,6 @@
 
     save();
 
-    // In shopping mode, animate out items set to 'none'
     if (state.mode === 'shopping' && item.status === 'none') {
       const itemEl = DOM.listContainer.querySelector('[data-id="' + id + '"].item');
       if (itemEl) {
@@ -1451,9 +1910,7 @@
 
   function clearSelection() {
     const items = getCurrentItems();
-    items.forEach(item => {
-      item.status = 'none';
-    });
+    items.forEach(item => { item.status = 'none'; });
     save();
     render();
   }
@@ -1467,14 +1924,15 @@
   }
 
   function exportData() {
-    const items = getCurrentItems();
+    const storeData = getCurrentStore();
     const storeName = state.currentStore;
 
     const exportObj = {
-      version: 2,
+      version: 3,
       exportDate: new Date().toISOString(),
       storeName: storeName,
-      items: items
+      items: storeData.items || [],
+      rewards: storeData.rewards || []
     };
 
     const json = JSON.stringify(exportObj, null, 2);
@@ -1499,6 +1957,7 @@
       try {
         const data = JSON.parse(e.target.result);
         let items = [];
+        let rewards = [];
         let storeName = data.storeName || 'Imported Store';
 
         if (Array.isArray(data.items)) {
@@ -1507,7 +1966,10 @@
           items = data;
         }
 
-        // Validate and normalize items
+        if (Array.isArray(data.rewards)) {
+          rewards = data.rewards;
+        }
+
         items = items.filter(item => 
           item && typeof item.name === 'string' && item.name.trim()
         ).map(item => ({
@@ -1519,20 +1981,29 @@
                   (item.checked ? 'checked' : 'none')
         }));
 
-        if (items.length === 0) {
-          alert('No valid items found in file.');
+        rewards = rewards.filter(r => r && r.phone).map(r => ({
+          phone: String(r.phone).trim(),
+          label: String(r.label || '').trim()
+        }));
+
+        if (items.length === 0 && rewards.length === 0) {
+          alert('No valid data found in file.');
           return;
         }
 
-        // Ask user what to do
         let targetStore = storeName;
         const storeExists = state.stores.includes(storeName);
 
         if (storeExists) {
+          const existingData = state.storeData[storeName];
+          const existingItems = existingData ? existingData.items.length : 0;
+          const existingRewards = existingData ? (existingData.rewards || []).length : 0;
+
           const choice = confirm(
-            'Store "' + storeName + '" already exists.\n\n' +
-            'OK = Replace items in existing store\n' +
-            'Cancel = Create new store with different name'
+            'Store "' + storeName + '" already exists with ' + existingItems + ' items and ' + existingRewards + ' rewards.\n\n' +
+            'OK = Replace with imported data\n' +
+            'Cancel = Create a new store\n\n' +
+            '(Your other stores are NOT affected either way)'
           );
 
           if (!choice) {
@@ -1544,19 +2015,18 @@
           }
         }
 
-        // Create or update store
         if (!state.stores.includes(targetStore)) {
           state.stores.push(targetStore);
         }
-        state.storeData[targetStore] = { items: items };
+        state.storeData[targetStore] = { items: items, rewards: rewards };
         state.currentStore = targetStore;
         state.mode = 'planning';
         
         save();
         render();
-        renderStoreList();
+        renderStoresRewardsList();
 
-        alert('Imported ' + items.length + ' item(s) to "' + targetStore + '"');
+        alert('Imported to "' + targetStore + '":\n• ' + items.length + ' items\n• ' + rewards.length + ' rewards numbers');
       } catch (err) {
         alert('Could not read file. Please check the format.');
       }
@@ -1625,7 +2095,7 @@
 
   // === Settings Modal ===
   function openSettingsModal() {
-    renderStoreList();
+    renderStoresRewardsList();
     DOM.newStoreName.value = '';
     DOM.settingsModal.classList.add('active');
   }
@@ -1657,15 +2127,29 @@
   }
 
   // === Event Handlers ===
-  DOM.btnPlanning.addEventListener('click', function() {
-    setMode('planning');
-  });
-
-  DOM.btnShopping.addEventListener('click', function() {
-    setMode('shopping');
-  });
-
+  DOM.btnPlanning.addEventListener('click', function() { setMode('planning'); });
+  DOM.btnShopping.addEventListener('click', function() { setMode('shopping'); });
   DOM.btnSettings.addEventListener('click', openSettingsModal);
+
+  DOM.btnRewards.addEventListener('click', function() {
+    DOM.rewardsPanel.classList.toggle('open');
+  });
+
+  DOM.rewardsPanelClose.addEventListener('click', function() {
+    DOM.rewardsPanel.classList.remove('open');
+  });
+
+  DOM.rewardsDisplay.addEventListener('click', function(e) {
+    if (e.target.classList.contains('reward-phone-copy')) {
+      const phone = e.target.dataset.phone;
+      if (phone) copyToClipboard(phone);
+    }
+    if (e.target.id === 'link-add-rewards') {
+      e.preventDefault();
+      DOM.rewardsPanel.classList.remove('open');
+      openSettingsModal();
+    }
+  });
 
   DOM.storeSelect.addEventListener('change', function() {
     setCurrentStore(this.value);
@@ -1676,20 +2160,14 @@
     const name = DOM.inputName.value.trim();
     if (!name) return;
 
-    addItem(
-      name,
-      DOM.inputDepartment.value,
-      DOM.inputAisle.value
-    );
-
+    addItem(name, DOM.inputDepartment.value, DOM.inputAisle.value);
     clearForm();
     DOM.inputName.focus();
   });
 
   DOM.quickDept.addEventListener('click', function(e) {
     if (e.target.classList.contains('quick-dept-btn')) {
-      const dept = e.target.dataset.dept;
-      DOM.inputDepartment.value = dept;
+      DOM.inputDepartment.value = e.target.dataset.dept;
       updateClearButtons();
       updateQuickDepartments();
     }
@@ -1723,9 +2201,7 @@
       ? 'Clear all selections and finish shopping?'
       : 'Clear all selected items?';
 
-    if (confirm(msg)) {
-      clearSelection();
-    }
+    if (confirm(msg)) clearSelection();
   });
 
   DOM.listContainer.addEventListener('click', function(e) {
@@ -1740,31 +2216,22 @@
     } else if (action === 'edit') {
       openEditModal(id);
     } else if (action === 'delete') {
-      if (confirm('Delete this item?')) {
-        deleteItem(id);
-      }
+      if (confirm('Delete this item?')) deleteItem(id);
     }
   });
 
   DOM.btnExport.addEventListener('click', exportData);
-
-  DOM.btnImport.addEventListener('click', function() {
-    DOM.fileInput.click();
-  });
+  DOM.btnImport.addEventListener('click', function() { DOM.fileInput.click(); });
 
   DOM.fileInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
-    if (file) {
-      importData(file);
-    }
+    if (file) importData(file);
     e.target.value = '';
   });
 
-  // Edit Modal Events
+  // Edit Modal
   DOM.editModal.addEventListener('click', function(e) {
-    if (e.target === DOM.editModal) {
-      closeEditModal();
-    }
+    if (e.target === DOM.editModal) closeEditModal();
   });
 
   DOM.statusToggle.addEventListener('click', function(e) {
@@ -1785,19 +2252,13 @@
   });
 
   DOM.editModal.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      saveEdit();
-    } else if (e.key === 'Escape') {
-      closeEditModal();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); saveEdit(); }
+    else if (e.key === 'Escape') closeEditModal();
   });
 
-  // Settings Modal Events
+  // Settings Modal
   DOM.settingsModal.addEventListener('click', function(e) {
-    if (e.target === DOM.settingsModal) {
-      closeSettingsModal();
-    }
+    if (e.target === DOM.settingsModal) closeSettingsModal();
   });
 
   DOM.btnSettingsClose.addEventListener('click', closeSettingsModal);
@@ -1817,7 +2278,7 @@
     }
   });
 
-  DOM.storeList.addEventListener('click', function(e) {
+  DOM.storesRewardsList.addEventListener('click', function(e) {
     const target = e.target;
     const action = target.dataset.action;
     const store = target.dataset.store;
@@ -1826,26 +2287,52 @@
       openRenameModal(store);
     } else if (action === 'delete-store' && store) {
       deleteStore(store);
+    } else if (action === 'delete-reward') {
+      const index = parseInt(target.dataset.index, 10);
+      if (store && !isNaN(index)) {
+        deleteReward(store, index);
+      }
+    } else if (action === 'add-reward' && store) {
+      const phoneInput = DOM.storesRewardsList.querySelector('[data-reward-phone="' + store + '"]');
+      const labelInput = DOM.storesRewardsList.querySelector('[data-reward-label="' + store + '"]');
+      if (phoneInput && labelInput) {
+        if (addReward(store, phoneInput.value, labelInput.value)) {
+          phoneInput.value = '';
+          labelInput.value = '';
+        }
+      }
     }
   });
 
-  // Rename Modal Events
-  DOM.renameModal.addEventListener('click', function(e) {
-    if (e.target === DOM.renameModal) {
-      closeRenameModal();
+  DOM.storesRewardsList.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const target = e.target;
+      if (target.dataset.rewardPhone || target.dataset.rewardLabel) {
+        e.preventDefault();
+        const store = target.dataset.rewardPhone || target.dataset.rewardLabel;
+        const phoneInput = DOM.storesRewardsList.querySelector('[data-reward-phone="' + store + '"]');
+        const labelInput = DOM.storesRewardsList.querySelector('[data-reward-label="' + store + '"]');
+        if (phoneInput && labelInput && phoneInput.value.trim()) {
+          if (addReward(store, phoneInput.value, labelInput.value)) {
+            phoneInput.value = '';
+            labelInput.value = '';
+          }
+        }
+      }
     }
+  });
+
+  // Rename Modal
+  DOM.renameModal.addEventListener('click', function(e) {
+    if (e.target === DOM.renameModal) closeRenameModal();
   });
 
   DOM.btnRenameCancel.addEventListener('click', closeRenameModal);
   DOM.btnRenameSave.addEventListener('click', saveRename);
 
   DOM.renameModal.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      saveRename();
-    } else if (e.key === 'Escape') {
-      closeRenameModal();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); saveRename(); }
+    else if (e.key === 'Escape') closeRenameModal();
   });
 
   // === Initialize ===
