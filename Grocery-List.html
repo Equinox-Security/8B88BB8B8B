@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Grocery%20List%22%2C%22short_name%22%3A%22Groceries%22%2C%22description%22%3A%22Smart%20grocery%20shopping%20list%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f0f4f0%22%2C%22theme_color%22%3A%22%232d6a4f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520100%2520100%27%253E%253Crect%2520fill%3D%27%25232d6a4f%27%2520width%3D%27100%27%2520height%3D%27100%27%2520rx%3D%2720%27%2F%253E%253Cpath%2520fill%3D%27white%27%2520d%3D%27M25%252028a3%25203%25200%25200%25201%25203-3h4a3%25203%25200%25200%25201%25202.9%25202.2L37%252032h38a3%25203%25200%25200%25201%25202.9%25203.8l-6%252024A3%25203%25200%25200%25201%252069%252062H41a3%25203%25200%25200%25201-2.9-2.2L28.2%252031H28a3%25203%25200%25200%25201-3-3zm17%252044a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10zm24%25200a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Grocery%20List%22%2C%22short_name%22%3A%22Groceries%22%2C%22description%22%3A%22Smart%20grocery%20shopping%20list%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f0f4f0%22%2C%22theme_color%22%3A%22%232d6a4f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520100%2520100%27%253E%253Crect%2520fill%3D%27%25232d6a4f%27%2520width%3D%27100%27%2520height%3D%27100%27%2520rx%3D%2720%27%2F%253E%253Cpath%2520fill%3D%27white%27%2520d%3D%27M25%252028a3%25203%25200%25200%25201%25203-3h4a3%25203%25200%25200%25201%25202.9%25202.2L37%252032h38a3%25203%25200%25200%25201%25202.9%25203.8l-6%252024A3%25203%25200%25200%25201%252069%252062H41a3%25203%25200%25200%25201-2.9-2.2L28.2%252031H28a3%25203%25200%25200%25201-3-3zm17%252044a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10zm24%25200a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
   <meta name="theme-color" content="#2d6a4f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -134,7 +134,7 @@
     }
 
     .rewards-panel {
-      background: rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.2);
       border-radius: 10px;
       margin-bottom: 12px;
       overflow: hidden;
@@ -143,23 +143,25 @@
     }
 
     .rewards-panel.open {
-      max-height: 300px;
+      max-height: 800px;
     }
 
     .rewards-panel-content {
       padding: 14px;
+      max-height: 60vh;
+      overflow-y: auto;
     }
 
     .rewards-panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .rewards-panel-title {
-      font-size: 0.9rem;
-      opacity: 0.9;
+      font-size: 1rem;
+      font-weight: 600;
     }
 
     .rewards-panel-close {
@@ -167,70 +169,153 @@
       border: none;
       color: white;
       opacity: 0.7;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       cursor: pointer;
       padding: 4px 8px;
     }
 
-    .reward-phone {
+    .ebt-balance-display {
+      background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: rgba(255,255,255,0.95);
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      color: #1a1a1a;
+      align-items: center;
     }
 
-    .reward-phone:last-child {
+    .ebt-balance-display .label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .ebt-balance-display .amount {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .account-card {
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .account-card:last-child {
       margin-bottom: 0;
     }
 
-    .reward-phone-info {
+    .account-header {
+      padding: 14px 16px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #eee;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .reward-phone-number {
-      font-size: 1.3rem;
+    .account-info {
+      color: #333;
+    }
+
+    .account-label {
       font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+
+    .account-phone {
       font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      letter-spacing: 1px;
+      font-size: 1.1rem;
       color: #2d6a4f;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
-    .reward-phone-label {
-      font-size: 0.8rem;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .reward-phone-copy {
+    .account-copy-btn {
       background: #e8f5e9;
       border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
       font-size: 0.85rem;
       cursor: pointer;
       color: #2d6a4f;
-      transition: background 0.2s;
+      font-weight: 500;
     }
 
-    .reward-phone-copy:hover {
+    .account-copy-btn:hover {
       background: #c8e6c9;
     }
 
-    .no-rewards {
-      text-align: center;
-      padding: 16px;
-      opacity: 0.8;
-      font-size: 0.9rem;
+    .coupons-list {
+      padding: 12px 16px;
     }
 
-    .no-rewards a {
+    .coupon-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 12px;
+      background: #f8fdf8;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .coupon-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .coupon-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .coupon-badge.free {
+      background: #10b981;
       color: white;
-      text-decoration: underline;
+    }
+
+    .coupon-badge.discount {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .coupon-badge.threshold {
+      background: #6366f1;
+      color: white;
+    }
+
+    .coupon-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .coupon-item-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .coupon-item-value {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .coupon-item-expires {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .no-coupons {
+      padding: 16px;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
     }
 
     .mode-toggle {
@@ -282,11 +367,11 @@
       position: relative;
     }
 
-    .form-row input {
+    .form-row input, .form-row select {
       width: 100%;
     }
 
-    .add-form input {
+    .add-form input, .add-form select {
       width: 100%;
       padding: 14px 16px;
       margin-bottom: 10px;
@@ -294,9 +379,10 @@
       border-radius: 10px;
       font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s;
+      background: white;
     }
 
-    .add-form input:focus {
+    .add-form input:focus, .add-form select:focus {
       outline: none;
       border-color: #40916c;
       box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
@@ -420,6 +506,7 @@
       margin: 0 16px 8px;
       font-size: 0.8rem;
       color: #666;
+      flex-wrap: wrap;
     }
 
     .legend-item {
@@ -539,6 +626,10 @@
       font-size: 1rem;
       font-weight: 500;
       word-break: break-word;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .item.is-done .item-name {
@@ -546,10 +637,36 @@
       text-decoration: line-through;
     }
 
+    .item-tag {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .item-tag.free {
+      background: #10b981;
+      color: white;
+    }
+
+    .item-tag.coupon {
+      background: #f59e0b;
+      color: white;
+    }
+
     .item-meta {
       font-size: 0.8rem;
       color: #888;
       margin-top: 2px;
+    }
+
+    .item-account {
+      font-size: 0.75rem;
+      color: #6366f1;
+      margin-top: 2px;
+      font-weight: 500;
     }
 
     .item-delete {
@@ -658,7 +775,7 @@
       padding: 24px;
       border-radius: 16px;
       width: 100%;
-      max-width: 440px;
+      max-width: 500px;
       max-height: 85vh;
       overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -680,17 +797,21 @@
     }
 
     .modal input[type="text"],
-    .modal input[type="tel"] {
+    .modal input[type="tel"],
+    .modal input[type="number"],
+    .modal input[type="date"],
+    .modal select {
       width: 100%;
       padding: 14px 16px;
       margin-bottom: 12px;
       border: 2px solid #e8e8e8;
       border-radius: 10px;
       font-size: 1rem;
+      background: white;
     }
 
-    .modal input[type="text"]:focus,
-    .modal input[type="tel"]:focus {
+    .modal input:focus,
+    .modal select:focus {
       outline: none;
       border-color: #40916c;
     }
@@ -774,8 +895,31 @@
     }
 
     /* Settings Modal */
+    .settings-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .settings-tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #f0f0f0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .settings-tab.active {
+      background: #40916c;
+      color: white;
+    }
+
     .settings-section {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .settings-section:last-of-type {
@@ -858,77 +1002,181 @@
       white-space: nowrap;
     }
 
-    /* Rewards Section in Settings */
-    .rewards-section {
+    /* Account/Rewards Section */
+    .account-section {
       background: #f8f8f8;
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .account-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       margin-bottom: 12px;
     }
 
-    .rewards-section-header {
+    .account-section-title {
       font-weight: 600;
-      margin-bottom: 10px;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .rewards-list {
-      margin-bottom: 10px;
+    .account-section-phone {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.9rem;
+      color: #2d6a4f;
+      margin-top: 4px;
     }
 
-    .rewards-item {
+    .account-section-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .account-section-btn {
+      background: #e0e0e0;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .account-section-btn:hover {
+      background: #d0d0d0;
+    }
+
+    .account-section-btn.delete:hover {
+      background: #fee;
+      color: #e74c3c;
+    }
+
+    .ebt-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .ebt-input-row label {
+      font-size: 0.9rem;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .ebt-input-row input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .ebt-input-row button {
+      padding: 10px 14px;
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .coupon-list {
+      margin-bottom: 12px;
+    }
+
+    .coupon-entry {
       display: flex;
       align-items: center;
       padding: 10px 12px;
       background: white;
       border-radius: 8px;
       margin-bottom: 6px;
+      gap: 8px;
     }
 
-    .rewards-item-info {
+    .coupon-entry-badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .coupon-entry-badge.free {
+      background: #10b981;
+      color: white;
+    }
+
+    .coupon-entry-badge.discount {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .coupon-entry-badge.threshold {
+      background: #6366f1;
+      color: white;
+    }
+
+    .coupon-entry-info {
       flex: 1;
+      min-width: 0;
     }
 
-    .rewards-item-phone {
-      font-weight: 600;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    .coupon-entry-name {
+      font-weight: 500;
+      font-size: 0.9rem;
     }
 
-    .rewards-item-label {
+    .coupon-entry-detail {
       font-size: 0.8rem;
       color: #666;
     }
 
-    .rewards-item-delete {
+    .coupon-entry-delete {
       background: none;
       border: none;
       color: #ccc;
       font-size: 1.1rem;
       cursor: pointer;
       padding: 4px 8px;
-      border-radius: 4px;
     }
 
-    .rewards-item-delete:hover {
+    .coupon-entry-delete:hover {
       color: #e74c3c;
-      background: rgba(231,76,60,0.1);
     }
 
-    .add-reward-form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .add-coupon-form {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
     }
 
-    .add-reward-form .form-row {
-      display: flex;
-      gap: 8px;
+    .add-coupon-form .form-group {
+      margin-bottom: 10px;
     }
 
-    .add-reward-form input {
-      flex: 1;
+    .add-coupon-form .form-group:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .add-coupon-form label {
+      display: block;
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .add-coupon-form input,
+    .add-coupon-form select {
+      width: 100%;
       padding: 10px 12px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
@@ -936,20 +1184,46 @@
       margin: 0;
     }
 
-    .add-reward-form input:focus {
-      outline: none;
-      border-color: #40916c;
+    .add-coupon-form .form-row {
+      display: flex;
+      gap: 8px;
     }
 
-    .add-reward-form button {
-      padding: 10px 16px;
+    .add-coupon-form .form-row > * {
+      flex: 1;
+    }
+
+    .add-coupon-form button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
       background: #40916c;
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.9rem;
+    }
+
+    .add-account-form {
+      background: white;
+      padding: 14px;
+      border-radius: 10px;
+    }
+
+    .add-account-form input {
+      margin-bottom: 8px;
+    }
+
+    .add-account-form button {
+      width: 100%;
+      padding: 12px;
+      background: #40916c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
     .shopping-tip {
@@ -998,6 +1272,14 @@
     .copied-toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+    }
+
+    .item-account-select {
+      padding: 8px 12px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
     }
 
     @media (max-width: 400px) {
@@ -1052,9 +1334,10 @@
   <div class="rewards-panel" id="rewards-panel">
     <div class="rewards-panel-content">
       <div class="rewards-panel-header">
-        <span class="rewards-panel-title">📱 Rewards Phone Numbers</span>
+        <span class="rewards-panel-title">💳 Rewards & Coupons</span>
         <button class="rewards-panel-close" id="rewards-panel-close">×</button>
       </div>
+      <div id="ebt-display"></div>
       <div id="rewards-display"></div>
     </div>
   </div>
@@ -1078,13 +1361,24 @@
     <div class="form-row">
       <div class="input-wrapper">
         <input type="text" id="input-department" placeholder="Department" list="list-departments" autocomplete="off">
-        <button type="button" class="clear-field-btn" id="clear-dept" title="Clear to see all options">×</button>
+        <button type="button" class="clear-field-btn" id="clear-dept" title="Clear">×</button>
       </div>
       <div class="input-wrapper">
         <input type="text" id="input-aisle" placeholder="Aisle/Area" list="list-aisles" autocomplete="off">
-        <button type="button" class="clear-field-btn" id="clear-aisle" title="Clear to see all options">×</button>
+        <button type="button" class="clear-field-btn" id="clear-aisle" title="Clear">×</button>
       </div>
     </div>
+    
+    <select id="input-account" class="item-account-select">
+      <option value="">No rewards account</option>
+    </select>
+    
+    <select id="input-coupon-type" class="item-account-select">
+      <option value="">No coupon</option>
+      <option value="free">🆓 FREE item</option>
+      <option value="coupon">🏷️ Has coupon</option>
+    </select>
+    
     <button type="submit">+ Add Item</button>
     <p class="tap-hint">Tap item circle to cycle: none → ✓ buy → ? maybe</p>
     <datalist id="list-departments"></datalist>
@@ -1103,7 +1397,7 @@
     </div>
     <div class="legend-item">
       <div class="legend-icon maybe">?</div>
-      <span>Maybe/Check</span>
+      <span>Maybe</span>
     </div>
   </div>
 
@@ -1121,7 +1415,7 @@
 
 <input type="file" id="file-input" accept=".json,application/json">
 
-<div class="copied-toast" id="copied-toast">📋 Copied to clipboard!</div>
+<div class="copied-toast" id="copied-toast">📋 Copied!</div>
 
 <!-- Edit Item Modal -->
 <div class="modal" id="edit-modal">
@@ -1130,6 +1424,14 @@
     <input type="text" id="edit-name" placeholder="Item name">
     <input type="text" id="edit-department" placeholder="Department" list="list-departments">
     <input type="text" id="edit-aisle" placeholder="Aisle/Area" list="list-aisles">
+    
+    <select id="edit-account" class="item-account-select" style="width: 100%; margin-bottom: 12px;"></select>
+    
+    <select id="edit-coupon-type" class="item-account-select" style="width: 100%; margin-bottom: 12px;">
+      <option value="">No coupon</option>
+      <option value="free">🆓 FREE item</option>
+      <option value="coupon">🏷️ Has coupon</option>
+    </select>
     
     <div class="status-toggle" id="status-toggle">
       <div class="status-option" data-status="none">
@@ -1159,17 +1461,38 @@
   <div class="modal-content">
     <h3>⚙️ Settings</h3>
     
-    <div class="settings-section">
-      <h4>Stores & Rewards</h4>
-      <div id="stores-rewards-list"></div>
-      <div class="add-row">
-        <input type="text" id="new-store-name" placeholder="New store name...">
-        <button type="button" id="btn-add-store">Add Store</button>
+    <div class="settings-tabs">
+      <button class="settings-tab active" data-tab="stores">Stores</button>
+      <button class="settings-tab" data-tab="accounts">Accounts</button>
+    </div>
+    
+    <!-- Stores Tab -->
+    <div id="tab-stores">
+      <div class="settings-section">
+        <h4>Your Stores</h4>
+        <div class="store-list" id="store-list"></div>
+        <div class="add-row">
+          <input type="text" id="new-store-name" placeholder="New store name...">
+          <button type="button" id="btn-add-store">Add</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Accounts Tab -->
+    <div id="tab-accounts" style="display: none;">
+      <div class="settings-section">
+        <h4>Rewards Accounts for <span id="current-store-name"></span></h4>
+        <div id="accounts-list"></div>
+        <div class="add-account-form">
+          <input type="tel" id="new-account-phone" placeholder="Phone number">
+          <input type="text" id="new-account-label" placeholder="Label (e.g., Mom, Work)">
+          <button type="button" id="btn-add-account">+ Add Account</button>
+        </div>
       </div>
     </div>
     
     <div class="info-note">
-      💡 <strong>Import note:</strong> Importing a file only affects that one store. Your other stores remain untouched.
+      💡 Import only affects one store. Your other stores remain untouched.
     </div>
     
     <div class="modal-buttons">
@@ -1194,7 +1517,7 @@
 (function() {
   'use strict';
 
-  const STORAGE_KEY = 'grocery_app_v3';
+  const STORAGE_KEY = 'grocery_app_v4';
   const DEFAULT_DEPARTMENTS = [
     'Produce', 'Dairy', 'Meat', 'Seafood', 'Bakery', 'Deli',
     'Frozen', 'Canned Goods', 'Pasta & Grains', 'Condiments',
@@ -1205,7 +1528,11 @@
     stores: ['My Store'],
     currentStore: 'My Store',
     storeData: {
-      'My Store': { items: [], rewards: [] }
+      'My Store': { 
+        items: [], 
+        accounts: [],
+        ebtBalance: null
+      }
     },
     mode: 'planning'
   };
@@ -1213,6 +1540,7 @@
   let editingItemId = null;
   let editingStatus = 'none';
   let renamingStore = null;
+  let currentSettingsTab = 'stores';
 
   function getEl(id) {
     return document.getElementById(id);
@@ -1226,12 +1554,15 @@
     rewardsCount: getEl('rewards-count'),
     rewardsPanel: getEl('rewards-panel'),
     rewardsPanelClose: getEl('rewards-panel-close'),
+    ebtDisplay: getEl('ebt-display'),
     rewardsDisplay: getEl('rewards-display'),
     storeSelect: getEl('store-select'),
     addForm: getEl('add-form'),
     inputName: getEl('input-name'),
     inputDepartment: getEl('input-department'),
     inputAisle: getEl('input-aisle'),
+    inputAccount: getEl('input-account'),
+    inputCouponType: getEl('input-coupon-type'),
     clearDept: getEl('clear-dept'),
     clearAisle: getEl('clear-aisle'),
     quickDept: getEl('quick-dept'),
@@ -1250,14 +1581,23 @@
     editName: getEl('edit-name'),
     editDepartment: getEl('edit-department'),
     editAisle: getEl('edit-aisle'),
+    editAccount: getEl('edit-account'),
+    editCouponType: getEl('edit-coupon-type'),
     statusToggle: getEl('status-toggle'),
     btnEditDelete: getEl('btn-edit-delete'),
     btnEditCancel: getEl('btn-edit-cancel'),
     btnEditSave: getEl('btn-edit-save'),
     settingsModal: getEl('settings-modal'),
-    storesRewardsList: getEl('stores-rewards-list'),
+    tabStores: getEl('tab-stores'),
+    tabAccounts: getEl('tab-accounts'),
+    currentStoreName: getEl('current-store-name'),
+    storeList: getEl('store-list'),
     newStoreName: getEl('new-store-name'),
     btnAddStore: getEl('btn-add-store'),
+    accountsList: getEl('accounts-list'),
+    newAccountPhone: getEl('new-account-phone'),
+    newAccountLabel: getEl('new-account-label'),
+    btnAddAccount: getEl('btn-add-account'),
     btnSettingsClose: getEl('btn-settings-close'),
     renameModal: getEl('rename-modal'),
     renameStoreInput: getEl('rename-store-input'),
@@ -1289,30 +1629,26 @@
     return phone;
   }
 
-  function getCurrentStore() {
-    return state.storeData[state.currentStore] || { items: [], rewards: [] };
+  function getCurrentStoreData() {
+    if (!state.storeData[state.currentStore]) {
+      state.storeData[state.currentStore] = { items: [], accounts: [], ebtBalance: null };
+    }
+    const data = state.storeData[state.currentStore];
+    if (!data.accounts) data.accounts = [];
+    if (!data.items) data.items = [];
+    return data;
   }
 
   function getCurrentItems() {
-    return getCurrentStore().items || [];
+    return getCurrentStoreData().items;
   }
 
-  function getCurrentRewards() {
-    return getCurrentStore().rewards || [];
+  function getCurrentAccounts() {
+    return getCurrentStoreData().accounts;
   }
 
-  function setCurrentItems(items) {
-    if (!state.storeData[state.currentStore]) {
-      state.storeData[state.currentStore] = { items: [], rewards: [] };
-    }
-    state.storeData[state.currentStore].items = items;
-  }
-
-  function setCurrentRewards(rewards) {
-    if (!state.storeData[state.currentStore]) {
-      state.storeData[state.currentStore] = { items: [], rewards: [] };
-    }
-    state.storeData[state.currentStore].rewards = rewards;
+  function getAccountById(accountId) {
+    return getCurrentAccounts().find(a => a.id === accountId);
   }
 
   function save() {
@@ -1327,76 +1663,90 @@
       if (data) {
         const parsed = JSON.parse(data);
         if (parsed.stores && parsed.storeData) {
-          state = {
-            stores: parsed.stores || ['My Store'],
-            currentStore: parsed.currentStore || parsed.stores[0] || 'My Store',
-            storeData: parsed.storeData || { 'My Store': { items: [], rewards: [] } },
-            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
-          };
-          
-          // Ensure rewards arrays exist
+          state = parsed;
+          // Ensure structure
           for (const store in state.storeData) {
-            if (!state.storeData[store].rewards) {
-              state.storeData[store].rewards = [];
+            if (!state.storeData[store].accounts) {
+              // Migrate old rewards to accounts
+              if (state.storeData[store].rewards) {
+                state.storeData[store].accounts = state.storeData[store].rewards.map(r => ({
+                  id: generateId(),
+                  phone: r.phone,
+                  label: r.label || '',
+                  coupons: [],
+                  ebtBalance: null
+                }));
+                delete state.storeData[store].rewards;
+              } else {
+                state.storeData[store].accounts = [];
+              }
             }
+            if (!state.storeData[store].items) state.storeData[store].items = [];
           }
-          
           if (!state.stores.includes(state.currentStore)) {
             state.currentStore = state.stores[0] || 'My Store';
           }
-          if (!state.storeData[state.currentStore]) {
-            state.storeData[state.currentStore] = { items: [], rewards: [] };
-          }
           return;
         }
       }
 
-      // Migration from v2
-      const v2Data = localStorage.getItem('grocery_app_v2');
-      if (v2Data) {
-        const parsed = JSON.parse(v2Data);
-        if (parsed.stores && parsed.storeData) {
-          state = {
-            stores: parsed.stores,
-            currentStore: parsed.currentStore,
-            storeData: {},
-            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
-          };
-          for (const store in parsed.storeData) {
-            state.storeData[store] = {
-              items: parsed.storeData[store].items || [],
-              rewards: []
-            };
-          }
-          save();
-          return;
-        }
-      }
-
-      // Migration from v1
-      const v1Data = localStorage.getItem('grocery_app_v1');
-      if (v1Data) {
-        const parsed = JSON.parse(v1Data);
-        if (Array.isArray(parsed.items)) {
-          state = {
-            stores: ['My Store'],
-            currentStore: 'My Store',
-            storeData: {
-              'My Store': { 
-                items: parsed.items.map(item => ({
+      // Try older versions
+      for (const key of ['grocery_app_v3', 'grocery_app_v2', 'grocery_app_v1']) {
+        const oldData = localStorage.getItem(key);
+        if (oldData) {
+          const parsed = JSON.parse(oldData);
+          if (parsed.stores && parsed.storeData) {
+            state.stores = parsed.stores;
+            state.currentStore = parsed.currentStore || parsed.stores[0];
+            state.mode = parsed.mode || 'planning';
+            state.storeData = {};
+            for (const store of parsed.stores) {
+              const sd = parsed.storeData[store] || {};
+              state.storeData[store] = {
+                items: (sd.items || []).map(item => ({
                   ...item,
-                  status: item.checked ? 'checked' : 'none'
+                  status: item.status || (item.checked ? 'checked' : 'none'),
+                  accountId: null,
+                  couponType: ''
                 })),
-                rewards: []
-              }
-            },
-            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
-          };
-          save();
-          return;
+                accounts: (sd.rewards || []).map(r => ({
+                  id: generateId(),
+                  phone: r.phone,
+                  label: r.label || '',
+                  coupons: [],
+                  ebtBalance: null
+                })),
+                ebtBalance: null
+              };
+            }
+            save();
+            return;
+          } else if (Array.isArray(parsed.items)) {
+            state = {
+              stores: ['My Store'],
+              currentStore: 'My Store',
+              storeData: {
+                'My Store': {
+                  items: parsed.items.map(item => ({
+                    ...item,
+                    status: item.checked ? 'checked' : 'none',
+                    accountId: null,
+                    couponType: ''
+                  })),
+                  accounts: [],
+                  ebtBalance: null
+                }
+              },
+              mode: 'planning'
+            };
+            save();
+            return;
+          }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error('Load error:', e);
+    }
   }
 
   function getUniqueDepartments() {
@@ -1426,13 +1776,9 @@
       .map(e => e[0])
       .slice(0, 6);
 
-    if (sorted.length < 6) {
-      const defaults = ['Produce', 'Dairy', 'Meat', 'Frozen', 'Bakery', 'Deli'];
-      for (const d of defaults) {
-        if (!sorted.includes(d) && sorted.length < 6) {
-          sorted.push(d);
-        }
-      }
+    const defaults = ['Produce', 'Dairy', 'Meat', 'Frozen', 'Bakery', 'Deli'];
+    for (const d of defaults) {
+      if (!sorted.includes(d) && sorted.length < 6) sorted.push(d);
     }
 
     return sorted;
@@ -1440,9 +1786,7 @@
 
   function showCopiedToast() {
     DOM.copiedToast.classList.add('show');
-    setTimeout(() => {
-      DOM.copiedToast.classList.remove('show');
-    }, 2000);
+    setTimeout(() => DOM.copiedToast.classList.remove('show'), 2000);
   }
 
   function copyToClipboard(text) {
@@ -1455,10 +1799,7 @@
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.select();
-      try {
-        document.execCommand('copy');
-        showCopiedToast();
-      } catch (e) {}
+      try { document.execCommand('copy'); showCopiedToast(); } catch (e) {}
       document.body.removeChild(textarea);
     }
   }
@@ -1471,11 +1812,27 @@
     }).join('');
   }
 
+  function updateAccountSelects() {
+    const accounts = getCurrentAccounts();
+    const options = '<option value="">No rewards account</option>' + 
+      accounts.map(a => {
+        const label = a.label ? a.label + ' - ' + formatPhoneNumber(a.phone) : formatPhoneNumber(a.phone);
+        return '<option value="' + a.id + '">' + escapeHtml(label) + '</option>';
+      }).join('');
+    
+    DOM.inputAccount.innerHTML = options;
+    DOM.editAccount.innerHTML = options;
+  }
+
   function updateRewardsButton() {
-    const rewards = getCurrentRewards();
-    if (rewards.length > 0) {
+    const accounts = getCurrentAccounts();
+    const storeData = getCurrentStoreData();
+    const totalCoupons = accounts.reduce((sum, a) => sum + (a.coupons ? a.coupons.length : 0), 0);
+    const hasEbt = storeData.ebtBalance !== null && storeData.ebtBalance !== '';
+    
+    if (accounts.length > 0 || hasEbt) {
       DOM.btnRewards.style.display = 'flex';
-      DOM.rewardsCount.textContent = rewards.length;
+      DOM.rewardsCount.textContent = accounts.length + (totalCoupons > 0 ? '+' + totalCoupons : '');
     } else {
       DOM.btnRewards.style.display = 'none';
       DOM.rewardsPanel.classList.remove('open');
@@ -1483,23 +1840,61 @@
   }
 
   function updateRewardsPanel() {
-    const rewards = getCurrentRewards();
-    if (rewards.length === 0) {
-      DOM.rewardsDisplay.innerHTML = '<div class="no-rewards">No rewards numbers for this store.<br><a href="#" id="link-add-rewards">Add in Settings</a></div>';
+    const storeData = getCurrentStoreData();
+    const accounts = getCurrentAccounts();
+
+    // EBT Display
+    if (storeData.ebtBalance !== null && storeData.ebtBalance !== '') {
+      DOM.ebtDisplay.innerHTML = 
+        '<div class="ebt-balance-display">' +
+        '<span class="label">💳 EBT Balance</span>' +
+        '<span class="amount">$' + parseFloat(storeData.ebtBalance).toFixed(2) + '</span>' +
+        '</div>';
+    } else {
+      DOM.ebtDisplay.innerHTML = '';
+    }
+
+    if (accounts.length === 0) {
+      DOM.rewardsDisplay.innerHTML = '<div class="no-coupons">No rewards accounts. Add them in Settings.</div>';
       return;
     }
 
-    DOM.rewardsDisplay.innerHTML = rewards.map((r, index) => {
-      const formatted = formatPhoneNumber(r.phone);
-      const label = r.label ? '<div class="reward-phone-label">' + escapeHtml(r.label) + '</div>' : '';
-      return '<div class="reward-phone">' +
-        '<div class="reward-phone-info">' +
-          '<div class="reward-phone-number">' + escapeHtml(formatted) + '</div>' +
-          label +
-        '</div>' +
-        '<button class="reward-phone-copy" data-phone="' + escapeHtml(r.phone.replace(/\D/g, '')) + '">Copy</button>' +
-      '</div>';
-    }).join('');
+    let html = '';
+    accounts.forEach(account => {
+      html += '<div class="account-card">';
+      html += '<div class="account-header">';
+      html += '<div class="account-info">';
+      if (account.label) html += '<div class="account-label">' + escapeHtml(account.label) + '</div>';
+      html += '<div class="account-phone">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
+      html += '</div>';
+      html += '<button class="account-copy-btn" data-phone="' + escapeHtml(account.phone.replace(/\D/g, '')) + '">📋 Copy</button>';
+      html += '</div>';
+
+      const coupons = account.coupons || [];
+      if (coupons.length > 0) {
+        html += '<div class="coupons-list">';
+        coupons.forEach(coupon => {
+          let badgeClass = coupon.type === 'free' ? 'free' : (coupon.type === 'threshold' ? 'threshold' : 'discount');
+          let badgeText = coupon.type === 'free' ? 'FREE' : (coupon.type === 'threshold' ? 'Threshold' : 'Coupon');
+          
+          html += '<div class="coupon-item">';
+          html += '<span class="coupon-badge ' + badgeClass + '">' + badgeText + '</span>';
+          html += '<div class="coupon-details">';
+          html += '<div class="coupon-item-name">' + escapeHtml(coupon.name || coupon.description) + '</div>';
+          if (coupon.value) html += '<div class="coupon-item-value">' + escapeHtml(coupon.value) + '</div>';
+          if (coupon.minSpend) html += '<div class="coupon-item-value">Min spend: $' + coupon.minSpend + '</div>';
+          if (coupon.expires) html += '<div class="coupon-item-expires">Expires: ' + coupon.expires + '</div>';
+          html += '</div></div>';
+        });
+        html += '</div>';
+      } else {
+        html += '<div class="no-coupons" style="padding: 12px 16px;">No coupons for this account</div>';
+      }
+
+      html += '</div>';
+    });
+
+    DOM.rewardsDisplay.innerHTML = html;
   }
 
   function updateDatalists() {
@@ -1544,7 +1939,7 @@
     }
 
     DOM.statsBar.style.display = 'flex';
-    DOM.legend.style.display = maybe > 0 ? 'flex' : 'none';
+    DOM.legend.style.display = (maybe > 0) ? 'flex' : 'none';
 
     if (state.mode === 'shopping') {
       let text = checked + ' to buy';
@@ -1558,15 +1953,23 @@
   }
 
   function groupItems(items) {
-    const groups = {};
+    // Group by account first, then by department/aisle
+    const byAccount = { '': {} };
+    const accounts = getCurrentAccounts();
+    
     items.forEach(item => {
+      const accountId = item.accountId || '';
+      if (!byAccount[accountId]) byAccount[accountId] = {};
+      
       const dept = item.department || 'Other';
       const aisle = item.aisle || '';
-      if (!groups[dept]) groups[dept] = {};
-      if (!groups[dept][aisle]) groups[dept][aisle] = [];
-      groups[dept][aisle].push(item);
+      
+      if (!byAccount[accountId][dept]) byAccount[accountId][dept] = {};
+      if (!byAccount[accountId][dept][aisle]) byAccount[accountId][dept][aisle] = [];
+      byAccount[accountId][dept][aisle].push(item);
     });
-    return groups;
+    
+    return byAccount;
   }
 
   function renderList() {
@@ -1581,143 +1984,219 @@
         const hasSelected = allItems.some(i => i.status === 'checked' || i.status === 'maybe');
         if (!hasSelected && allItems.length > 0) {
           DOM.listContainer.innerHTML = 
-            '<div class="shopping-tip">💡 Switch to Planning mode and select items for your trip!</div>' +
-            '<div class="empty-state">' +
-            '<div class="empty-state-icon">✅</div>' +
-            '<div class="empty-state-text">No items selected.<br>Use Planning mode to pick what you need.</div>' +
-            '</div>';
+            '<div class="shopping-tip">💡 Switch to Planning mode and select items!</div>' +
+            '<div class="empty-state"><div class="empty-state-icon">✅</div>' +
+            '<div class="empty-state-text">No items selected.</div></div>';
         } else {
           DOM.listContainer.innerHTML = 
-            '<div class="empty-state">' +
-            '<div class="empty-state-icon">🎉</div>' +
-            '<div class="empty-state-text">All done!<br>Great shopping!</div>' +
-            '</div>';
+            '<div class="empty-state"><div class="empty-state-icon">🎉</div>' +
+            '<div class="empty-state-text">All done!<br>Great shopping!</div></div>';
         }
       } else {
         DOM.listContainer.innerHTML = 
-          '<div class="empty-state">' +
-          '<div class="empty-state-icon">📝</div>' +
-          '<div class="empty-state-text">Your list is empty.<br>Add items above to get started!</div>' +
-          '</div>';
+          '<div class="empty-state"><div class="empty-state-icon">📝</div>' +
+          '<div class="empty-state-text">Your list is empty.<br>Add items above!</div></div>';
       }
       return;
     }
 
-    const groups = groupItems(items);
-    const sortedDepts = Object.keys(groups).sort((a, b) => {
-      if (a === 'Other') return 1;
-      if (b === 'Other') return -1;
-      return a.localeCompare(b);
-    });
-
+    const accounts = getCurrentAccounts();
+    const byAccount = groupItems(items);
     let html = '';
 
-    sortedDepts.forEach(dept => {
-      const aisles = groups[dept];
-      const sortedAisles = Object.keys(aisles).sort((a, b) => {
-        if (a === '') return 1;
-        if (b === '') return -1;
-        return a.localeCompare(b, undefined, { numeric: true });
+    // Sort account IDs: items without account first, then by account
+    const accountIds = Object.keys(byAccount).sort((a, b) => {
+      if (a === '') return -1;
+      if (b === '') return 1;
+      return 0;
+    });
+
+    accountIds.forEach(accountId => {
+      const account = accountId ? getAccountById(accountId) : null;
+      const groups = byAccount[accountId];
+      
+      // Account header if applicable
+      if (account && isShoppingMode) {
+        html += '<div style="background: #6366f1; color: white; padding: 12px 18px; margin: 0 16px 8px; border-radius: 10px;">';
+        html += '<div style="font-weight: 600;">' + escapeHtml(account.label || 'Account') + '</div>';
+        html += '<div style="font-family: monospace; font-size: 1.1rem;">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
+        html += '</div>';
+      }
+
+      const sortedDepts = Object.keys(groups).sort((a, b) => {
+        if (a === 'Other') return 1;
+        if (b === 'Other') return -1;
+        return a.localeCompare(b);
       });
 
-      html += '<div class="department-group">';
-      html += '<div class="department-header">🏷️ ' + escapeHtml(dept) + '</div>';
+      sortedDepts.forEach(dept => {
+        const aisles = groups[dept];
+        const sortedAisles = Object.keys(aisles).sort((a, b) => {
+          if (a === '') return 1;
+          if (b === '') return -1;
+          return a.localeCompare(b, undefined, { numeric: true });
+        });
 
-      sortedAisles.forEach(aisle => {
-        const aisleItems = aisles[aisle].sort((a, b) => a.name.localeCompare(b.name));
+        html += '<div class="department-group">';
+        html += '<div class="department-header">🏷️ ' + escapeHtml(dept) + '</div>';
 
-        html += '<div class="aisle-section">';
-        if (aisle) {
-          html += '<div class="aisle-header">📍 ' + escapeHtml(aisle) + '</div>';
-        }
+        sortedAisles.forEach(aisle => {
+          const aisleItems = aisles[aisle].sort((a, b) => a.name.localeCompare(b.name));
 
-        aisleItems.forEach(item => {
-          const status = item.status || 'none';
-          const checkboxClass = status === 'checked' ? 'checked' : (status === 'maybe' ? 'maybe' : '');
-          const checkboxContent = status === 'checked' ? '✓' : (status === 'maybe' ? '?' : '');
-          const itemClass = status !== 'none' && !isShoppingMode ? 'is-done' : '';
+          html += '<div class="aisle-section">';
+          if (aisle) html += '<div class="aisle-header">📍 ' + escapeHtml(aisle) + '</div>';
 
-          html += '<div class="item ' + itemClass + '" data-id="' + item.id + '">';
-          html += '<div class="item-checkbox ' + checkboxClass + '" data-action="toggle" data-id="' + item.id + '">' + checkboxContent + '</div>';
-          html += '<div class="item-content" data-action="edit" data-id="' + item.id + '">';
-          html += '<div class="item-name">' + escapeHtml(item.name) + '</div>';
-          if (!isShoppingMode && item.aisle) {
-            html += '<div class="item-meta">' + escapeHtml(item.aisle) + '</div>';
-          }
-          html += '</div>';
-          html += '<button class="item-delete" data-action="delete" data-id="' + item.id + '" aria-label="Delete">×</button>';
+          aisleItems.forEach(item => {
+            const status = item.status || 'none';
+            const checkboxClass = status === 'checked' ? 'checked' : (status === 'maybe' ? 'maybe' : '');
+            const checkboxContent = status === 'checked' ? '✓' : (status === 'maybe' ? '?' : '');
+            const itemClass = status !== 'none' && !isShoppingMode ? 'is-done' : '';
+            const itemAccount = item.accountId ? getAccountById(item.accountId) : null;
+
+            html += '<div class="item ' + itemClass + '" data-id="' + item.id + '">';
+            html += '<div class="item-checkbox ' + checkboxClass + '" data-action="toggle" data-id="' + item.id + '">' + checkboxContent + '</div>';
+            html += '<div class="item-content" data-action="edit" data-id="' + item.id + '">';
+            
+            html += '<div class="item-name">' + escapeHtml(item.name);
+            if (item.couponType === 'free') {
+              html += ' <span class="item-tag free">FREE</span>';
+            } else if (item.couponType === 'coupon') {
+              html += ' <span class="item-tag coupon">COUPON</span>';
+            }
+            html += '</div>';
+
+            if (!isShoppingMode && item.aisle) {
+              html += '<div class="item-meta">' + escapeHtml(item.aisle) + '</div>';
+            }
+            
+            if (itemAccount) {
+              html += '<div class="item-account">👤 ' + escapeHtml(itemAccount.label || formatPhoneNumber(itemAccount.phone)) + '</div>';
+            }
+
+            html += '</div>';
+            html += '<button class="item-delete" data-action="delete" data-id="' + item.id + '">×</button>';
+            html += '</div>';
+          });
+
           html += '</div>';
         });
 
         html += '</div>';
       });
-
-      html += '</div>';
     });
 
     DOM.listContainer.innerHTML = html;
   }
 
-  function renderStoresRewardsList() {
+  function renderStoreList() {
+    DOM.storeList.innerHTML = state.stores.map(store => {
+      const activeClass = store === state.currentStore ? ' active' : '';
+      const canDelete = state.stores.length > 1;
+      
+      let html = '<div class="store-item' + activeClass + '">';
+      html += '<span class="store-item-name">' + escapeHtml(store);
+      if (store === state.currentStore) html += ' <span style="color:#40916c;font-size:0.8rem">(current)</span>';
+      html += '</span><div class="store-item-actions">';
+      html += '<button class="store-item-btn" data-action="select-store" data-store="' + escapeHtml(store) + '">Select</button>';
+      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '">✏️</button>';
+      if (canDelete) html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '">🗑️</button>';
+      html += '</div></div>';
+      return html;
+    }).join('');
+  }
+
+  function renderAccountsList() {
+    DOM.currentStoreName.textContent = state.currentStore;
+    const storeData = getCurrentStoreData();
+    const accounts = getCurrentAccounts();
+
     let html = '';
 
-    state.stores.forEach(store => {
-      const activeClass = store === state.currentStore ? ' active' : '';
-      const storeData = state.storeData[store] || { items: [], rewards: [] };
-      const rewards = storeData.rewards || [];
-      const canDelete = state.stores.length > 1;
+    // EBT Balance section
+    html += '<div class="account-section" style="background: #f3e8ff;">';
+    html += '<div class="account-section-header"><span class="account-section-title">💳 EBT Balance</span></div>';
+    html += '<div class="ebt-input-row">';
+    html += '<label>Balance: $</label>';
+    html += '<input type="number" step="0.01" min="0" id="ebt-balance-input" value="' + (storeData.ebtBalance || '') + '" placeholder="0.00">';
+    html += '<button type="button" id="btn-save-ebt">Save</button>';
+    html += '</div></div>';
 
-      html += '<div class="rewards-section">';
-      html += '<div class="rewards-section-header">';
-      html += '<span>🏪 ' + escapeHtml(store) + '</span>';
-      if (store === state.currentStore) {
-        html += ' <span style="color: #40916c; font-size: 0.8rem;">(current)</span>';
-      }
+    // Accounts
+    accounts.forEach((account, index) => {
+      html += '<div class="account-section">';
+      html += '<div class="account-section-header">';
+      html += '<div>';
+      html += '<div class="account-section-title">📱 ' + escapeHtml(account.label || 'Account ' + (index + 1)) + '</div>';
+      html += '<div class="account-section-phone">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
       html += '</div>';
+      html += '<div class="account-section-actions">';
+      html += '<button class="account-section-btn delete" data-action="delete-account" data-id="' + account.id + '">🗑️</button>';
+      html += '</div></div>';
 
-      // Store actions
-      html += '<div style="display: flex; gap: 8px; margin-bottom: 10px;">';
-      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '" style="background: #f0f0f0; flex: 1;">✏️ Rename</button>';
-      if (canDelete) {
-        html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '" style="background: #fee; flex: 1;">🗑️ Delete</button>';
-      }
-      html += '</div>';
-
-      // Rewards list
-      if (rewards.length > 0) {
-        html += '<div class="rewards-list">';
-        rewards.forEach((r, index) => {
-          const formatted = formatPhoneNumber(r.phone);
-          html += '<div class="rewards-item">';
-          html += '<div class="rewards-item-info">';
-          html += '<div class="rewards-item-phone">' + escapeHtml(formatted) + '</div>';
-          if (r.label) {
-            html += '<div class="rewards-item-label">' + escapeHtml(r.label) + '</div>';
-          }
+      // Coupons list
+      const coupons = account.coupons || [];
+      if (coupons.length > 0) {
+        html += '<div class="coupon-list">';
+        coupons.forEach((coupon, ci) => {
+          const badgeClass = coupon.type === 'free' ? 'free' : (coupon.type === 'threshold' ? 'threshold' : 'discount');
+          const badgeText = coupon.type === 'free' ? 'FREE' : (coupon.type === 'threshold' ? '$$ OFF' : 'COUPON');
+          
+          html += '<div class="coupon-entry">';
+          html += '<span class="coupon-entry-badge ' + badgeClass + '">' + badgeText + '</span>';
+          html += '<div class="coupon-entry-info">';
+          html += '<div class="coupon-entry-name">' + escapeHtml(coupon.name || coupon.description) + '</div>';
+          let detail = '';
+          if (coupon.value) detail += coupon.value;
+          if (coupon.minSpend) detail += (detail ? ' • ' : '') + 'Min $' + coupon.minSpend;
+          if (coupon.expires) detail += (detail ? ' • ' : '') + 'Exp: ' + coupon.expires;
+          if (detail) html += '<div class="coupon-entry-detail">' + escapeHtml(detail) + '</div>';
           html += '</div>';
-          html += '<button class="rewards-item-delete" data-action="delete-reward" data-store="' + escapeHtml(store) + '" data-index="' + index + '">×</button>';
+          html += '<button class="coupon-entry-delete" data-action="delete-coupon" data-account="' + account.id + '" data-index="' + ci + '">×</button>';
           html += '</div>';
         });
         html += '</div>';
       }
 
-      // Add reward form
-      html += '<div class="add-reward-form">';
+      // Add coupon form
+      html += '<div class="add-coupon-form">';
+      html += '<div class="form-group"><label>Coupon Type</label>';
+      html += '<select data-coupon-type-for="' + account.id + '">';
+      html += '<option value="free">🆓 Free Item</option>';
+      html += '<option value="discount">🏷️ Personal Coupon</option>';
+      html += '<option value="threshold">💰 Threshold ($X off $Y+)</option>';
+      html += '</select></div>';
+      html += '<div class="form-group"><label>Item / Description</label>';
+      html += '<input type="text" placeholder="e.g., Deli Turkey 1lb" data-coupon-name-for="' + account.id + '"></div>';
       html += '<div class="form-row">';
-      html += '<input type="tel" placeholder="Phone number" data-reward-phone="' + escapeHtml(store) + '">';
-      html += '<input type="text" placeholder="Label (optional)" data-reward-label="' + escapeHtml(store) + '" style="flex: 0.7;">';
+      html += '<div class="form-group"><label>Value (optional)</label>';
+      html += '<input type="text" placeholder="e.g., $2 off" data-coupon-value-for="' + account.id + '"></div>';
+      html += '<div class="form-group"><label>Min Spend</label>';
+      html += '<input type="number" placeholder="e.g., 90" data-coupon-min-for="' + account.id + '"></div>';
       html += '</div>';
-      html += '<button type="button" data-action="add-reward" data-store="' + escapeHtml(store) + '">+ Add Rewards #</button>';
-      html += '</div>';
-
-      html += '</div>';
+      html += '<div class="form-group"><label>Expires (optional)</label>';
+      html += '<input type="date" data-coupon-expires-for="' + account.id + '"></div>';
+      html += '<button type="button" data-action="add-coupon" data-account="' + account.id + '">+ Add Coupon</button>';
+      html += '</div></div>';
     });
 
-    DOM.storesRewardsList.innerHTML = html;
+    DOM.accountsList.innerHTML = html;
+
+    // Attach EBT save handler
+    const ebtInput = getEl('ebt-balance-input');
+    const btnSaveEbt = getEl('btn-save-ebt');
+    if (btnSaveEbt) {
+      btnSaveEbt.onclick = function() {
+        const val = ebtInput.value.trim();
+        getCurrentStoreData().ebtBalance = val ? parseFloat(val) : null;
+        save();
+        render();
+      };
+    }
   }
 
   function render() {
     updateStoreSelect();
+    updateAccountSelects();
     updateRewardsButton();
     updateRewardsPanel();
     updateModeButtons();
@@ -1738,9 +2217,6 @@
   function setCurrentStore(storeName) {
     if (state.stores.includes(storeName)) {
       state.currentStore = storeName;
-      if (!state.storeData[storeName]) {
-        state.storeData[storeName] = { items: [], rewards: [] };
-      }
       DOM.rewardsPanel.classList.remove('open');
       save();
       render();
@@ -1751,16 +2227,16 @@
     const trimmed = name.trim();
     if (!trimmed) return false;
     if (state.stores.includes(trimmed)) {
-      alert('A store with this name already exists.');
+      alert('Store already exists.');
       return false;
     }
 
     state.stores.push(trimmed);
-    state.storeData[trimmed] = { items: [], rewards: [] };
+    state.storeData[trimmed] = { items: [], accounts: [], ebtBalance: null };
     state.currentStore = trimmed;
     save();
     render();
-    renderStoresRewardsList();
+    renderStoreList();
     return true;
   }
 
@@ -1769,7 +2245,7 @@
     if (!trimmed) return false;
     if (trimmed === oldName) return true;
     if (state.stores.includes(trimmed)) {
-      alert('A store with this name already exists.');
+      alert('Store already exists.');
       return false;
     }
 
@@ -1780,25 +2256,21 @@
     state.storeData[trimmed] = state.storeData[oldName];
     delete state.storeData[oldName];
 
-    if (state.currentStore === oldName) {
-      state.currentStore = trimmed;
-    }
+    if (state.currentStore === oldName) state.currentStore = trimmed;
 
     save();
     render();
-    renderStoresRewardsList();
+    renderStoreList();
     return true;
   }
 
   function deleteStore(name) {
     if (state.stores.length <= 1) {
-      alert('You must have at least one store.');
+      alert('Must have at least one store.');
       return;
     }
 
-    if (!confirm('Delete "' + name + '" and all its items and rewards? This cannot be undone.')) {
-      return;
-    }
+    if (!confirm('Delete "' + name + '" and all its data?')) return;
 
     const index = state.stores.indexOf(name);
     if (index === -1) return;
@@ -1806,58 +2278,93 @@
     state.stores.splice(index, 1);
     delete state.storeData[name];
 
-    if (state.currentStore === name) {
-      state.currentStore = state.stores[0];
-    }
+    if (state.currentStore === name) state.currentStore = state.stores[0];
 
     save();
     render();
-    renderStoresRewardsList();
+    renderStoreList();
   }
 
-  function addReward(storeName, phone, label) {
-    const trimmedPhone = phone.trim();
-    if (!trimmedPhone) return false;
+  function addAccount(phone, label) {
+    const trimmed = phone.replace(/\D/g, '');
+    if (!trimmed) return false;
 
-    if (!state.storeData[storeName]) {
-      state.storeData[storeName] = { items: [], rewards: [] };
-    }
-    if (!state.storeData[storeName].rewards) {
-      state.storeData[storeName].rewards = [];
-    }
+    const account = {
+      id: generateId(),
+      phone: trimmed,
+      label: label.trim(),
+      coupons: []
+    };
 
-    state.storeData[storeName].rewards.push({
-      phone: trimmedPhone,
-      label: label.trim()
-    });
-
+    getCurrentAccounts().push(account);
     save();
     render();
-    renderStoresRewardsList();
+    renderAccountsList();
     return true;
   }
 
-  function deleteReward(storeName, index) {
-    if (!state.storeData[storeName] || !state.storeData[storeName].rewards) return;
+  function deleteAccount(accountId) {
+    const accounts = getCurrentAccounts();
+    const index = accounts.findIndex(a => a.id === accountId);
+    if (index === -1) return;
     
-    state.storeData[storeName].rewards.splice(index, 1);
+    if (!confirm('Delete this account and all its coupons?')) return;
+    
+    accounts.splice(index, 1);
+    
+    // Clear accountId from items
+    getCurrentItems().forEach(item => {
+      if (item.accountId === accountId) item.accountId = null;
+    });
+    
     save();
     render();
-    renderStoresRewardsList();
+    renderAccountsList();
   }
 
-  function addItem(name, department, aisle) {
+  function addCoupon(accountId, type, name, value, minSpend, expires) {
+    const account = getAccountById(accountId);
+    if (!account) return false;
+    if (!name.trim()) return false;
+
+    if (!account.coupons) account.coupons = [];
+    
+    account.coupons.push({
+      type: type,
+      name: name.trim(),
+      value: value.trim(),
+      minSpend: minSpend ? parseFloat(minSpend) : null,
+      expires: expires || null
+    });
+
+    save();
+    renderAccountsList();
+    updateRewardsPanel();
+    return true;
+  }
+
+  function deleteCoupon(accountId, couponIndex) {
+    const account = getAccountById(accountId);
+    if (!account || !account.coupons) return;
+    
+    account.coupons.splice(couponIndex, 1);
+    save();
+    renderAccountsList();
+    updateRewardsPanel();
+  }
+
+  function addItem(name, department, aisle, accountId, couponType) {
     const item = {
       id: generateId(),
       name: name.trim(),
       department: department.trim() || 'Other',
       aisle: aisle.trim(),
-      status: 'none'
+      status: 'none',
+      accountId: accountId || null,
+      couponType: couponType || ''
     };
 
-    const items = getCurrentItems();
-    items.push(item);
-    setCurrentItems(items);
+    getCurrentItems().push(item);
     save();
     render();
   }
@@ -1868,15 +2375,7 @@
     if (!item) return;
 
     const oldStatus = item.status || 'none';
-    
-    if (oldStatus === 'none') {
-      item.status = 'checked';
-    } else if (oldStatus === 'checked') {
-      item.status = 'maybe';
-    } else {
-      item.status = 'none';
-    }
-
+    item.status = oldStatus === 'none' ? 'checked' : (oldStatus === 'checked' ? 'maybe' : 'none');
     save();
 
     if (state.mode === 'shopping' && item.status === 'none') {
@@ -1892,22 +2391,23 @@
   }
 
   function deleteItem(id) {
-    let items = getCurrentItems();
-    items = items.filter(i => i.id !== id);
-    setCurrentItems(items);
+    const items = getCurrentItems();
+    const index = items.findIndex(i => i.id === id);
+    if (index !== -1) items.splice(index, 1);
     save();
     render();
     closeEditModal();
   }
 
-  function updateItem(id, name, department, aisle, status) {
-    const items = getCurrentItems();
-    const item = items.find(i => i.id === id);
+  function updateItem(id, name, department, aisle, accountId, couponType, status) {
+    const item = getCurrentItems().find(i => i.id === id);
     if (!item) return;
 
     item.name = name.trim() || item.name;
     item.department = department.trim() || 'Other';
     item.aisle = aisle.trim();
+    item.accountId = accountId || null;
+    item.couponType = couponType || '';
     item.status = status || 'none';
 
     save();
@@ -1915,8 +2415,7 @@
   }
 
   function clearSelection() {
-    const items = getCurrentItems();
-    items.forEach(item => { item.status = 'none'; });
+    getCurrentItems().forEach(item => { item.status = 'none'; });
     save();
     render();
   }
@@ -1925,20 +2424,21 @@
     DOM.inputName.value = '';
     DOM.inputDepartment.value = '';
     DOM.inputAisle.value = '';
+    DOM.inputAccount.value = '';
+    DOM.inputCouponType.value = '';
     updateClearButtons();
     updateQuickDepartments();
   }
 
   function exportData() {
-    const storeData = getCurrentStore();
-    const storeName = state.currentStore;
-
+    const storeData = getCurrentStoreData();
     const exportObj = {
-      version: 3,
+      version: 4,
       exportDate: new Date().toISOString(),
-      storeName: storeName,
-      items: storeData.items || [],
-      rewards: storeData.rewards || []
+      storeName: state.currentStore,
+      items: storeData.items,
+      accounts: storeData.accounts,
+      ebtBalance: storeData.ebtBalance
     };
 
     const json = JSON.stringify(exportObj, null, 2);
@@ -1948,8 +2448,7 @@
     const a = document.createElement('a');
     a.href = url;
     const date = new Date().toISOString().split('T')[0];
-    const filename = sanitizeFilename(storeName) + '-' + date + '.json';
-    a.download = filename;
+    a.download = sanitizeFilename(state.currentStore) + '-' + date + '.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1962,93 +2461,76 @@
     reader.onload = function(e) {
       try {
         const data = JSON.parse(e.target.result);
-        let items = [];
-        let rewards = [];
+        let items = [], accounts = [], ebtBalance = null;
         let storeName = data.storeName || 'Imported Store';
 
-        if (Array.isArray(data.items)) {
-          items = data.items;
-        } else if (Array.isArray(data)) {
-          items = data;
+        if (Array.isArray(data.items)) items = data.items;
+        else if (Array.isArray(data)) items = data;
+
+        if (Array.isArray(data.accounts)) accounts = data.accounts;
+        else if (Array.isArray(data.rewards)) {
+          accounts = data.rewards.map(r => ({
+            id: generateId(),
+            phone: r.phone,
+            label: r.label || '',
+            coupons: []
+          }));
         }
 
-        if (Array.isArray(data.rewards)) {
-          rewards = data.rewards;
-        }
+        if (data.ebtBalance !== undefined) ebtBalance = data.ebtBalance;
 
-        items = items.filter(item => 
-          item && typeof item.name === 'string' && item.name.trim()
-        ).map(item => ({
+        items = items.filter(item => item && item.name).map(item => ({
           id: item.id || generateId(),
           name: String(item.name).trim(),
           department: String(item.department || 'Other').trim(),
           aisle: String(item.aisle || '').trim(),
-          status: ['none', 'checked', 'maybe'].includes(item.status) ? item.status : 
-                  (item.checked ? 'checked' : 'none')
+          status: ['none','checked','maybe'].includes(item.status) ? item.status : (item.checked ? 'checked' : 'none'),
+          accountId: item.accountId || null,
+          couponType: item.couponType || ''
         }));
 
-        rewards = rewards.filter(r => r && r.phone).map(r => ({
-          phone: String(r.phone).trim(),
-          label: String(r.label || '').trim()
+        accounts = accounts.filter(a => a && a.phone).map(a => ({
+          id: a.id || generateId(),
+          phone: String(a.phone).replace(/\D/g, ''),
+          label: String(a.label || '').trim(),
+          coupons: Array.isArray(a.coupons) ? a.coupons : []
         }));
 
-        if (items.length === 0 && rewards.length === 0) {
-          alert('No valid data found in file.');
+        if (items.length === 0 && accounts.length === 0) {
+          alert('No valid data found.');
           return;
         }
 
         let targetStore = storeName;
-        const storeExists = state.stores.includes(storeName);
-
-        if (storeExists) {
-          const existingData = state.storeData[storeName];
-          const existingItems = existingData ? existingData.items.length : 0;
-          const existingRewards = existingData ? (existingData.rewards || []).length : 0;
-
-          const choice = confirm(
-            'Store "' + storeName + '" already exists with ' + existingItems + ' items and ' + existingRewards + ' rewards.\n\n' +
-            'OK = Replace with imported data\n' +
-            'Cancel = Create a new store\n\n' +
-            '(Your other stores are NOT affected either way)'
-          );
-
-          if (!choice) {
-            let counter = 2;
-            while (state.stores.includes(storeName + ' (' + counter + ')')) {
-              counter++;
-            }
-            targetStore = storeName + ' (' + counter + ')';
+        if (state.stores.includes(storeName)) {
+          if (!confirm('Replace data in "' + storeName + '"?\n\nCancel to create new store.')) {
+            let c = 2;
+            while (state.stores.includes(storeName + ' (' + c + ')')) c++;
+            targetStore = storeName + ' (' + c + ')';
           }
         }
 
-        if (!state.stores.includes(targetStore)) {
-          state.stores.push(targetStore);
-        }
-        state.storeData[targetStore] = { items: items, rewards: rewards };
+        if (!state.stores.includes(targetStore)) state.stores.push(targetStore);
+        state.storeData[targetStore] = { items, accounts, ebtBalance };
         state.currentStore = targetStore;
         state.mode = 'planning';
         
         save();
         render();
-        renderStoresRewardsList();
-
-        alert('Imported to "' + targetStore + '":\n• ' + items.length + ' items\n• ' + rewards.length + ' rewards numbers');
+        
+        alert('Imported to "' + targetStore + '":\n• ' + items.length + ' items\n• ' + accounts.length + ' accounts');
       } catch (err) {
-        alert('Could not read file. Please check the format.');
+        alert('Could not read file.');
       }
     };
 
-    reader.onerror = function() {
-      alert('Error reading file.');
-    };
-
+    reader.onerror = function() { alert('Error reading file.'); };
     reader.readAsText(file);
   }
 
   // === Edit Modal ===
   function openEditModal(id) {
-    const items = getCurrentItems();
-    const item = items.find(i => i.id === id);
+    const item = getCurrentItems().find(i => i.id === id);
     if (!item) return;
 
     editingItemId = id;
@@ -2057,6 +2539,8 @@
     DOM.editName.value = item.name;
     DOM.editDepartment.value = item.department;
     DOM.editAisle.value = item.aisle;
+    DOM.editAccount.value = item.accountId || '';
+    DOM.editCouponType.value = item.couponType || '';
     
     updateStatusToggle();
     
@@ -2081,18 +2565,16 @@
 
   function saveEdit() {
     if (!editingItemId) return;
-
     const name = DOM.editName.value.trim();
-    if (!name) {
-      DOM.editName.focus();
-      return;
-    }
+    if (!name) { DOM.editName.focus(); return; }
 
     updateItem(
       editingItemId,
       name,
       DOM.editDepartment.value,
       DOM.editAisle.value,
+      DOM.editAccount.value,
+      DOM.editCouponType.value,
       editingStatus
     );
 
@@ -2101,13 +2583,27 @@
 
   // === Settings Modal ===
   function openSettingsModal() {
-    renderStoresRewardsList();
+    renderStoreList();
+    renderAccountsList();
     DOM.newStoreName.value = '';
     DOM.settingsModal.classList.add('active');
+    switchSettingsTab('stores');
   }
 
   function closeSettingsModal() {
     DOM.settingsModal.classList.remove('active');
+  }
+
+  function switchSettingsTab(tab) {
+    currentSettingsTab = tab;
+    DOM.tabStores.style.display = tab === 'stores' ? 'block' : 'none';
+    DOM.tabAccounts.style.display = tab === 'accounts' ? 'block' : 'none';
+    
+    document.querySelectorAll('.settings-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === tab);
+    });
+    
+    if (tab === 'accounts') renderAccountsList();
   }
 
   // === Rename Modal ===
@@ -2126,47 +2622,33 @@
 
   function saveRename() {
     if (!renamingStore) return;
-    const newName = DOM.renameStoreInput.value.trim();
-    if (newName && renameStore(renamingStore, newName)) {
+    if (renameStore(renamingStore, DOM.renameStoreInput.value)) {
       closeRenameModal();
     }
   }
 
   // === Event Handlers ===
-  DOM.btnPlanning.addEventListener('click', function() { setMode('planning'); });
-  DOM.btnShopping.addEventListener('click', function() { setMode('shopping'); });
+  DOM.btnPlanning.addEventListener('click', () => setMode('planning'));
+  DOM.btnShopping.addEventListener('click', () => setMode('shopping'));
   DOM.btnSettings.addEventListener('click', openSettingsModal);
 
-  DOM.btnRewards.addEventListener('click', function() {
-    DOM.rewardsPanel.classList.toggle('open');
-  });
-
-  DOM.rewardsPanelClose.addEventListener('click', function() {
-    DOM.rewardsPanel.classList.remove('open');
-  });
+  DOM.btnRewards.addEventListener('click', () => DOM.rewardsPanel.classList.toggle('open'));
+  DOM.rewardsPanelClose.addEventListener('click', () => DOM.rewardsPanel.classList.remove('open'));
 
   DOM.rewardsDisplay.addEventListener('click', function(e) {
-    if (e.target.classList.contains('reward-phone-copy')) {
-      const phone = e.target.dataset.phone;
-      if (phone) copyToClipboard(phone);
-    }
-    if (e.target.id === 'link-add-rewards') {
-      e.preventDefault();
-      DOM.rewardsPanel.classList.remove('open');
-      openSettingsModal();
+    if (e.target.classList.contains('account-copy-btn')) {
+      copyToClipboard(e.target.dataset.phone);
     }
   });
 
-  DOM.storeSelect.addEventListener('change', function() {
-    setCurrentStore(this.value);
-  });
+  DOM.storeSelect.addEventListener('change', function() { setCurrentStore(this.value); });
 
   DOM.addForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const name = DOM.inputName.value.trim();
     if (!name) return;
 
-    addItem(name, DOM.inputDepartment.value, DOM.inputAisle.value);
+    addItem(name, DOM.inputDepartment.value, DOM.inputAisle.value, DOM.inputAccount.value, DOM.inputCouponType.value);
     clearForm();
     DOM.inputName.focus();
   });
@@ -2179,214 +2661,133 @@
     }
   });
 
-  DOM.clearDept.addEventListener('click', function() {
-    DOM.inputDepartment.value = '';
-    updateClearButtons();
-    updateQuickDepartments();
-    DOM.inputDepartment.focus();
-  });
-
-  DOM.clearAisle.addEventListener('click', function() {
-    DOM.inputAisle.value = '';
-    updateClearButtons();
-    DOM.inputAisle.focus();
-  });
-
-  DOM.inputDepartment.addEventListener('input', function() {
-    updateClearButtons();
-    updateQuickDepartments();
-  });
-
+  DOM.clearDept.addEventListener('click', () => { DOM.inputDepartment.value = ''; updateClearButtons(); updateQuickDepartments(); });
+  DOM.clearAisle.addEventListener('click', () => { DOM.inputAisle.value = ''; updateClearButtons(); });
+  DOM.inputDepartment.addEventListener('input', () => { updateClearButtons(); updateQuickDepartments(); });
   DOM.inputAisle.addEventListener('input', updateClearButtons);
 
   DOM.btnClear.addEventListener('click', function() {
-    const items = getCurrentItems();
-    if (items.filter(i => i.status !== 'none').length === 0) return;
-
-    const msg = state.mode === 'shopping'
-      ? 'Clear all selections and finish shopping?'
-      : 'Clear all selected items?';
-
-    if (confirm(msg)) clearSelection();
+    if (getCurrentItems().filter(i => i.status !== 'none').length === 0) return;
+    if (confirm('Clear all selections?')) clearSelection();
   });
 
   DOM.listContainer.addEventListener('click', function(e) {
-    const target = e.target;
-    const action = target.dataset.action;
-    const id = target.dataset.id;
-
+    const action = e.target.dataset.action;
+    const id = e.target.dataset.id;
     if (!action || !id) return;
 
-    if (action === 'toggle') {
-      cycleItemStatus(id);
-    } else if (action === 'edit') {
-      openEditModal(id);
-    } else if (action === 'delete') {
-      if (confirm('Delete this item?')) deleteItem(id);
-    }
+    if (action === 'toggle') cycleItemStatus(id);
+    else if (action === 'edit') openEditModal(id);
+    else if (action === 'delete' && confirm('Delete?')) deleteItem(id);
   });
 
   DOM.btnExport.addEventListener('click', exportData);
-  DOM.btnImport.addEventListener('click', function() { DOM.fileInput.click(); });
-
+  DOM.btnImport.addEventListener('click', () => DOM.fileInput.click());
   DOM.fileInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) importData(file);
+    if (e.target.files[0]) importData(e.target.files[0]);
     e.target.value = '';
   });
 
   // Edit Modal
-  DOM.editModal.addEventListener('click', function(e) {
-    if (e.target === DOM.editModal) closeEditModal();
-  });
-
+  DOM.editModal.addEventListener('click', e => { if (e.target === DOM.editModal) closeEditModal(); });
   DOM.statusToggle.addEventListener('click', function(e) {
-    const option = e.target.closest('.status-option');
-    if (option) {
-      editingStatus = option.dataset.status;
-      updateStatusToggle();
-    }
+    const opt = e.target.closest('.status-option');
+    if (opt) { editingStatus = opt.dataset.status; updateStatusToggle(); }
   });
-
   DOM.btnEditCancel.addEventListener('click', closeEditModal);
   DOM.btnEditSave.addEventListener('click', saveEdit);
-
-  DOM.btnEditDelete.addEventListener('click', function() {
-    if (editingItemId && confirm('Delete this item permanently?')) {
-      deleteItem(editingItemId);
-    }
-  });
-
-  DOM.editModal.addEventListener('keydown', function(e) {
+  DOM.btnEditDelete.addEventListener('click', () => { if (editingItemId && confirm('Delete?')) deleteItem(editingItemId); });
+  DOM.editModal.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveEdit(); }
     else if (e.key === 'Escape') closeEditModal();
   });
 
   // Settings Modal
-  DOM.settingsModal.addEventListener('click', function(e) {
-    if (e.target === DOM.settingsModal) closeSettingsModal();
-  });
-
+  DOM.settingsModal.addEventListener('click', e => { if (e.target === DOM.settingsModal) closeSettingsModal(); });
   DOM.btnSettingsClose.addEventListener('click', closeSettingsModal);
 
-  DOM.btnAddStore.addEventListener('click', function() {
-    if (addStore(DOM.newStoreName.value)) {
-      DOM.newStoreName.value = '';
+  document.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
+  });
+
+  DOM.btnAddStore.addEventListener('click', () => {
+    if (addStore(DOM.newStoreName.value)) DOM.newStoreName.value = '';
+  });
+  DOM.newStoreName.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); if (addStore(DOM.newStoreName.value)) DOM.newStoreName.value = ''; }
+  });
+
+  DOM.storeList.addEventListener('click', function(e) {
+    const action = e.target.dataset.action;
+    const store = e.target.dataset.store;
+    if (action === 'select-store') setCurrentStore(store);
+    else if (action === 'rename') openRenameModal(store);
+    else if (action === 'delete-store') deleteStore(store);
+  });
+
+  DOM.btnAddAccount.addEventListener('click', () => {
+    if (addAccount(DOM.newAccountPhone.value, DOM.newAccountLabel.value)) {
+      DOM.newAccountPhone.value = '';
+      DOM.newAccountLabel.value = '';
     }
   });
 
-  DOM.newStoreName.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (addStore(DOM.newStoreName.value)) {
-        DOM.newStoreName.value = '';
-      }
-    }
-  });
-
-  DOM.storesRewardsList.addEventListener('click', function(e) {
-    const target = e.target;
-    const action = target.dataset.action;
-    const store = target.dataset.store;
-
-    if (action === 'rename' && store) {
-      openRenameModal(store);
-    } else if (action === 'delete-store' && store) {
-      deleteStore(store);
-    } else if (action === 'delete-reward') {
-      const index = parseInt(target.dataset.index, 10);
-      if (store && !isNaN(index)) {
-        deleteReward(store, index);
-      }
-    } else if (action === 'add-reward' && store) {
-      const phoneInput = DOM.storesRewardsList.querySelector('[data-reward-phone="' + store + '"]');
-      const labelInput = DOM.storesRewardsList.querySelector('[data-reward-label="' + store + '"]');
-      if (phoneInput && labelInput) {
-        if (addReward(store, phoneInput.value, labelInput.value)) {
-          phoneInput.value = '';
-          labelInput.value = '';
-        }
-      }
-    }
-  });
-
-  DOM.storesRewardsList.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      const target = e.target;
-      if (target.dataset.rewardPhone || target.dataset.rewardLabel) {
-        e.preventDefault();
-        const store = target.dataset.rewardPhone || target.dataset.rewardLabel;
-        const phoneInput = DOM.storesRewardsList.querySelector('[data-reward-phone="' + store + '"]');
-        const labelInput = DOM.storesRewardsList.querySelector('[data-reward-label="' + store + '"]');
-        if (phoneInput && labelInput && phoneInput.value.trim()) {
-          if (addReward(store, phoneInput.value, labelInput.value)) {
-            phoneInput.value = '';
-            labelInput.value = '';
-          }
-        }
+  DOM.accountsList.addEventListener('click', function(e) {
+    const action = e.target.dataset.action;
+    
+    if (action === 'delete-account') {
+      deleteAccount(e.target.dataset.id);
+    } else if (action === 'delete-coupon') {
+      deleteCoupon(e.target.dataset.account, parseInt(e.target.dataset.index));
+    } else if (action === 'add-coupon') {
+      const accId = e.target.dataset.account;
+      const type = DOM.accountsList.querySelector('[data-coupon-type-for="' + accId + '"]').value;
+      const name = DOM.accountsList.querySelector('[data-coupon-name-for="' + accId + '"]');
+      const value = DOM.accountsList.querySelector('[data-coupon-value-for="' + accId + '"]');
+      const min = DOM.accountsList.querySelector('[data-coupon-min-for="' + accId + '"]');
+      const exp = DOM.accountsList.querySelector('[data-coupon-expires-for="' + accId + '"]');
+      
+      if (addCoupon(accId, type, name.value, value.value, min.value, exp.value)) {
+        name.value = '';
+        value.value = '';
+        min.value = '';
+        exp.value = '';
       }
     }
   });
 
   // Rename Modal
-  DOM.renameModal.addEventListener('click', function(e) {
-    if (e.target === DOM.renameModal) closeRenameModal();
-  });
-
+  DOM.renameModal.addEventListener('click', e => { if (e.target === DOM.renameModal) closeRenameModal(); });
   DOM.btnRenameCancel.addEventListener('click', closeRenameModal);
   DOM.btnRenameSave.addEventListener('click', saveRename);
-
-  DOM.renameModal.addEventListener('keydown', function(e) {
+  DOM.renameModal.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveRename(); }
     else if (e.key === 'Escape') closeRenameModal();
   });
 
-  // === Initialize ===
-  load();
-  render();
   // === PWA Service Worker ===
   if ('serviceWorker' in navigator) {
     const swCode = `
-      const CACHE_NAME = 'grocery-v3';
+      const CACHE_NAME = 'grocery-v4';
       const ASSETS = [self.location.href];
-      
       self.addEventListener('install', e => {
-        e.waitUntil(
-          caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(ASSETS))
-            .then(() => self.skipWaiting())
-        );
+        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
       });
-      
       self.addEventListener('activate', e => {
-        e.waitUntil(
-          caches.keys().then(keys => 
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-          ).then(() => self.clients.claim())
-        );
+        e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim()));
       });
-      
       self.addEventListener('fetch', e => {
-        e.respondWith(
-          caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(self.location.href)))
-        );
+        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(self.location.href))));
       });
     `;
-    
     const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(swBlob);
-    
-    navigator.serviceWorker.register(swUrl).then(reg => {
-      reg.onupdatefound = () => {
-        const newWorker = reg.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'activated') {
-            URL.revokeObjectURL(swUrl);
-          }
-        };
-      };
-    }).catch(() => {});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
   }
+
+  // === Initialize ===
+  load();
+  render();
+
 })();
 </script>
 
