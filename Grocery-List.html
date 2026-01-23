@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+    <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Grocery%20List%22%2C%22short_name%22%3A%22Groceries%22%2C%22description%22%3A%22Smart%20grocery%20shopping%20list%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f0f4f0%22%2C%22theme_color%22%3A%22%232d6a4f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520100%2520100%27%253E%253Crect%2520fill%3D%27%25232d6a4f%27%2520width%3D%27100%27%2520height%3D%27100%27%2520rx%3D%2720%27%2F%253E%253Cpath%2520fill%3D%27white%27%2520d%3D%27M25%252028a3%25203%25200%25200%25201%25203-3h4a3%25203%25200%25200%25201%25202.9%25202.2L37%252032h38a3%25203%25200%25200%25201%25202.9%25203.8l-6%252024A3%25203%25200%25200%25201%252069%252062H41a3%25203%25200%25200%25201-2.9-2.2L28.2%252031H28a3%25203%25200%25200%25201-3-3zm17%252044a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10zm24%25200a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <meta name="theme-color" content="#2d6a4f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Groceries">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232d6a4f' width='100' height='100' rx='20'/><path fill='white' d='M25 28a3 3 0 0 1 3-3h4a3 3 0 0 1 2.9 2.2L37 32h38a3 3 0 0 1 2.9 3.8l-6 24A3 3 0 0 1 69 62H41a3 3 0 0 1-2.9-2.2L28.2 31H28a3 3 0 0 1-3-3zm17 44a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm24 0a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'/></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Grocery List</title>
   <style>
@@ -2338,7 +2344,49 @@
   // === Initialize ===
   load();
   render();
-
+  // === PWA Service Worker ===
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE_NAME = 'grocery-v3';
+      const ASSETS = [self.location.href];
+      
+      self.addEventListener('install', e => {
+        e.waitUntil(
+          caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(ASSETS))
+            .then(() => self.skipWaiting())
+        );
+      });
+      
+      self.addEventListener('activate', e => {
+        e.waitUntil(
+          caches.keys().then(keys => 
+            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+          ).then(() => self.clients.claim())
+        );
+      });
+      
+      self.addEventListener('fetch', e => {
+        e.respondWith(
+          caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(self.location.href)))
+        );
+      });
+    `;
+    
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+    
+    navigator.serviceWorker.register(swUrl).then(reg => {
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'activated') {
+            URL.revokeObjectURL(swUrl);
+          }
+        };
+      };
+    }).catch(() => {});
+  }
 })();
 </script>
 
