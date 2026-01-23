@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Grocery List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #f0f4f0;
+      min-height: 100vh;
+      color: #1a1a1a;
+      padding-bottom: 100px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .settings-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .settings-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .store-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+    }
+
+    .store-selector label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .store-selector select {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      background: white;
+      color: #2d6a4f;
+      cursor: pointer;
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-btn.active {
+      background: white;
+      color: #2d6a4f;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .add-form {
+      background: white;
+      padding: 16px;
+      margin: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-row .input-wrapper {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+    }
+
+    .form-row input {
+      width: 100%;
+    }
+
+    .add-form input {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .add-form input:focus {
+      outline: none;
+      border-color: #40916c;
+      box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
+    }
+
+    .add-form input::placeholder {
+      color: #999;
+    }
+
+    .clear-field-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(calc(-50% - 5px));
+      background: #ddd;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      color: #666;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-field-btn.visible {
+      display: flex;
+    }
+
+    .clear-field-btn:hover {
+      background: #ccc;
+    }
+
+    .add-form button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .add-form button[type="submit"]:active {
+      transform: scale(0.98);
+    }
+
+    .quick-dept {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-top: 4px;
+    }
+
+    .quick-dept-btn {
+      padding: 6px 12px;
+      background: #f0f4f0;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #555;
+    }
+
+    .quick-dept-btn:hover {
+      background: #e8f5e9;
+      border-color: #40916c;
+      color: #2d6a4f;
+    }
+
+    .quick-dept-btn.active {
+      background: #40916c;
+      border-color: #40916c;
+      color: white;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      margin: 0 16px 8px;
+      background: #e8f5e9;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #2d6a4f;
+    }
+
+    .stats-bar .count {
+      font-weight: 600;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      padding: 8px 16px;
+      margin: 0 16px 8px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .legend-icon.check {
+      background: #40916c;
+      color: white;
+    }
+
+    .legend-icon.maybe {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .department-group {
+      margin: 0 16px 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .department-header {
+      background: linear-gradient(135deg, #40916c 0%, #52b788 100%);
+      color: white;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .aisle-section {
+      background: white;
+    }
+
+    .aisle-header {
+      padding: 10px 18px;
+      background: #f8fdf8;
+      font-size: 0.82rem;
+      color: #666;
+      font-weight: 500;
+      border-bottom: 1px solid #eef5ee;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      background: white;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s, opacity 0.3s, transform 0.3s;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item.checked-off {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+
+    .item-checkbox {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .item-checkbox.checked {
+      background: #40916c;
+      border-color: #40916c;
+      color: white;
+    }
+
+    .item-checkbox.maybe {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: white;
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .item-name {
+      font-size: 1rem;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .item.is-done .item-name {
+      color: #888;
+      text-decoration: line-through;
+    }
+
+    .item-meta {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .item-delete {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px;
+      margin: -8px;
+      margin-left: 8px;
+      border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .item-delete:hover {
+      color: #e74c3c;
+      background: rgba(231,76,60,0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 30px;
+      color: #888;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 10px;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    .footer-btn {
+      flex: 1;
+      padding: 14px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background: white;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer-btn:hover {
+      border-color: #40916c;
+      color: #40916c;
+    }
+
+    .footer-btn:active {
+      background: #f8fdf8;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    /* Modal Base Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      transform: scale(0.9);
+      transition: transform 0.2s;
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      color: #2d6a4f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .modal input[type="text"]:focus {
+      outline: none;
+      border-color: #40916c;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-save {
+      background: #40916c;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #e74c3c;
+      color: white;
+    }
+
+    /* Status Toggle in Edit Modal */
+    .status-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .status-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .status-option:hover {
+      border-color: #ccc;
+    }
+
+    .status-option.active-none {
+      border-color: #666;
+      background: #f5f5f5;
+    }
+
+    .status-option.active-checked {
+      border-color: #40916c;
+      background: #e8f5e9;
+    }
+
+    .status-option.active-maybe {
+      border-color: #f59e0b;
+      background: #fef3c7;
+    }
+
+    .status-option-icon {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .status-option-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Settings Modal */
+    .store-list {
+      margin-bottom: 16px;
+    }
+
+    .store-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .store-item.active {
+      background: #e8f5e9;
+      border: 2px solid #40916c;
+    }
+
+    .store-item-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .store-item-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .store-item-btn {
+      background: none;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .store-item-btn:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    .store-item-btn.delete:hover {
+      background: rgba(231,76,60,0.2);
+    }
+
+    .add-store-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-store-form input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .add-store-form button {
+      padding: 14px 20px;
+      background: #40916c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .settings-section {
+      margin-bottom: 24px;
+    }
+
+    .settings-section h4 {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .shopping-tip {
+      text-align: center;
+      padding: 16px;
+      margin: 16px;
+      background: #fff3cd;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #856404;
+    }
+
+    .tap-hint {
+      font-size: 0.75rem;
+      color: #888;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 400px) {
+      .mode-btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+      }
+
+      .footer-btn {
+        padding: 12px 8px;
+        font-size: 0.8rem;
+      }
+
+      .quick-dept-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <h1>🛒 Grocery List</h1>
+    <div class="header-actions">
+      <button class="settings-btn" id="btn-settings" title="Settings">⚙️</button>
+    </div>
+  </div>
+  
+  <div class="store-selector">
+    <label>📍 Store:</label>
+    <select id="store-select"></select>
+  </div>
+  
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-planning">
+      <span>📝</span> Planning
+    </button>
+    <button class="mode-btn" id="btn-shopping">
+      <span>🛍️</span> Shopping
+    </button>
+  </div>
+</header>
+
+<main id="main-content">
+  <form class="add-form" id="add-form">
+    <input type="text" id="input-name" placeholder="Item name..." autocomplete="off" required>
+    
+    <div class="quick-dept" id="quick-dept"></div>
+    
+    <div class="form-row">
+      <div class="input-wrapper">
+        <input type="text" id="input-department" placeholder="Department" list="list-departments" autocomplete="off">
+        <button type="button" class="clear-field-btn" id="clear-dept" title="Clear to see all options">×</button>
+      </div>
+      <div class="input-wrapper">
+        <input type="text" id="input-aisle" placeholder="Aisle/Area" list="list-aisles" autocomplete="off">
+        <button type="button" class="clear-field-btn" id="clear-aisle" title="Clear to see all options">×</button>
+      </div>
+    </div>
+    <button type="submit">+ Add Item</button>
+    <p class="tap-hint">Tap item circle to cycle: none → ✓ buy → ? maybe</p>
+    <datalist id="list-departments"></datalist>
+    <datalist id="list-aisles"></datalist>
+  </form>
+
+  <div class="stats-bar" id="stats-bar" style="display: none;">
+    <span class="count" id="stats-text"></span>
+    <button class="clear-btn" id="btn-clear">Clear All ✕</button>
+  </div>
+
+  <div class="legend" id="legend" style="display: none;">
+    <div class="legend-item">
+      <div class="legend-icon check">✓</div>
+      <span>Buy</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-icon maybe">?</div>
+      <span>Maybe/Check</span>
+    </div>
+  </div>
+
+  <div id="list-container"></div>
+</main>
+
+<footer class="footer">
+  <button class="footer-btn" id="btn-export">
+    <span>📤</span> Export
+  </button>
+  <button class="footer-btn" id="btn-import">
+    <span>📥</span> Import
+  </button>
+</footer>
+
+<input type="file" id="file-input" accept=".json,application/json">
+
+<!-- Edit Item Modal -->
+<div class="modal" id="edit-modal">
+  <div class="modal-content">
+    <h3>✏️ Edit Item</h3>
+    <input type="text" id="edit-name" placeholder="Item name">
+    <input type="text" id="edit-department" placeholder="Department" list="list-departments">
+    <input type="text" id="edit-aisle" placeholder="Aisle/Area" list="list-aisles">
+    
+    <div class="status-toggle" id="status-toggle">
+      <div class="status-option" data-status="none">
+        <div class="status-option-icon">○</div>
+        <div class="status-option-label">None</div>
+      </div>
+      <div class="status-option" data-status="checked">
+        <div class="status-option-icon">✓</div>
+        <div class="status-option-label">Buy</div>
+      </div>
+      <div class="status-option" data-status="maybe">
+        <div class="status-option-icon">?</div>
+        <div class="status-option-label">Maybe</div>
+      </div>
+    </div>
+    
+    <div class="modal-buttons">
+      <button type="button" class="btn-delete" id="btn-edit-delete">Delete</button>
+      <button type="button" class="btn-cancel" id="btn-edit-cancel">Cancel</button>
+      <button type="button" class="btn-save" id="btn-edit-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal" id="settings-modal">
+  <div class="modal-content">
+    <h3>⚙️ Settings</h3>
+    
+    <div class="settings-section">
+      <h4>Manage Stores</h4>
+      <div class="store-list" id="store-list"></div>
+      <div class="add-store-form">
+        <input type="text" id="new-store-name" placeholder="New store name...">
+        <button type="button" id="btn-add-store">Add</button>
+      </div>
+    </div>
+    
+    <div class="modal-buttons">
+      <button type="button" class="btn-save" id="btn-settings-close" style="flex: 1;">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Store Modal -->
+<div class="modal" id="rename-modal">
+  <div class="modal-content">
+    <h3>✏️ Rename Store</h3>
+    <input type="text" id="rename-store-input" placeholder="Store name">
+    <div class="modal-buttons">
+      <button type="button" class="btn-cancel" id="btn-rename-cancel">Cancel</button>
+      <button type="button" class="btn-save" id="btn-rename-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // === Configuration ===
+  const STORAGE_KEY = 'grocery_app_v2';
+  const DEFAULT_DEPARTMENTS = [
+    'Produce', 'Dairy', 'Meat', 'Seafood', 'Bakery', 'Deli',
+    'Frozen', 'Canned Goods', 'Pasta & Grains', 'Condiments',
+    'Snacks', 'Beverages', 'Breakfast', 'Household', 'Personal Care', 'Other'
+  ];
+
+  // === State ===
+  let state = {
+    stores: ['My Store'],
+    currentStore: 'My Store',
+    storeData: {
+      'My Store': { items: [] }
+    },
+    mode: 'planning'
+  };
+
+  let editingItemId = null;
+  let editingStatus = 'none';
+  let renamingStore = null;
+
+  // === DOM References ===
+  function getEl(id) {
+    return document.getElementById(id);
+  }
+
+  const DOM = {
+    btnPlanning: getEl('btn-planning'),
+    btnShopping: getEl('btn-shopping'),
+    btnSettings: getEl('btn-settings'),
+    storeSelect: getEl('store-select'),
+    addForm: getEl('add-form'),
+    inputName: getEl('input-name'),
+    inputDepartment: getEl('input-department'),
+    inputAisle: getEl('input-aisle'),
+    clearDept: getEl('clear-dept'),
+    clearAisle: getEl('clear-aisle'),
+    quickDept: getEl('quick-dept'),
+    listDepartments: getEl('list-departments'),
+    listAisles: getEl('list-aisles'),
+    statsBar: getEl('stats-bar'),
+    statsText: getEl('stats-text'),
+    btnClear: getEl('btn-clear'),
+    legend: getEl('legend'),
+    listContainer: getEl('list-container'),
+    btnExport: getEl('btn-export'),
+    btnImport: getEl('btn-import'),
+    fileInput: getEl('file-input'),
+    // Edit Modal
+    editModal: getEl('edit-modal'),
+    editName: getEl('edit-name'),
+    editDepartment: getEl('edit-department'),
+    editAisle: getEl('edit-aisle'),
+    statusToggle: getEl('status-toggle'),
+    btnEditDelete: getEl('btn-edit-delete'),
+    btnEditCancel: getEl('btn-edit-cancel'),
+    btnEditSave: getEl('btn-edit-save'),
+    // Settings Modal
+    settingsModal: getEl('settings-modal'),
+    storeList: getEl('store-list'),
+    newStoreName: getEl('new-store-name'),
+    btnAddStore: getEl('btn-add-store'),
+    btnSettingsClose: getEl('btn-settings-close'),
+    // Rename Modal
+    renameModal: getEl('rename-modal'),
+    renameStoreInput: getEl('rename-store-input'),
+    btnRenameCancel: getEl('btn-rename-cancel'),
+    btnRenameSave: getEl('btn-rename-save')
+  };
+
+  // === Utilities ===
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
+  function sanitizeFilename(name) {
+    return name.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_');
+  }
+
+  function getCurrentItems() {
+    const store = state.storeData[state.currentStore];
+    return store ? store.items : [];
+  }
+
+  function setCurrentItems(items) {
+    if (!state.storeData[state.currentStore]) {
+      state.storeData[state.currentStore] = { items: [] };
+    }
+    state.storeData[state.currentStore].items = items;
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      // Fail silently
+    }
+  }
+
+  function load() {
+    try {
+      // Try new format first
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (parsed.stores && parsed.storeData) {
+          state = {
+            stores: parsed.stores || ['My Store'],
+            currentStore: parsed.currentStore || parsed.stores[0] || 'My Store',
+            storeData: parsed.storeData || { 'My Store': { items: [] } },
+            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
+          };
+          // Ensure current store exists
+          if (!state.stores.includes(state.currentStore)) {
+            state.currentStore = state.stores[0] || 'My Store';
+          }
+          if (!state.storeData[state.currentStore]) {
+            state.storeData[state.currentStore] = { items: [] };
+          }
+          return;
+        }
+      }
+
+      // Try migrating from v1 format
+      const oldData = localStorage.getItem('grocery_app_v1');
+      if (oldData) {
+        const parsed = JSON.parse(oldData);
+        if (Array.isArray(parsed.items)) {
+          state = {
+            stores: ['My Store'],
+            currentStore: 'My Store',
+            storeData: {
+              'My Store': { 
+                items: parsed.items.map(item => ({
+                  ...item,
+                  status: item.checked ? 'checked' : 'none'
+                }))
+              }
+            },
+            mode: parsed.mode === 'shopping' ? 'shopping' : 'planning'
+          };
+          save();
+          return;
+        }
+      }
+    } catch (e) {
+      // Fail silently, use defaults
+    }
+  }
+
+  function getUniqueDepartments() {
+    const items = getCurrentItems();
+    const used = items.map(i => i.department).filter(Boolean);
+    const all = [...new Set([...DEFAULT_DEPARTMENTS, ...used])];
+    return all.sort((a, b) => a.localeCompare(b));
+  }
+
+  function getUniqueAisles() {
+    const items = getCurrentItems();
+    const aisles = items.map(i => i.aisle).filter(Boolean);
+    return [...new Set(aisles)].sort((a, b) => a.localeCompare(b));
+  }
+
+  function getFrequentDepartments() {
+    const items = getCurrentItems();
+    const counts = {};
+    items.forEach(item => {
+      if (item.department) {
+        counts[item.department] = (counts[item.department] || 0) + 1;
+      }
+    });
+
+    const sorted = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(e => e[0])
+      .slice(0, 6);
+
+    if (sorted.length < 6) {
+      const defaults = ['Produce', 'Dairy', 'Meat', 'Frozen', 'Bakery', 'Deli'];
+      for (const d of defaults) {
+        if (!sorted.includes(d) && sorted.length < 6) {
+          sorted.push(d);
+        }
+      }
+    }
+
+    return sorted;
+  }
+
+  // === Rendering ===
+  function updateStoreSelect() {
+    DOM.storeSelect.innerHTML = state.stores.map(store => {
+      const selected = store === state.currentStore ? ' selected' : '';
+      return '<option value="' + escapeHtml(store) + '"' + selected + '>' + escapeHtml(store) + '</option>';
+    }).join('');
+  }
+
+  function updateDatalists() {
+    DOM.listDepartments.innerHTML = getUniqueDepartments()
+      .map(d => '<option value="' + escapeHtml(d) + '">').join('');
+    DOM.listAisles.innerHTML = getUniqueAisles()
+      .map(a => '<option value="' + escapeHtml(a) + '">').join('');
+  }
+
+  function updateQuickDepartments() {
+    const frequent = getFrequentDepartments();
+    const currentDept = DOM.inputDepartment.value.trim();
+
+    DOM.quickDept.innerHTML = frequent.map(dept => {
+      const activeClass = dept === currentDept ? ' active' : '';
+      return '<button type="button" class="quick-dept-btn' + activeClass + '" data-dept="' + escapeHtml(dept) + '">' + escapeHtml(dept) + '</button>';
+    }).join('');
+  }
+
+  function updateClearButtons() {
+    DOM.clearDept.classList.toggle('visible', DOM.inputDepartment.value.length > 0);
+    DOM.clearAisle.classList.toggle('visible', DOM.inputAisle.value.length > 0);
+  }
+
+  function updateModeButtons() {
+    DOM.btnPlanning.classList.toggle('active', state.mode === 'planning');
+    DOM.btnShopping.classList.toggle('active', state.mode === 'shopping');
+    DOM.addForm.style.display = state.mode === 'planning' ? 'block' : 'none';
+  }
+
+  function updateStats() {
+    const items = getCurrentItems();
+    const total = items.length;
+    const checked = items.filter(i => i.status === 'checked').length;
+    const maybe = items.filter(i => i.status === 'maybe').length;
+    const selected = checked + maybe;
+
+    if (total === 0) {
+      DOM.statsBar.style.display = 'none';
+      DOM.legend.style.display = 'none';
+      return;
+    }
+
+    DOM.statsBar.style.display = 'flex';
+    
+    // Show legend only if there are maybe items
+    DOM.legend.style.display = maybe > 0 ? 'flex' : 'none';
+
+    if (state.mode === 'shopping') {
+      let text = checked + ' to buy';
+      if (maybe > 0) text += ', ' + maybe + ' to check';
+      DOM.statsText.textContent = text;
+      DOM.btnClear.textContent = 'Done Shopping';
+    } else {
+      DOM.statsText.textContent = selected + ' of ' + total + ' selected';
+      DOM.btnClear.textContent = 'Clear Selection';
+    }
+  }
+
+  function groupItems(items) {
+    const groups = {};
+
+    items.forEach(item => {
+      const dept = item.department || 'Other';
+      const aisle = item.aisle || '';
+
+      if (!groups[dept]) {
+        groups[dept] = {};
+      }
+      if (!groups[dept][aisle]) {
+        groups[dept][aisle] = [];
+      }
+      groups[dept][aisle].push(item);
+    });
+
+    return groups;
+  }
+
+  function renderList() {
+    const allItems = getCurrentItems();
+    const isShoppingMode = state.mode === 'shopping';
+    const items = isShoppingMode
+      ? allItems.filter(i => i.status === 'checked' || i.status === 'maybe')
+      : allItems;
+
+    if (items.length === 0) {
+      if (isShoppingMode) {
+        const hasSelected = allItems.some(i => i.status === 'checked' || i.status === 'maybe');
+        if (!hasSelected && allItems.length > 0) {
+          DOM.listContainer.innerHTML = 
+            '<div class="shopping-tip">💡 Switch to Planning mode and select items for your trip!</div>' +
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon">✅</div>' +
+            '<div class="empty-state-text">No items selected.<br>Use Planning mode to pick what you need.</div>' +
+            '</div>';
+        } else {
+          DOM.listContainer.innerHTML = 
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon">🎉</div>' +
+            '<div class="empty-state-text">All done!<br>Great shopping!</div>' +
+            '</div>';
+        }
+      } else {
+        DOM.listContainer.innerHTML = 
+          '<div class="empty-state">' +
+          '<div class="empty-state-icon">📝</div>' +
+          '<div class="empty-state-text">Your list is empty.<br>Add items above to get started!</div>' +
+          '</div>';
+      }
+      return;
+    }
+
+    const groups = groupItems(items);
+    const sortedDepts = Object.keys(groups).sort((a, b) => {
+      if (a === 'Other') return 1;
+      if (b === 'Other') return -1;
+      return a.localeCompare(b);
+    });
+
+    let html = '';
+
+    sortedDepts.forEach(dept => {
+      const aisles = groups[dept];
+      const sortedAisles = Object.keys(aisles).sort((a, b) => {
+        if (a === '') return 1;
+        if (b === '') return -1;
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
+
+      html += '<div class="department-group">';
+      html += '<div class="department-header">🏷️ ' + escapeHtml(dept) + '</div>';
+
+      sortedAisles.forEach(aisle => {
+        const aisleItems = aisles[aisle].sort((a, b) => 
+          a.name.localeCompare(b.name)
+        );
+
+        html += '<div class="aisle-section">';
+
+        if (aisle) {
+          html += '<div class="aisle-header">📍 ' + escapeHtml(aisle) + '</div>';
+        }
+
+        aisleItems.forEach(item => {
+          const status = item.status || 'none';
+          const checkboxClass = status === 'checked' ? 'checked' : (status === 'maybe' ? 'maybe' : '');
+          const checkboxContent = status === 'checked' ? '✓' : (status === 'maybe' ? '?' : '');
+          const itemClass = status !== 'none' && !isShoppingMode ? 'is-done' : '';
+
+          html += '<div class="item ' + itemClass + '" data-id="' + item.id + '">';
+          html += '<div class="item-checkbox ' + checkboxClass + '" data-action="toggle" data-id="' + item.id + '">' + checkboxContent + '</div>';
+          html += '<div class="item-content" data-action="edit" data-id="' + item.id + '">';
+          html += '<div class="item-name">' + escapeHtml(item.name) + '</div>';
+
+          if (!isShoppingMode && item.aisle) {
+            html += '<div class="item-meta">' + escapeHtml(item.aisle) + '</div>';
+          }
+
+          html += '</div>';
+          html += '<button class="item-delete" data-action="delete" data-id="' + item.id + '" aria-label="Delete">×</button>';
+          html += '</div>';
+        });
+
+        html += '</div>';
+      });
+
+      html += '</div>';
+    });
+
+    DOM.listContainer.innerHTML = html;
+  }
+
+  function renderStoreList() {
+    DOM.storeList.innerHTML = state.stores.map(store => {
+      const activeClass = store === state.currentStore ? ' active' : '';
+      const canDelete = state.stores.length > 1;
+      
+      let html = '<div class="store-item' + activeClass + '" data-store="' + escapeHtml(store) + '">';
+      html += '<span class="store-item-name">' + escapeHtml(store) + '</span>';
+      html += '<div class="store-item-actions">';
+      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '" title="Rename">✏️</button>';
+      if (canDelete) {
+        html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '" title="Delete">🗑️</button>';
+      }
+      html += '</div></div>';
+      return html;
+    }).join('');
+  }
+
+  function render() {
+    updateStoreSelect();
+    updateModeButtons();
+    updateStats();
+    updateDatalists();
+    updateQuickDepartments();
+    updateClearButtons();
+    renderList();
+  }
+
+  // === Actions ===
+  function setMode(mode) {
+    state.mode = mode;
+    save();
+    render();
+  }
+
+  function setCurrentStore(storeName) {
+    if (state.stores.includes(storeName)) {
+      state.currentStore = storeName;
+      if (!state.storeData[storeName]) {
+        state.storeData[storeName] = { items: [] };
+      }
+      save();
+      render();
+    }
+  }
+
+  function addStore(name) {
+    const trimmed = name.trim();
+    if (!trimmed) return false;
+    if (state.stores.includes(trimmed)) {
+      alert('A store with this name already exists.');
+      return false;
+    }
+
+    state.stores.push(trimmed);
+    state.storeData[trimmed] = { items: [] };
+    state.currentStore = trimmed;
+    save();
+    render();
+    renderStoreList();
+    return true;
+  }
+
+  function renameStore(oldName, newName) {
+    const trimmed = newName.trim();
+    if (!trimmed) return false;
+    if (trimmed === oldName) return true;
+    if (state.stores.includes(trimmed)) {
+      alert('A store with this name already exists.');
+      return false;
+    }
+
+    const index = state.stores.indexOf(oldName);
+    if (index === -1) return false;
+
+    state.stores[index] = trimmed;
+    state.storeData[trimmed] = state.storeData[oldName];
+    delete state.storeData[oldName];
+
+    if (state.currentStore === oldName) {
+      state.currentStore = trimmed;
+    }
+
+    save();
+    render();
+    renderStoreList();
+    return true;
+  }
+
+  function deleteStore(name) {
+    if (state.stores.length <= 1) {
+      alert('You must have at least one store.');
+      return;
+    }
+
+    const index = state.stores.indexOf(name);
+    if (index === -1) return;
+
+    if (!confirm('Delete "' + name + '" and all its items? This cannot be undone.')) {
+      return;
+    }
+
+    state.stores.splice(index, 1);
+    delete state.storeData[name];
+
+    if (state.currentStore === name) {
+      state.currentStore = state.stores[0];
+    }
+
+    save();
+    render();
+    renderStoreList();
+  }
+
+  function addItem(name, department, aisle) {
+    const item = {
+      id: generateId(),
+      name: name.trim(),
+      department: department.trim() || 'Other',
+      aisle: aisle.trim(),
+      status: 'none'
+    };
+
+    const items = getCurrentItems();
+    items.push(item);
+    setCurrentItems(items);
+    save();
+    render();
+  }
+
+  function cycleItemStatus(id) {
+    const items = getCurrentItems();
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+
+    const oldStatus = item.status || 'none';
+    
+    // Cycle: none -> checked -> maybe -> none
+    if (oldStatus === 'none') {
+      item.status = 'checked';
+    } else if (oldStatus === 'checked') {
+      item.status = 'maybe';
+    } else {
+      item.status = 'none';
+    }
+
+    save();
+
+    // In shopping mode, animate out items set to 'none'
+    if (state.mode === 'shopping' && item.status === 'none') {
+      const itemEl = DOM.listContainer.querySelector('[data-id="' + id + '"].item');
+      if (itemEl) {
+        itemEl.classList.add('checked-off');
+        setTimeout(render, 300);
+        return;
+      }
+    }
+
+    render();
+  }
+
+  function deleteItem(id) {
+    let items = getCurrentItems();
+    items = items.filter(i => i.id !== id);
+    setCurrentItems(items);
+    save();
+    render();
+    closeEditModal();
+  }
+
+  function updateItem(id, name, department, aisle, status) {
+    const items = getCurrentItems();
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+
+    item.name = name.trim() || item.name;
+    item.department = department.trim() || 'Other';
+    item.aisle = aisle.trim();
+    item.status = status || 'none';
+
+    save();
+    render();
+  }
+
+  function clearSelection() {
+    const items = getCurrentItems();
+    items.forEach(item => {
+      item.status = 'none';
+    });
+    save();
+    render();
+  }
+
+  function clearForm() {
+    DOM.inputName.value = '';
+    DOM.inputDepartment.value = '';
+    DOM.inputAisle.value = '';
+    updateClearButtons();
+    updateQuickDepartments();
+  }
+
+  function exportData() {
+    const items = getCurrentItems();
+    const storeName = state.currentStore;
+
+    const exportObj = {
+      version: 2,
+      exportDate: new Date().toISOString(),
+      storeName: storeName,
+      items: items
+    };
+
+    const json = JSON.stringify(exportObj, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    const date = new Date().toISOString().split('T')[0];
+    const filename = sanitizeFilename(storeName) + '-' + date + '.json';
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function importData(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        let items = [];
+        let storeName = data.storeName || 'Imported Store';
+
+        if (Array.isArray(data.items)) {
+          items = data.items;
+        } else if (Array.isArray(data)) {
+          items = data;
+        }
+
+        // Validate and normalize items
+        items = items.filter(item => 
+          item && typeof item.name === 'string' && item.name.trim()
+        ).map(item => ({
+          id: item.id || generateId(),
+          name: String(item.name).trim(),
+          department: String(item.department || 'Other').trim(),
+          aisle: String(item.aisle || '').trim(),
+          status: ['none', 'checked', 'maybe'].includes(item.status) ? item.status : 
+                  (item.checked ? 'checked' : 'none')
+        }));
+
+        if (items.length === 0) {
+          alert('No valid items found in file.');
+          return;
+        }
+
+        // Ask user what to do
+        let targetStore = storeName;
+        const storeExists = state.stores.includes(storeName);
+
+        if (storeExists) {
+          const choice = confirm(
+            'Store "' + storeName + '" already exists.\n\n' +
+            'OK = Replace items in existing store\n' +
+            'Cancel = Create new store with different name'
+          );
+
+          if (!choice) {
+            let counter = 2;
+            while (state.stores.includes(storeName + ' (' + counter + ')')) {
+              counter++;
+            }
+            targetStore = storeName + ' (' + counter + ')';
+          }
+        }
+
+        // Create or update store
+        if (!state.stores.includes(targetStore)) {
+          state.stores.push(targetStore);
+        }
+        state.storeData[targetStore] = { items: items };
+        state.currentStore = targetStore;
+        state.mode = 'planning';
+        
+        save();
+        render();
+        renderStoreList();
+
+        alert('Imported ' + items.length + ' item(s) to "' + targetStore + '"');
+      } catch (err) {
+        alert('Could not read file. Please check the format.');
+      }
+    };
+
+    reader.onerror = function() {
+      alert('Error reading file.');
+    };
+
+    reader.readAsText(file);
+  }
+
+  // === Edit Modal ===
+  function openEditModal(id) {
+    const items = getCurrentItems();
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+
+    editingItemId = id;
+    editingStatus = item.status || 'none';
+    
+    DOM.editName.value = item.name;
+    DOM.editDepartment.value = item.department;
+    DOM.editAisle.value = item.aisle;
+    
+    updateStatusToggle();
+    
+    DOM.editModal.classList.add('active');
+    DOM.editName.focus();
+  }
+
+  function updateStatusToggle() {
+    const options = DOM.statusToggle.querySelectorAll('.status-option');
+    options.forEach(opt => {
+      opt.className = 'status-option';
+      if (opt.dataset.status === editingStatus) {
+        opt.classList.add('active-' + editingStatus);
+      }
+    });
+  }
+
+  function closeEditModal() {
+    editingItemId = null;
+    DOM.editModal.classList.remove('active');
+  }
+
+  function saveEdit() {
+    if (!editingItemId) return;
+
+    const name = DOM.editName.value.trim();
+    if (!name) {
+      DOM.editName.focus();
+      return;
+    }
+
+    updateItem(
+      editingItemId,
+      name,
+      DOM.editDepartment.value,
+      DOM.editAisle.value,
+      editingStatus
+    );
+
+    closeEditModal();
+  }
+
+  // === Settings Modal ===
+  function openSettingsModal() {
+    renderStoreList();
+    DOM.newStoreName.value = '';
+    DOM.settingsModal.classList.add('active');
+  }
+
+  function closeSettingsModal() {
+    DOM.settingsModal.classList.remove('active');
+  }
+
+  // === Rename Modal ===
+  function openRenameModal(storeName) {
+    renamingStore = storeName;
+    DOM.renameStoreInput.value = storeName;
+    DOM.renameModal.classList.add('active');
+    DOM.renameStoreInput.focus();
+    DOM.renameStoreInput.select();
+  }
+
+  function closeRenameModal() {
+    renamingStore = null;
+    DOM.renameModal.classList.remove('active');
+  }
+
+  function saveRename() {
+    if (!renamingStore) return;
+    const newName = DOM.renameStoreInput.value.trim();
+    if (newName && renameStore(renamingStore, newName)) {
+      closeRenameModal();
+    }
+  }
+
+  // === Event Handlers ===
+  DOM.btnPlanning.addEventListener('click', function() {
+    setMode('planning');
+  });
+
+  DOM.btnShopping.addEventListener('click', function() {
+    setMode('shopping');
+  });
+
+  DOM.btnSettings.addEventListener('click', openSettingsModal);
+
+  DOM.storeSelect.addEventListener('change', function() {
+    setCurrentStore(this.value);
+  });
+
+  DOM.addForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = DOM.inputName.value.trim();
+    if (!name) return;
+
+    addItem(
+      name,
+      DOM.inputDepartment.value,
+      DOM.inputAisle.value
+    );
+
+    clearForm();
+    DOM.inputName.focus();
+  });
+
+  DOM.quickDept.addEventListener('click', function(e) {
+    if (e.target.classList.contains('quick-dept-btn')) {
+      const dept = e.target.dataset.dept;
+      DOM.inputDepartment.value = dept;
+      updateClearButtons();
+      updateQuickDepartments();
+    }
+  });
+
+  DOM.clearDept.addEventListener('click', function() {
+    DOM.inputDepartment.value = '';
+    updateClearButtons();
+    updateQuickDepartments();
+    DOM.inputDepartment.focus();
+  });
+
+  DOM.clearAisle.addEventListener('click', function() {
+    DOM.inputAisle.value = '';
+    updateClearButtons();
+    DOM.inputAisle.focus();
+  });
+
+  DOM.inputDepartment.addEventListener('input', function() {
+    updateClearButtons();
+    updateQuickDepartments();
+  });
+
+  DOM.inputAisle.addEventListener('input', updateClearButtons);
+
+  DOM.btnClear.addEventListener('click', function() {
+    const items = getCurrentItems();
+    if (items.filter(i => i.status !== 'none').length === 0) return;
+
+    const msg = state.mode === 'shopping'
+      ? 'Clear all selections and finish shopping?'
+      : 'Clear all selected items?';
+
+    if (confirm(msg)) {
+      clearSelection();
+    }
+  });
+
+  DOM.listContainer.addEventListener('click', function(e) {
+    const target = e.target;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+
+    if (!action || !id) return;
+
+    if (action === 'toggle') {
+      cycleItemStatus(id);
+    } else if (action === 'edit') {
+      openEditModal(id);
+    } else if (action === 'delete') {
+      if (confirm('Delete this item?')) {
+        deleteItem(id);
+      }
+    }
+  });
+
+  DOM.btnExport.addEventListener('click', exportData);
+
+  DOM.btnImport.addEventListener('click', function() {
+    DOM.fileInput.click();
+  });
+
+  DOM.fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      importData(file);
+    }
+    e.target.value = '';
+  });
+
+  // Edit Modal Events
+  DOM.editModal.addEventListener('click', function(e) {
+    if (e.target === DOM.editModal) {
+      closeEditModal();
+    }
+  });
+
+  DOM.statusToggle.addEventListener('click', function(e) {
+    const option = e.target.closest('.status-option');
+    if (option) {
+      editingStatus = option.dataset.status;
+      updateStatusToggle();
+    }
+  });
+
+  DOM.btnEditCancel.addEventListener('click', closeEditModal);
+  DOM.btnEditSave.addEventListener('click', saveEdit);
+
+  DOM.btnEditDelete.addEventListener('click', function() {
+    if (editingItemId && confirm('Delete this item permanently?')) {
+      deleteItem(editingItemId);
+    }
+  });
+
+  DOM.editModal.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveEdit();
+    } else if (e.key === 'Escape') {
+      closeEditModal();
+    }
+  });
+
+  // Settings Modal Events
+  DOM.settingsModal.addEventListener('click', function(e) {
+    if (e.target === DOM.settingsModal) {
+      closeSettingsModal();
+    }
+  });
+
+  DOM.btnSettingsClose.addEventListener('click', closeSettingsModal);
+
+  DOM.btnAddStore.addEventListener('click', function() {
+    if (addStore(DOM.newStoreName.value)) {
+      DOM.newStoreName.value = '';
+    }
+  });
+
+  DOM.newStoreName.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (addStore(DOM.newStoreName.value)) {
+        DOM.newStoreName.value = '';
+      }
+    }
+  });
+
+  DOM.storeList.addEventListener('click', function(e) {
+    const target = e.target;
+    const action = target.dataset.action;
+    const store = target.dataset.store;
+
+    if (action === 'rename' && store) {
+      openRenameModal(store);
+    } else if (action === 'delete-store' && store) {
+      deleteStore(store);
+    }
+  });
+
+  // Rename Modal Events
+  DOM.renameModal.addEventListener('click', function(e) {
+    if (e.target === DOM.renameModal) {
+      closeRenameModal();
+    }
+  });
+
+  DOM.btnRenameCancel.addEventListener('click', closeRenameModal);
+  DOM.btnRenameSave.addEventListener('click', saveRename);
+
+  DOM.renameModal.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveRename();
+    } else if (e.key === 'Escape') {
+      closeRenameModal();
+    }
+  });
+
+  // === Initialize ===
+  load();
+  render();
+
+})();
+</script>
+
+</body>
+</html>
