@@ -23,337 +23,186 @@
       background: #f0f4f0;
       min-height: 100vh;
       color: #1a1a1a;
-      padding-bottom: 100px;
+      padding-bottom: 80px;
     }
 
     .header {
       background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
       color: white;
-      padding: 16px;
+      padding: 14px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
 
-    .header-top {
+    .header-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .header-row:last-child {
+      margin-bottom: 0;
     }
 
     .header h1 {
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
+      flex: 1;
     }
 
     .header-btn {
       background: rgba(255,255,255,0.2);
       border: none;
       color: white;
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
+      flex-shrink: 0;
     }
 
-    .header-btn:hover {
-      background: rgba(255,255,255,0.3);
+    .header-btn.active {
+      background: rgba(255,255,255,0.4);
     }
 
-    .store-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .store-selector {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 10px;
-    }
-
-    .store-selector label {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
-
-    .store-selector select {
+    .store-select {
       flex: 1;
       padding: 8px 12px;
       border: none;
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: 500;
-      background: white;
+      background: rgba(255,255,255,0.9);
       color: #2d6a4f;
-      cursor: pointer;
-    }
-
-    .rewards-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .rewards-btn:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
-    .rewards-btn .badge {
-      background: rgba(255,255,255,0.3);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-    }
-
-    .rewards-panel {
-      background: rgba(0,0,0,0.2);
-      border-radius: 10px;
-      margin-bottom: 12px;
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.3s ease;
-    }
-
-    .rewards-panel.open {
-      max-height: 800px;
-    }
-
-    .rewards-panel-content {
-      padding: 14px;
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-
-    .rewards-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .rewards-panel-title {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .rewards-panel-close {
-      background: none;
-      border: none;
-      color: white;
-      opacity: 0.7;
-      font-size: 1.4rem;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-
-    .ebt-balance-display {
-      background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .ebt-balance-display .label {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-
-    .ebt-balance-display .amount {
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .account-card {
-      background: white;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
-
-    .account-card:last-child {
-      margin-bottom: 0;
-    }
-
-    .account-header {
-      padding: 14px 16px;
-      background: #f8f8f8;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .account-info {
-      color: #333;
-    }
-
-    .account-label {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 2px;
-    }
-
-    .account-phone {
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      font-size: 1.1rem;
-      color: #2d6a4f;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .account-copy-btn {
-      background: #e8f5e9;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      color: #2d6a4f;
-      font-weight: 500;
-    }
-
-    .account-copy-btn:hover {
-      background: #c8e6c9;
-    }
-
-    .coupons-list {
-      padding: 12px 16px;
-    }
-
-    .coupon-item {
-      display: flex;
-      align-items: flex-start;
-      padding: 10px 12px;
-      background: #f8fdf8;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      gap: 10px;
-    }
-
-    .coupon-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .coupon-badge {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      flex-shrink: 0;
-    }
-
-    .coupon-badge.free {
-      background: #10b981;
-      color: white;
-    }
-
-    .coupon-badge.discount {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .coupon-badge.threshold {
-      background: #6366f1;
-      color: white;
-    }
-
-    .coupon-details {
-      flex: 1;
       min-width: 0;
     }
 
-    .coupon-item-name {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 2px;
-    }
-
-    .coupon-item-value {
+    .deal-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 12px;
+      border-radius: 8px;
       font-size: 0.85rem;
-      color: #666;
     }
 
-    .coupon-item-expires {
-      font-size: 0.75rem;
-      color: #999;
-      margin-top: 2px;
+    .deal-row span {
+      opacity: 0.9;
     }
 
-    .no-coupons {
-      padding: 16px;
-      text-align: center;
-      color: #888;
+    .deal-input {
+      width: 50px;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 6px;
       font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      background: rgba(255,255,255,0.9);
+      color: #2d6a4f;
+    }
+
+    .deal-input::placeholder {
+      color: #999;
+      font-weight: 400;
+    }
+
+    .deal-active {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      padding: 10px 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+    }
+
+    .deal-active .deal-input {
+      background: white;
+      color: #b45309;
+    }
+
+    .ebt-bar {
+      background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .ebt-bar.visible {
+      display: flex;
+    }
+
+    .ebt-bar input {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      width: 100px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-align: right;
+    }
+
+    .ebt-bar input::placeholder {
+      color: rgba(255,255,255,0.6);
     }
 
     .mode-toggle {
       display: flex;
       background: rgba(255,255,255,0.15);
-      border-radius: 10px;
-      padding: 4px;
+      border-radius: 8px;
+      padding: 3px;
     }
 
     .mode-btn {
       flex: 1;
-      padding: 12px 20px;
+      padding: 10px 16px;
       border: none;
       background: transparent;
       color: rgba(255,255,255,0.8);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      border-radius: 6px;
+      transition: all 0.2s;
     }
 
     .mode-btn.active {
       background: white;
       color: #2d6a4f;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     .add-form {
       background: white;
-      padding: 16px;
-      margin: 16px;
+      padding: 14px;
+      margin: 12px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .add-form input, .add-form select {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .add-form input:focus, .add-form select:focus {
+      outline: none;
+      border-color: #40916c;
     }
 
     .form-row {
@@ -361,62 +210,8 @@
       gap: 8px;
     }
 
-    .form-row .input-wrapper {
+    .form-row > * {
       flex: 1;
-      min-width: 0;
-      position: relative;
-    }
-
-    .form-row input, .form-row select {
-      width: 100%;
-    }
-
-    .add-form input, .add-form select {
-      width: 100%;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      border: 2px solid #e8e8e8;
-      border-radius: 10px;
-      font-size: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      background: white;
-    }
-
-    .add-form input:focus, .add-form select:focus {
-      outline: none;
-      border-color: #40916c;
-      box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
-    }
-
-    .add-form input::placeholder {
-      color: #999;
-    }
-
-    .clear-field-btn {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(calc(-50% - 5px));
-      background: #ddd;
-      border: none;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
-      line-height: 1;
-      cursor: pointer;
-      color: #666;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .clear-field-btn.visible {
-      display: flex;
-    }
-
-    .clear-field-btn:hover {
-      background: #ccc;
     }
 
     .add-form button[type="submit"] {
@@ -429,39 +224,26 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.2s;
     }
 
-    .add-form button[type="submit"]:active {
-      transform: scale(0.98);
-    }
-
-    .quick-dept {
+    .quick-btns {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 10px;
-      padding-top: 4px;
+      margin-bottom: 8px;
     }
 
-    .quick-dept-btn {
+    .quick-btn {
       padding: 6px 12px;
       background: #f0f4f0;
       border: 1px solid #ddd;
-      border-radius: 16px;
+      border-radius: 20px;
       font-size: 0.8rem;
       cursor: pointer;
-      transition: all 0.15s;
       color: #555;
     }
 
-    .quick-dept-btn:hover {
-      background: #e8f5e9;
-      border-color: #40916c;
-      color: #2d6a4f;
-    }
-
-    .quick-dept-btn.active {
+    .quick-btn:hover, .quick-btn.active {
       background: #40916c;
       border-color: #40916c;
       color: white;
@@ -471,152 +253,102 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
-      margin: 0 16px 8px;
+      padding: 10px 16px;
+      margin: 0 12px 8px;
       background: #e8f5e9;
       border-radius: 10px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #2d6a4f;
-    }
-
-    .stats-bar .count {
-      font-weight: 600;
     }
 
     .clear-btn {
       background: none;
       border: none;
       color: #666;
-      font-size: 0.85rem;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .clear-btn:hover {
-      background: rgba(0,0,0,0.05);
-    }
-
-    .legend {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      padding: 8px 16px;
-      margin: 0 16px 8px;
       font-size: 0.8rem;
-      color: #666;
-      flex-wrap: wrap;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 6px;
     }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .legend-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    .legend-icon.check {
-      background: #40916c;
-      color: white;
-    }
-
-    .legend-icon.maybe {
-      background: #f59e0b;
-      color: white;
-    }
+    /* Account Colors */
+    .account-color-0 { border-left: 4px solid #6366f1; background: linear-gradient(90deg, #eef2ff 0%, white 20%); }
+    .account-color-1 { border-left: 4px solid #ec4899; background: linear-gradient(90deg, #fdf2f8 0%, white 20%); }
+    .account-color-2 { border-left: 4px solid #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, white 20%); }
+    .account-color-3 { border-left: 4px solid #10b981; background: linear-gradient(90deg, #ecfdf5 0%, white 20%); }
+    .account-color-4 { border-left: 4px solid #06b6d4; background: linear-gradient(90deg, #ecfeff 0%, white 20%); }
 
     .department-group {
-      margin: 0 16px 16px;
+      margin: 0 12px 12px;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
     .department-header {
       background: linear-gradient(135deg, #40916c 0%, #52b788 100%);
       color: white;
-      padding: 14px 18px;
+      padding: 12px 16px;
       font-weight: 600;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .aisle-section {
-      background: white;
+      font-size: 0.9rem;
     }
 
     .aisle-header {
-      padding: 10px 18px;
-      background: #f8fdf8;
-      font-size: 0.82rem;
+      padding: 8px 16px;
+      background: #f0fdf4;
+      font-size: 0.8rem;
       color: #666;
       font-weight: 500;
-      border-bottom: 1px solid #eef5ee;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      border-bottom: 1px solid #e8f5e9;
     }
 
     .item {
       display: flex;
       align-items: center;
-      padding: 14px 18px;
+      padding: 12px 16px;
       background: white;
       border-bottom: 1px solid #f0f0f0;
-      transition: background 0.15s, opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s, transform 0.3s;
     }
 
     .item:last-child {
       border-bottom: none;
     }
 
-    .item.checked-off {
+    .item.removing {
       opacity: 0;
       transform: translateX(50px);
     }
 
-    .item-checkbox {
+    .item-check {
       width: 28px;
       height: 28px;
       border: 2px solid #ccc;
       border-radius: 50%;
-      margin-right: 14px;
+      margin-right: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
       flex-shrink: 0;
       font-size: 14px;
       font-weight: bold;
+      transition: all 0.2s;
     }
 
-    .item-checkbox.checked {
+    .item-check.checked {
       background: #40916c;
       border-color: #40916c;
       color: white;
     }
 
-    .item-checkbox.maybe {
+    .item-check.maybe {
       background: #f59e0b;
       border-color: #f59e0b;
       color: white;
     }
 
-    .item-content {
+    .item-body {
       flex: 1;
       min-width: 0;
       cursor: pointer;
@@ -625,83 +357,76 @@
     .item-name {
       font-size: 1rem;
       font-weight: 500;
-      word-break: break-word;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: 6px;
     }
 
-    .item.is-done .item-name {
-      color: #888;
+    .item.done .item-name {
+      color: #999;
       text-decoration: line-through;
     }
 
-    .item-tag {
+    .tag {
       font-size: 0.65rem;
       padding: 2px 6px;
       border-radius: 4px;
       font-weight: 700;
       text-transform: uppercase;
-      flex-shrink: 0;
     }
 
-    .item-tag.free {
+    .tag-free {
       background: #10b981;
       color: white;
     }
 
-    .item-tag.coupon {
+    .tag-coupon {
       background: #f59e0b;
       color: white;
     }
 
     .item-meta {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #888;
       margin-top: 2px;
     }
 
     .item-account {
-      font-size: 0.75rem;
-      color: #6366f1;
-      margin-top: 2px;
-      font-weight: 500;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 3px;
+      padding: 2px 8px;
+      background: rgba(99,102,241,0.1);
+      border-radius: 4px;
+      display: inline-block;
     }
 
     .item-delete {
       background: none;
       border: none;
       color: #ccc;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       cursor: pointer;
       padding: 8px;
-      margin: -8px;
-      margin-left: 8px;
+      margin: -8px -8px -8px 4px;
       border-radius: 50%;
-      transition: color 0.2s, background 0.2s;
     }
 
     .item-delete:hover {
       color: #e74c3c;
-      background: rgba(231,76,60,0.1);
     }
 
     .empty-state {
       text-align: center;
-      padding: 60px 30px;
+      padding: 50px 30px;
       color: #888;
     }
 
     .empty-state-icon {
-      font-size: 4rem;
-      margin-bottom: 16px;
+      font-size: 3.5rem;
+      margin-bottom: 12px;
       opacity: 0.5;
-    }
-
-    .empty-state-text {
-      font-size: 1.1rem;
-      line-height: 1.5;
     }
 
     .footer {
@@ -710,28 +435,23 @@
       left: 0;
       right: 0;
       background: white;
-      padding: 12px 16px;
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      padding: 10px 12px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
       display: flex;
-      gap: 10px;
+      gap: 8px;
       box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
       z-index: 100;
     }
 
     .footer-btn {
       flex: 1;
-      padding: 14px 12px;
+      padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       background: white;
       font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
     .footer-btn:hover {
@@ -739,21 +459,85 @@
       color: #40916c;
     }
 
-    .footer-btn:active {
-      background: #f8fdf8;
-    }
+    #file-input { display: none; }
 
-    #file-input {
+    /* Phone Panel */
+    .phone-panel {
+      position: fixed;
+      bottom: 70px;
+      left: 12px;
+      right: 12px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      padding: 16px;
+      z-index: 150;
       display: none;
     }
 
-    /* Modal Base Styles */
+    .phone-panel.visible {
+      display: block;
+    }
+
+    .phone-panel h4 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .phone-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .phone-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .phone-info strong {
+      display: block;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .phone-number {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2d6a4f;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn {
+      padding: 8px 14px;
+      background: #e8f5e9;
+      border: none;
+      border-radius: 8px;
+      color: #2d6a4f;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .phone-panel-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #999;
+      cursor: pointer;
+    }
+
+    /* Modal */
     .modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background: rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
@@ -762,7 +546,7 @@
       padding: 20px;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.2s, visibility 0.2s;
+      transition: all 0.2s;
     }
 
     .modal.active {
@@ -770,215 +554,106 @@
       visibility: visible;
     }
 
-    .modal-content {
+    .modal-box {
       background: white;
-      padding: 24px;
+      padding: 20px;
       border-radius: 16px;
       width: 100%;
-      max-width: 500px;
-      max-height: 85vh;
+      max-width: 400px;
+      max-height: 80vh;
       overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      transform: scale(0.9);
-      transition: transform 0.2s;
-    }
-
-    .modal.active .modal-content {
-      transform: scale(1);
     }
 
     .modal h3 {
-      margin-bottom: 20px;
-      font-size: 1.2rem;
+      margin-bottom: 16px;
       color: #2d6a4f;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .modal input[type="text"],
-    .modal input[type="tel"],
-    .modal input[type="number"],
-    .modal input[type="date"],
-    .modal select {
+    .modal input, .modal select {
       width: 100%;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
       border: 2px solid #e8e8e8;
       border-radius: 10px;
       font-size: 1rem;
-      background: white;
     }
 
-    .modal input:focus,
-    .modal select:focus {
-      outline: none;
-      border-color: #40916c;
-    }
-
-    .modal-buttons {
+    .modal-btns {
       display: flex;
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
-    .modal-buttons button {
+    .modal-btns button {
       flex: 1;
-      padding: 14px;
+      padding: 12px;
       border: none;
       border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
     }
 
-    .btn-cancel {
-      background: #f0f0f0;
-      color: #666;
-    }
+    .btn-cancel { background: #f0f0f0; color: #666; }
+    .btn-save { background: #40916c; color: white; }
+    .btn-delete { background: #e74c3c; color: white; }
 
-    .btn-save {
-      background: #40916c;
-      color: white;
-    }
-
-    .btn-delete {
-      background: #e74c3c;
-      color: white;
-    }
-
-    /* Status Toggle in Edit Modal */
-    .status-toggle {
+    .status-btns {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
-    .status-option {
+    .status-btn {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       background: white;
-      cursor: pointer;
       text-align: center;
-      transition: all 0.2s;
+      cursor: pointer;
     }
 
-    .status-option:hover {
-      border-color: #ccc;
-    }
+    .status-btn.active-checked { border-color: #40916c; background: #e8f5e9; }
+    .status-btn.active-maybe { border-color: #f59e0b; background: #fef3c7; }
+    .status-btn.active-none { border-color: #666; background: #f5f5f5; }
 
-    .status-option.active-none {
-      border-color: #666;
-      background: #f5f5f5;
-    }
-
-    .status-option.active-checked {
-      border-color: #40916c;
-      background: #e8f5e9;
-    }
-
-    .status-option.active-maybe {
-      border-color: #f59e0b;
-      background: #fef3c7;
-    }
-
-    .status-option-icon {
-      font-size: 1.2rem;
-      margin-bottom: 4px;
-    }
-
-    .status-option-label {
-      font-size: 0.8rem;
-      color: #666;
-    }
-
-    /* Settings Modal */
-    .settings-tabs {
-      display: flex;
-      gap: 8px;
+    /* Settings */
+    .settings-section {
       margin-bottom: 20px;
     }
 
-    .settings-tab {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #f0f0f0;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .settings-tab.active {
-      background: #40916c;
-      color: white;
-    }
-
-    .settings-section {
-      margin-bottom: 24px;
-    }
-
-    .settings-section:last-of-type {
-      margin-bottom: 0;
-    }
-
     .settings-section h4 {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #666;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
-    .store-list {
-      margin-bottom: 12px;
-    }
-
-    .store-item {
+    .settings-item {
       display: flex;
       align-items: center;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: #f8f8f8;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      border: 2px solid transparent;
+      border-radius: 8px;
+      margin-bottom: 6px;
     }
 
-    .store-item.active {
-      background: #e8f5e9;
-      border-color: #40916c;
-    }
-
-    .store-item-name {
+    .settings-item span {
       flex: 1;
       font-weight: 500;
     }
 
-    .store-item-actions {
-      display: flex;
-      gap: 4px;
+    .settings-item small {
+      color: #888;
+      margin-left: 8px;
     }
 
-    .store-item-btn {
+    .settings-item button {
       background: none;
       border: none;
-      padding: 6px 10px;
+      padding: 4px 8px;
       cursor: pointer;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-    }
-
-    .store-item-btn:hover {
-      background: rgba(0,0,0,0.1);
-    }
-
-    .store-item-btn.delete:hover {
-      background: rgba(231,76,60,0.2);
+      font-size: 1rem;
     }
 
     .add-row {
@@ -988,527 +663,182 @@
 
     .add-row input {
       flex: 1;
-      margin-bottom: 0;
+      margin: 0;
     }
 
     .add-row button {
-      padding: 14px 20px;
+      padding: 12px 16px;
       background: #40916c;
       color: white;
       border: none;
       border-radius: 10px;
       font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
     }
 
-    /* Account/Rewards Section */
-    .account-section {
-      background: #f8f8f8;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .account-section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .account-section-title {
-      font-weight: 600;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .account-section-phone {
-      font-family: 'SF Mono', Monaco, monospace;
-      font-size: 0.9rem;
-      color: #2d6a4f;
-      margin-top: 4px;
-    }
-
-    .account-section-actions {
-      display: flex;
-      gap: 4px;
-    }
-
-    .account-section-btn {
-      background: #e0e0e0;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-
-    .account-section-btn:hover {
-      background: #d0d0d0;
-    }
-
-    .account-section-btn.delete:hover {
-      background: #fee;
-      color: #e74c3c;
-    }
-
-    .ebt-input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-
-    .ebt-input-row label {
-      font-size: 0.9rem;
-      color: #666;
-      white-space: nowrap;
-    }
-
-    .ebt-input-row input {
-      flex: 1;
-      padding: 10px 12px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin: 0;
-    }
-
-    .ebt-input-row button {
-      padding: 10px 14px;
-      background: #7c3aed;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .coupon-list {
-      margin-bottom: 12px;
-    }
-
-    .coupon-entry {
-      display: flex;
-      align-items: center;
-      padding: 10px 12px;
-      background: white;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-
-    .coupon-entry-badge {
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      flex-shrink: 0;
-    }
-
-    .coupon-entry-badge.free {
-      background: #10b981;
-      color: white;
-    }
-
-    .coupon-entry-badge.discount {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .coupon-entry-badge.threshold {
-      background: #6366f1;
-      color: white;
-    }
-
-    .coupon-entry-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .coupon-entry-name {
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .coupon-entry-detail {
-      font-size: 0.8rem;
-      color: #666;
-    }
-
-    .coupon-entry-delete {
-      background: none;
-      border: none;
-      color: #ccc;
-      font-size: 1.1rem;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-
-    .coupon-entry-delete:hover {
-      color: #e74c3c;
-    }
-
-    .add-coupon-form {
-      background: white;
-      padding: 12px;
-      border-radius: 8px;
-    }
-
-    .add-coupon-form .form-group {
-      margin-bottom: 10px;
-    }
-
-    .add-coupon-form .form-group:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .add-coupon-form label {
-      display: block;
-      font-size: 0.8rem;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    .add-coupon-form input,
-    .add-coupon-form select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      margin: 0;
-    }
-
-    .add-coupon-form .form-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .add-coupon-form .form-row > * {
-      flex: 1;
-    }
-
-    .add-coupon-form button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      background: #40916c;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .add-account-form {
-      background: white;
-      padding: 14px;
-      border-radius: 10px;
-    }
-
-    .add-account-form input {
-      margin-bottom: 8px;
-    }
-
-    .add-account-form button {
-      width: 100%;
-      padding: 12px;
-      background: #40916c;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .shopping-tip {
-      text-align: center;
-      padding: 16px;
-      margin: 16px;
-      background: #fff3cd;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      color: #856404;
-    }
-
-    .tap-hint {
-      font-size: 0.75rem;
-      color: #888;
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    .info-note {
-      background: #e3f2fd;
-      padding: 12px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      color: #1565c0;
-      margin-top: 16px;
-      line-height: 1.4;
-    }
-
-    .copied-toast {
+    .toast {
       position: fixed;
-      bottom: 100px;
+      bottom: 90px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: #333;
       color: white;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 8px;
-      font-size: 0.9rem;
       opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: all 0.2s;
       z-index: 300;
       pointer-events: none;
     }
 
-    .copied-toast.show {
+    .toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
 
-    .item-account-select {
-      padding: 8px 12px;
-      border: 2px solid #e8e8e8;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 400px) {
-      .mode-btn {
-        padding: 10px 14px;
-        font-size: 0.85rem;
-      }
-
-      .footer-btn {
-        padding: 12px 8px;
-        font-size: 0.8rem;
-      }
-
-      .quick-dept-btn {
-        padding: 5px 10px;
-        font-size: 0.75rem;
-      }
-
-      .store-row {
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .rewards-btn {
-        justify-content: center;
-      }
+    @media (max-width: 380px) {
+      .header h1 { font-size: 1.1rem; }
+      .mode-btn { padding: 8px 12px; font-size: 0.8rem; }
+      .deal-row { padding: 6px 10px; font-size: 0.8rem; }
+      .deal-input { width: 45px; padding: 5px 6px; font-size: 0.85rem; }
     }
   </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="header-top">
+  <div class="header-row">
     <h1>🛒 Grocery List</h1>
-    <div class="header-actions">
-      <button class="header-btn" id="btn-settings" title="Settings">⚙️</button>
+    <button class="header-btn" id="btn-ebt" title="EBT Balance">💳</button>
+    <button class="header-btn" id="btn-phones" title="Phone Numbers">📱</button>
+    <button class="header-btn" id="btn-settings" title="Settings">⚙️</button>
+  </div>
+  <div class="header-row">
+    <select class="store-select" id="store-select"></select>
+    <div class="deal-row" id="deal-row">
+      <span>$</span>
+      <input type="number" class="deal-input" id="deal-off" placeholder="0" min="0" step="0.01">
+      <span>off</span>
+      <span>$</span>
+      <input type="number" class="deal-input" id="deal-min" placeholder="0" min="0" step="0.01">
+      <span>+</span>
     </div>
   </div>
-  
-  <div class="store-row">
-    <div class="store-selector">
-      <label>📍</label>
-      <select id="store-select"></select>
-    </div>
-    <button class="rewards-btn" id="btn-rewards" style="display: none;">
-      <span>💳</span>
-      <span>Rewards</span>
-      <span class="badge" id="rewards-count"></span>
-    </button>
-  </div>
-
-  <div class="rewards-panel" id="rewards-panel">
-    <div class="rewards-panel-content">
-      <div class="rewards-panel-header">
-        <span class="rewards-panel-title">💳 Rewards & Coupons</span>
-        <button class="rewards-panel-close" id="rewards-panel-close">×</button>
-      </div>
-      <div id="ebt-display"></div>
-      <div id="rewards-display"></div>
-    </div>
-  </div>
-  
   <div class="mode-toggle">
-    <button class="mode-btn active" id="btn-planning">
-      <span>📝</span> Planning
-    </button>
-    <button class="mode-btn" id="btn-shopping">
-      <span>🛍️</span> Shopping
-    </button>
+    <button class="mode-btn active" id="btn-planning">📝 Planning</button>
+    <button class="mode-btn" id="btn-shopping">🛒 Shopping</button>
   </div>
 </header>
 
-<main id="main-content">
+<div class="ebt-bar" id="ebt-bar">
+  <span>💳 EBT Balance</span>
+  <div>
+    <span>$</span>
+    <input type="number" step="0.01" id="ebt-input" placeholder="0.00">
+  </div>
+</div>
+
+<main>
   <form class="add-form" id="add-form">
     <input type="text" id="input-name" placeholder="Item name..." autocomplete="off" required>
-    
-    <div class="quick-dept" id="quick-dept"></div>
-    
+    <div class="quick-btns" id="quick-depts"></div>
     <div class="form-row">
-      <div class="input-wrapper">
-        <input type="text" id="input-department" placeholder="Department" list="list-departments" autocomplete="off">
-        <button type="button" class="clear-field-btn" id="clear-dept" title="Clear">×</button>
-      </div>
-      <div class="input-wrapper">
-        <input type="text" id="input-aisle" placeholder="Aisle/Area" list="list-aisles" autocomplete="off">
-        <button type="button" class="clear-field-btn" id="clear-aisle" title="Clear">×</button>
-      </div>
+      <input type="text" id="input-dept" placeholder="Department" list="dl-depts">
+      <input type="text" id="input-aisle" placeholder="Aisle" list="dl-aisles">
     </div>
-    
-    <select id="input-account" class="item-account-select">
-      <option value="">No rewards account</option>
-    </select>
-    
-    <select id="input-coupon-type" class="item-account-select">
-      <option value="">No coupon</option>
-      <option value="free">🆓 FREE item</option>
-      <option value="coupon">🏷️ Has coupon</option>
-    </select>
-    
+    <div class="form-row">
+      <select id="input-account">
+        <option value="">No account</option>
+      </select>
+      <select id="input-tag">
+        <option value="">No tag</option>
+        <option value="free">🆓 FREE</option>
+        <option value="coupon">🏷️ Coupon</option>
+      </select>
+    </div>
     <button type="submit">+ Add Item</button>
-    <p class="tap-hint">Tap item circle to cycle: none → ✓ buy → ? maybe</p>
-    <datalist id="list-departments"></datalist>
-    <datalist id="list-aisles"></datalist>
+    <datalist id="dl-depts"></datalist>
+    <datalist id="dl-aisles"></datalist>
   </form>
 
-  <div class="stats-bar" id="stats-bar" style="display: none;">
-    <span class="count" id="stats-text"></span>
-    <button class="clear-btn" id="btn-clear">Clear All ✕</button>
-  </div>
-
-  <div class="legend" id="legend" style="display: none;">
-    <div class="legend-item">
-      <div class="legend-icon check">✓</div>
-      <span>Buy</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon maybe">?</div>
-      <span>Maybe</span>
-    </div>
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <span id="stats-text"></span>
+    <button class="clear-btn" id="btn-clear">Clear ✕</button>
   </div>
 
   <div id="list-container"></div>
 </main>
 
 <footer class="footer">
-  <button class="footer-btn" id="btn-export">
-    <span>📤</span> Export
-  </button>
-  <button class="footer-btn" id="btn-import">
-    <span>📥</span> Import
-  </button>
+  <button class="footer-btn" id="btn-export">📤 Export</button>
+  <button class="footer-btn" id="btn-import">📥 Import</button>
 </footer>
 
-<input type="file" id="file-input" accept=".json,application/json">
+<input type="file" id="file-input" accept=".json">
 
-<div class="copied-toast" id="copied-toast">📋 Copied!</div>
+<div class="phone-panel" id="phone-panel">
+  <button class="phone-panel-close" id="phone-panel-close">×</button>
+  <h4>📱 Rewards Phone Numbers</h4>
+  <div id="phone-list"></div>
+</div>
 
-<!-- Edit Item Modal -->
+<div class="toast" id="toast">Copied!</div>
+
+<!-- Edit Modal -->
 <div class="modal" id="edit-modal">
-  <div class="modal-content">
+  <div class="modal-box">
     <h3>✏️ Edit Item</h3>
     <input type="text" id="edit-name" placeholder="Item name">
-    <input type="text" id="edit-department" placeholder="Department" list="list-departments">
-    <input type="text" id="edit-aisle" placeholder="Aisle/Area" list="list-aisles">
-    
-    <select id="edit-account" class="item-account-select" style="width: 100%; margin-bottom: 12px;"></select>
-    
-    <select id="edit-coupon-type" class="item-account-select" style="width: 100%; margin-bottom: 12px;">
-      <option value="">No coupon</option>
-      <option value="free">🆓 FREE item</option>
-      <option value="coupon">🏷️ Has coupon</option>
-    </select>
-    
-    <div class="status-toggle" id="status-toggle">
-      <div class="status-option" data-status="none">
-        <div class="status-option-icon">○</div>
-        <div class="status-option-label">None</div>
-      </div>
-      <div class="status-option" data-status="checked">
-        <div class="status-option-icon">✓</div>
-        <div class="status-option-label">Buy</div>
-      </div>
-      <div class="status-option" data-status="maybe">
-        <div class="status-option-icon">?</div>
-        <div class="status-option-label">Maybe</div>
-      </div>
+    <div class="form-row">
+      <input type="text" id="edit-dept" placeholder="Department" list="dl-depts">
+      <input type="text" id="edit-aisle" placeholder="Aisle" list="dl-aisles">
     </div>
-    
-    <div class="modal-buttons">
-      <button type="button" class="btn-delete" id="btn-edit-delete">Delete</button>
-      <button type="button" class="btn-cancel" id="btn-edit-cancel">Cancel</button>
-      <button type="button" class="btn-save" id="btn-edit-save">Save</button>
+    <select id="edit-account"></select>
+    <select id="edit-tag">
+      <option value="">No tag</option>
+      <option value="free">🆓 FREE</option>
+      <option value="coupon">🏷️ Coupon</option>
+    </select>
+    <div class="status-btns" id="status-btns">
+      <div class="status-btn" data-status="none">○ None</div>
+      <div class="status-btn" data-status="checked">✓ Buy</div>
+      <div class="status-btn" data-status="maybe">? Maybe</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-delete" id="edit-delete">Delete</button>
+      <button class="btn-cancel" id="edit-cancel">Cancel</button>
+      <button class="btn-save" id="edit-save">Save</button>
     </div>
   </div>
 </div>
 
 <!-- Settings Modal -->
 <div class="modal" id="settings-modal">
-  <div class="modal-content">
+  <div class="modal-box">
     <h3>⚙️ Settings</h3>
     
-    <div class="settings-tabs">
-      <button class="settings-tab active" data-tab="stores">Stores</button>
-      <button class="settings-tab" data-tab="accounts">Accounts</button>
-    </div>
-    
-    <!-- Stores Tab -->
-    <div id="tab-stores">
-      <div class="settings-section">
-        <h4>Your Stores</h4>
-        <div class="store-list" id="store-list"></div>
-        <div class="add-row">
-          <input type="text" id="new-store-name" placeholder="New store name...">
-          <button type="button" id="btn-add-store">Add</button>
-        </div>
+    <div class="settings-section">
+      <h4>Stores</h4>
+      <div id="store-list"></div>
+      <div class="add-row">
+        <input type="text" id="new-store" placeholder="New store...">
+        <button id="add-store">Add</button>
       </div>
     </div>
     
-    <!-- Accounts Tab -->
-    <div id="tab-accounts" style="display: none;">
-      <div class="settings-section">
-        <h4>Rewards Accounts for <span id="current-store-name"></span></h4>
-        <div id="accounts-list"></div>
-        <div class="add-account-form">
-          <input type="tel" id="new-account-phone" placeholder="Phone number">
-          <input type="text" id="new-account-label" placeholder="Label (e.g., Mom, Work)">
-          <button type="button" id="btn-add-account">+ Add Account</button>
-        </div>
+    <div class="settings-section">
+      <h4>Rewards Accounts (for <span id="current-store-label"></span>)</h4>
+      <div id="account-list"></div>
+      <div class="add-row" style="margin-bottom:8px">
+        <input type="tel" id="new-phone" placeholder="Phone number">
+      </div>
+      <div class="add-row">
+        <input type="text" id="new-label" placeholder="Label (e.g., Mom)">
+        <button id="add-account">Add</button>
       </div>
     </div>
     
-    <div class="info-note">
-      💡 Import only affects one store. Your other stores remain untouched.
-    </div>
-    
-    <div class="modal-buttons">
-      <button type="button" class="btn-save" id="btn-settings-close" style="flex: 1;">Done</button>
-    </div>
-  </div>
-</div>
-
-<!-- Rename Store Modal -->
-<div class="modal" id="rename-modal">
-  <div class="modal-content">
-    <h3>✏️ Rename Store</h3>
-    <input type="text" id="rename-store-input" placeholder="Store name">
-    <div class="modal-buttons">
-      <button type="button" class="btn-cancel" id="btn-rename-cancel">Cancel</button>
-      <button type="button" class="btn-save" id="btn-rename-save">Save</button>
+    <div class="modal-btns">
+      <button class="btn-save" id="settings-close" style="flex:1">Done</button>
     </div>
   </div>
 </div>
@@ -1517,1274 +847,711 @@
 (function() {
   'use strict';
 
-  const STORAGE_KEY = 'grocery_app_v4';
-  const DEFAULT_DEPARTMENTS = [
-    'Produce', 'Dairy', 'Meat', 'Seafood', 'Bakery', 'Deli',
-    'Frozen', 'Canned Goods', 'Pasta & Grains', 'Condiments',
-    'Snacks', 'Beverages', 'Breakfast', 'Household', 'Personal Care', 'Other'
-  ];
+  const STORAGE = 'grocery_v6';
+  const COLORS = ['account-color-0','account-color-1','account-color-2','account-color-3','account-color-4'];
+  const DEFAULT_DEPTS = ['Produce','Dairy','Meat','Seafood','Bakery','Deli','Frozen','Canned','Snacks','Beverages','Household','Other'];
 
   let state = {
     stores: ['My Store'],
-    currentStore: 'My Store',
-    storeData: {
-      'My Store': { 
-        items: [], 
-        accounts: [],
-        ebtBalance: null
-      }
-    },
+    current: 'My Store',
+    data: { 'My Store': { items: [], accounts: [], ebt: '', dealOff: '', dealMin: '' } },
     mode: 'planning'
   };
 
-  let editingItemId = null;
-  let editingStatus = 'none';
-  let renamingStore = null;
-  let currentSettingsTab = 'stores';
+  let editId = null, editStatus = 'none';
 
-  function getEl(id) {
-    return document.getElementById(id);
-  }
+  const $ = id => document.getElementById(id);
 
   const DOM = {
-    btnPlanning: getEl('btn-planning'),
-    btnShopping: getEl('btn-shopping'),
-    btnSettings: getEl('btn-settings'),
-    btnRewards: getEl('btn-rewards'),
-    rewardsCount: getEl('rewards-count'),
-    rewardsPanel: getEl('rewards-panel'),
-    rewardsPanelClose: getEl('rewards-panel-close'),
-    ebtDisplay: getEl('ebt-display'),
-    rewardsDisplay: getEl('rewards-display'),
-    storeSelect: getEl('store-select'),
-    addForm: getEl('add-form'),
-    inputName: getEl('input-name'),
-    inputDepartment: getEl('input-department'),
-    inputAisle: getEl('input-aisle'),
-    inputAccount: getEl('input-account'),
-    inputCouponType: getEl('input-coupon-type'),
-    clearDept: getEl('clear-dept'),
-    clearAisle: getEl('clear-aisle'),
-    quickDept: getEl('quick-dept'),
-    listDepartments: getEl('list-departments'),
-    listAisles: getEl('list-aisles'),
-    statsBar: getEl('stats-bar'),
-    statsText: getEl('stats-text'),
-    btnClear: getEl('btn-clear'),
-    legend: getEl('legend'),
-    listContainer: getEl('list-container'),
-    btnExport: getEl('btn-export'),
-    btnImport: getEl('btn-import'),
-    fileInput: getEl('file-input'),
-    copiedToast: getEl('copied-toast'),
-    editModal: getEl('edit-modal'),
-    editName: getEl('edit-name'),
-    editDepartment: getEl('edit-department'),
-    editAisle: getEl('edit-aisle'),
-    editAccount: getEl('edit-account'),
-    editCouponType: getEl('edit-coupon-type'),
-    statusToggle: getEl('status-toggle'),
-    btnEditDelete: getEl('btn-edit-delete'),
-    btnEditCancel: getEl('btn-edit-cancel'),
-    btnEditSave: getEl('btn-edit-save'),
-    settingsModal: getEl('settings-modal'),
-    tabStores: getEl('tab-stores'),
-    tabAccounts: getEl('tab-accounts'),
-    currentStoreName: getEl('current-store-name'),
-    storeList: getEl('store-list'),
-    newStoreName: getEl('new-store-name'),
-    btnAddStore: getEl('btn-add-store'),
-    accountsList: getEl('accounts-list'),
-    newAccountPhone: getEl('new-account-phone'),
-    newAccountLabel: getEl('new-account-label'),
-    btnAddAccount: getEl('btn-add-account'),
-    btnSettingsClose: getEl('btn-settings-close'),
-    renameModal: getEl('rename-modal'),
-    renameStoreInput: getEl('rename-store-input'),
-    btnRenameCancel: getEl('btn-rename-cancel'),
-    btnRenameSave: getEl('btn-rename-save')
+    storeSelect: $('store-select'),
+    dealRow: $('deal-row'),
+    dealOff: $('deal-off'),
+    dealMin: $('deal-min'),
+    btnEbt: $('btn-ebt'),
+    ebtBar: $('ebt-bar'),
+    ebtInput: $('ebt-input'),
+    btnPhones: $('btn-phones'),
+    phonePanel: $('phone-panel'),
+    phonePanelClose: $('phone-panel-close'),
+    phoneList: $('phone-list'),
+    btnSettings: $('btn-settings'),
+    btnPlanning: $('btn-planning'),
+    btnShopping: $('btn-shopping'),
+    addForm: $('add-form'),
+    inputName: $('input-name'),
+    inputDept: $('input-dept'),
+    inputAisle: $('input-aisle'),
+    inputAccount: $('input-account'),
+    inputTag: $('input-tag'),
+    quickDepts: $('quick-depts'),
+    dlDepts: $('dl-depts'),
+    dlAisles: $('dl-aisles'),
+    statsBar: $('stats-bar'),
+    statsText: $('stats-text'),
+    btnClear: $('btn-clear'),
+    listContainer: $('list-container'),
+    btnExport: $('btn-export'),
+    btnImport: $('btn-import'),
+    fileInput: $('file-input'),
+    toast: $('toast'),
+    editModal: $('edit-modal'),
+    editName: $('edit-name'),
+    editDept: $('edit-dept'),
+    editAisle: $('edit-aisle'),
+    editAccount: $('edit-account'),
+    editTag: $('edit-tag'),
+    statusBtns: $('status-btns'),
+    editDelete: $('edit-delete'),
+    editCancel: $('edit-cancel'),
+    editSave: $('edit-save'),
+    settingsModal: $('settings-modal'),
+    storeList: $('store-list'),
+    newStore: $('new-store'),
+    addStoreBtn: $('add-store'),
+    currentStoreLabel: $('current-store-label'),
+    accountList: $('account-list'),
+    newPhone: $('new-phone'),
+    newLabel: $('new-label'),
+    addAccountBtn: $('add-account'),
+    settingsClose: $('settings-close')
   };
 
-  function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text || '';
-    return div.innerHTML;
-  }
-
-  function sanitizeFilename(name) {
-    return name.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_');
-  }
-
-  function formatPhoneNumber(phone) {
-    const digits = phone.replace(/\D/g, '');
-    if (digits.length === 10) {
-      return '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
-    } else if (digits.length === 11 && digits[0] === '1') {
-      return '+1 (' + digits.slice(1,4) + ') ' + digits.slice(4,7) + '-' + digits.slice(7);
+  // Helpers
+  const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  const esc = t => { const d = document.createElement('div'); d.textContent = t||''; return d.innerHTML; };
+  const getStore = () => {
+    if (!state.data[state.current]) {
+      state.data[state.current] = { items: [], accounts: [], ebt: '', dealOff: '', dealMin: '' };
     }
-    return phone;
-  }
+    return state.data[state.current];
+  };
+  const getItems = () => getStore().items;
+  const getAccounts = () => getStore().accounts;
+  const findAccount = id => getAccounts().find(a => a.id === id);
+  const accountIndex = id => getAccounts().findIndex(a => a.id === id);
 
-  function getCurrentStoreData() {
-    if (!state.storeData[state.currentStore]) {
-      state.storeData[state.currentStore] = { items: [], accounts: [], ebtBalance: null };
-    }
-    const data = state.storeData[state.currentStore];
-    if (!data.accounts) data.accounts = [];
-    if (!data.items) data.items = [];
-    return data;
-  }
+  const formatPhone = p => {
+    const d = (p||'').replace(/\D/g,'');
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    if (d.length === 11 && d[0]==='1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
+    return p;
+  };
 
-  function getCurrentItems() {
-    return getCurrentStoreData().items;
-  }
-
-  function getCurrentAccounts() {
-    return getCurrentStoreData().accounts;
-  }
-
-  function getAccountById(accountId) {
-    return getCurrentAccounts().find(a => a.id === accountId);
-  }
-
-  function save() {
+  const save = () => { try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch(e){} };
+  
+  const load = () => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {}
-  }
-
-  function load() {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      if (data) {
-        const parsed = JSON.parse(data);
-        if (parsed.stores && parsed.storeData) {
-          state = parsed;
-          // Ensure structure
-          for (const store in state.storeData) {
-            if (!state.storeData[store].accounts) {
-              // Migrate old rewards to accounts
-              if (state.storeData[store].rewards) {
-                state.storeData[store].accounts = state.storeData[store].rewards.map(r => ({
-                  id: generateId(),
-                  phone: r.phone,
-                  label: r.label || '',
-                  coupons: [],
-                  ebtBalance: null
-                }));
-                delete state.storeData[store].rewards;
-              } else {
-                state.storeData[store].accounts = [];
-              }
-            }
-            if (!state.storeData[store].items) state.storeData[store].items = [];
-          }
-          if (!state.stores.includes(state.currentStore)) {
-            state.currentStore = state.stores[0] || 'My Store';
+      const d = localStorage.getItem(STORAGE);
+      if (d) {
+        const p = JSON.parse(d);
+        if (p.stores && p.data) {
+          state = p;
+          for (const s in state.data) {
+            if (!state.data[s].accounts) state.data[s].accounts = [];
+            if (!state.data[s].items) state.data[s].items = [];
+            if (state.data[s].ebt === undefined) state.data[s].ebt = '';
+            if (state.data[s].dealOff === undefined) state.data[s].dealOff = '';
+            if (state.data[s].dealMin === undefined) state.data[s].dealMin = '';
           }
           return;
         }
       }
-
-      // Try older versions
-      for (const key of ['grocery_app_v3', 'grocery_app_v2', 'grocery_app_v1']) {
-        const oldData = localStorage.getItem(key);
-        if (oldData) {
-          const parsed = JSON.parse(oldData);
-          if (parsed.stores && parsed.storeData) {
-            state.stores = parsed.stores;
-            state.currentStore = parsed.currentStore || parsed.stores[0];
-            state.mode = parsed.mode || 'planning';
-            state.storeData = {};
-            for (const store of parsed.stores) {
-              const sd = parsed.storeData[store] || {};
-              state.storeData[store] = {
-                items: (sd.items || []).map(item => ({
-                  ...item,
-                  status: item.status || (item.checked ? 'checked' : 'none'),
-                  accountId: null,
-                  couponType: ''
+      // Try migrate older versions
+      for (const k of ['grocery_v5','grocery_app_v4','grocery_app_v3','grocery_app_v2','grocery_app_v1']) {
+        const old = localStorage.getItem(k);
+        if (old) {
+          const p = JSON.parse(old);
+          if (p.stores || p.data) {
+            state.stores = p.stores || ['My Store'];
+            state.current = p.current || p.currentStore || p.stores?.[0] || 'My Store';
+            state.mode = p.mode || 'planning';
+            state.data = {};
+            const srcData = p.data || p.storeData || {};
+            for (const s of state.stores) {
+              const sd = srcData[s] || {};
+              state.data[s] = {
+                items: (sd.items||[]).map(i => ({
+                  id: i.id || genId(),
+                  name: i.name,
+                  dept: i.department || i.dept || 'Other',
+                  aisle: i.aisle || '',
+                  status: i.status || (i.checked ? 'checked' : 'none'),
+                  accountId: i.accountId || '',
+                  tag: i.couponType || i.tag || ''
                 })),
-                accounts: (sd.rewards || []).map(r => ({
-                  id: generateId(),
-                  phone: r.phone,
-                  label: r.label || '',
-                  coupons: [],
-                  ebtBalance: null
+                accounts: (sd.accounts || sd.rewards || []).map(a => ({
+                  id: a.id || genId(),
+                  phone: (a.phone||'').replace(/\D/g,''),
+                  label: a.label || ''
                 })),
-                ebtBalance: null
+                ebt: sd.ebtBalance || sd.ebt || '',
+                dealOff: sd.dealOff || '',
+                dealMin: sd.dealMin || ''
               };
             }
             save();
             return;
-          } else if (Array.isArray(parsed.items)) {
-            state = {
-              stores: ['My Store'],
-              currentStore: 'My Store',
-              storeData: {
-                'My Store': {
-                  items: parsed.items.map(item => ({
-                    ...item,
-                    status: item.checked ? 'checked' : 'none',
-                    accountId: null,
-                    couponType: ''
-                  })),
-                  accounts: [],
-                  ebtBalance: null
-                }
-              },
-              mode: 'planning'
-            };
-            save();
-            return;
           }
         }
       }
-    } catch (e) {
-      console.error('Load error:', e);
-    }
-  }
+    } catch(e) { console.error(e); }
+  };
 
-  function getUniqueDepartments() {
-    const items = getCurrentItems();
-    const used = items.map(i => i.department).filter(Boolean);
-    const all = [...new Set([...DEFAULT_DEPARTMENTS, ...used])];
-    return all.sort((a, b) => a.localeCompare(b));
-  }
+  const showToast = (msg = 'Copied!') => {
+    DOM.toast.textContent = msg;
+    DOM.toast.classList.add('show');
+    setTimeout(() => DOM.toast.classList.remove('show'), 1500);
+  };
 
-  function getUniqueAisles() {
-    const items = getCurrentItems();
-    const aisles = items.map(i => i.aisle).filter(Boolean);
-    return [...new Set(aisles)].sort((a, b) => a.localeCompare(b));
-  }
-
-  function getFrequentDepartments() {
-    const items = getCurrentItems();
-    const counts = {};
-    items.forEach(item => {
-      if (item.department) {
-        counts[item.department] = (counts[item.department] || 0) + 1;
-      }
-    });
-
-    const sorted = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(e => e[0])
-      .slice(0, 6);
-
-    const defaults = ['Produce', 'Dairy', 'Meat', 'Frozen', 'Bakery', 'Deli'];
-    for (const d of defaults) {
-      if (!sorted.includes(d) && sorted.length < 6) sorted.push(d);
-    }
-
-    return sorted;
-  }
-
-  function showCopiedToast() {
-    DOM.copiedToast.classList.add('show');
-    setTimeout(() => DOM.copiedToast.classList.remove('show'), 2000);
-  }
-
-  function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(showCopiedToast).catch(() => {});
+  const copyText = t => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(t).then(() => showToast());
     } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      try { document.execCommand('copy'); showCopiedToast(); } catch (e) {}
-      document.body.removeChild(textarea);
+      const ta = document.createElement('textarea');
+      ta.value = t;
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast();
     }
-  }
+  };
 
-  // === Rendering ===
-  function updateStoreSelect() {
-    DOM.storeSelect.innerHTML = state.stores.map(store => {
-      const selected = store === state.currentStore ? ' selected' : '';
-      return '<option value="' + escapeHtml(store) + '"' + selected + '>' + escapeHtml(store) + '</option>';
-    }).join('');
-  }
-
-  function updateAccountSelects() {
-    const accounts = getCurrentAccounts();
-    const options = '<option value="">No rewards account</option>' + 
-      accounts.map(a => {
-        const label = a.label ? a.label + ' - ' + formatPhoneNumber(a.phone) : formatPhoneNumber(a.phone);
-        return '<option value="' + a.id + '">' + escapeHtml(label) + '</option>';
-      }).join('');
+  // Rendering
+  const render = () => {
+    const store = getStore();
     
-    DOM.inputAccount.innerHTML = options;
-    DOM.editAccount.innerHTML = options;
-  }
+    // Store select
+    DOM.storeSelect.innerHTML = state.stores.map(s => 
+      `<option value="${esc(s)}" ${s===state.current?'selected':''}>${esc(s)}</option>`
+    ).join('');
 
-  function updateRewardsButton() {
-    const accounts = getCurrentAccounts();
-    const storeData = getCurrentStoreData();
-    const totalCoupons = accounts.reduce((sum, a) => sum + (a.coupons ? a.coupons.length : 0), 0);
-    const hasEbt = storeData.ebtBalance !== null && storeData.ebtBalance !== '';
-    
-    if (accounts.length > 0 || hasEbt) {
-      DOM.btnRewards.style.display = 'flex';
-      DOM.rewardsCount.textContent = accounts.length + (totalCoupons > 0 ? '+' + totalCoupons : '');
+    // Deal row
+    DOM.dealOff.value = store.dealOff || '';
+    DOM.dealMin.value = store.dealMin || '';
+    updateDealStyle();
+
+    // EBT
+    DOM.ebtInput.value = store.ebt || '';
+
+    // Account selects
+    const accts = getAccounts();
+    const accOpts = '<option value="">No account</option>' + accts.map(a => 
+      `<option value="${a.id}">${esc(a.label || formatPhone(a.phone))}</option>`
+    ).join('');
+    DOM.inputAccount.innerHTML = accOpts;
+    DOM.editAccount.innerHTML = accOpts;
+
+    // Phone panel
+    if (accts.length === 0) {
+      DOM.phoneList.innerHTML = '<p style="color:#888;text-align:center">No accounts. Add in Settings.</p>';
     } else {
-      DOM.btnRewards.style.display = 'none';
-      DOM.rewardsPanel.classList.remove('open');
-    }
-  }
-
-  function updateRewardsPanel() {
-    const storeData = getCurrentStoreData();
-    const accounts = getCurrentAccounts();
-
-    // EBT Display
-    if (storeData.ebtBalance !== null && storeData.ebtBalance !== '') {
-      DOM.ebtDisplay.innerHTML = 
-        '<div class="ebt-balance-display">' +
-        '<span class="label">💳 EBT Balance</span>' +
-        '<span class="amount">$' + parseFloat(storeData.ebtBalance).toFixed(2) + '</span>' +
-        '</div>';
-    } else {
-      DOM.ebtDisplay.innerHTML = '';
+      DOM.phoneList.innerHTML = accts.map((a,i) => `
+        <div class="phone-card">
+          <div class="phone-info">
+            <strong>${esc(a.label || 'Account '+(i+1))}</strong>
+            <div class="phone-number">${esc(formatPhone(a.phone))}</div>
+          </div>
+          <button class="copy-btn" data-phone="${a.phone}">📋 Copy</button>
+        </div>
+      `).join('');
     }
 
-    if (accounts.length === 0) {
-      DOM.rewardsDisplay.innerHTML = '<div class="no-coupons">No rewards accounts. Add them in Settings.</div>';
-      return;
-    }
-
-    let html = '';
-    accounts.forEach(account => {
-      html += '<div class="account-card">';
-      html += '<div class="account-header">';
-      html += '<div class="account-info">';
-      if (account.label) html += '<div class="account-label">' + escapeHtml(account.label) + '</div>';
-      html += '<div class="account-phone">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
-      html += '</div>';
-      html += '<button class="account-copy-btn" data-phone="' + escapeHtml(account.phone.replace(/\D/g, '')) + '">📋 Copy</button>';
-      html += '</div>';
-
-      const coupons = account.coupons || [];
-      if (coupons.length > 0) {
-        html += '<div class="coupons-list">';
-        coupons.forEach(coupon => {
-          let badgeClass = coupon.type === 'free' ? 'free' : (coupon.type === 'threshold' ? 'threshold' : 'discount');
-          let badgeText = coupon.type === 'free' ? 'FREE' : (coupon.type === 'threshold' ? 'Threshold' : 'Coupon');
-          
-          html += '<div class="coupon-item">';
-          html += '<span class="coupon-badge ' + badgeClass + '">' + badgeText + '</span>';
-          html += '<div class="coupon-details">';
-          html += '<div class="coupon-item-name">' + escapeHtml(coupon.name || coupon.description) + '</div>';
-          if (coupon.value) html += '<div class="coupon-item-value">' + escapeHtml(coupon.value) + '</div>';
-          if (coupon.minSpend) html += '<div class="coupon-item-value">Min spend: $' + coupon.minSpend + '</div>';
-          if (coupon.expires) html += '<div class="coupon-item-expires">Expires: ' + coupon.expires + '</div>';
-          html += '</div></div>';
-        });
-        html += '</div>';
-      } else {
-        html += '<div class="no-coupons" style="padding: 12px 16px;">No coupons for this account</div>';
-      }
-
-      html += '</div>';
-    });
-
-    DOM.rewardsDisplay.innerHTML = html;
-  }
-
-  function updateDatalists() {
-    DOM.listDepartments.innerHTML = getUniqueDepartments()
-      .map(d => '<option value="' + escapeHtml(d) + '">').join('');
-    DOM.listAisles.innerHTML = getUniqueAisles()
-      .map(a => '<option value="' + escapeHtml(a) + '">').join('');
-  }
-
-  function updateQuickDepartments() {
-    const frequent = getFrequentDepartments();
-    const currentDept = DOM.inputDepartment.value.trim();
-
-    DOM.quickDept.innerHTML = frequent.map(dept => {
-      const activeClass = dept === currentDept ? ' active' : '';
-      return '<button type="button" class="quick-dept-btn' + activeClass + '" data-dept="' + escapeHtml(dept) + '">' + escapeHtml(dept) + '</button>';
-    }).join('');
-  }
-
-  function updateClearButtons() {
-    DOM.clearDept.classList.toggle('visible', DOM.inputDepartment.value.length > 0);
-    DOM.clearAisle.classList.toggle('visible', DOM.inputAisle.value.length > 0);
-  }
-
-  function updateModeButtons() {
+    // Mode
     DOM.btnPlanning.classList.toggle('active', state.mode === 'planning');
     DOM.btnShopping.classList.toggle('active', state.mode === 'shopping');
     DOM.addForm.style.display = state.mode === 'planning' ? 'block' : 'none';
-  }
 
-  function updateStats() {
-    const items = getCurrentItems();
-    const total = items.length;
+    // Datalists
+    const items = getItems();
+    const depts = [...new Set([...DEFAULT_DEPTS, ...items.map(i=>i.dept).filter(Boolean)])].sort();
+    const aisles = [...new Set(items.map(i=>i.aisle).filter(Boolean))].sort();
+    DOM.dlDepts.innerHTML = depts.map(d => `<option value="${esc(d)}">`).join('');
+    DOM.dlAisles.innerHTML = aisles.map(a => `<option value="${esc(a)}">`).join('');
+
+    // Quick depts
+    const counts = {};
+    items.forEach(i => { if(i.dept) counts[i.dept] = (counts[i.dept]||0)+1; });
+    let quick = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>e[0]);
+    if (quick.length < 6) {
+      for (const d of ['Produce','Dairy','Meat','Frozen','Bakery','Deli']) {
+        if (!quick.includes(d) && quick.length < 6) quick.push(d);
+      }
+    }
+    DOM.quickDepts.innerHTML = quick.map(d => 
+      `<button type="button" class="quick-btn ${DOM.inputDept.value===d?'active':''}" data-dept="${esc(d)}">${esc(d)}</button>`
+    ).join('');
+
+    // Stats
     const checked = items.filter(i => i.status === 'checked').length;
     const maybe = items.filter(i => i.status === 'maybe').length;
-    const selected = checked + maybe;
-
-    if (total === 0) {
-      DOM.statsBar.style.display = 'none';
-      DOM.legend.style.display = 'none';
-      return;
-    }
-
-    DOM.statsBar.style.display = 'flex';
-    DOM.legend.style.display = (maybe > 0) ? 'flex' : 'none';
-
-    if (state.mode === 'shopping') {
-      let text = checked + ' to buy';
-      if (maybe > 0) text += ', ' + maybe + ' to check';
-      DOM.statsText.textContent = text;
-      DOM.btnClear.textContent = 'Done Shopping';
-    } else {
-      DOM.statsText.textContent = selected + ' of ' + total + ' selected';
-      DOM.btnClear.textContent = 'Clear Selection';
-    }
-  }
-
-  function groupItems(items) {
-    // Group by account first, then by department/aisle
-    const byAccount = { '': {} };
-    const accounts = getCurrentAccounts();
-    
-    items.forEach(item => {
-      const accountId = item.accountId || '';
-      if (!byAccount[accountId]) byAccount[accountId] = {};
-      
-      const dept = item.department || 'Other';
-      const aisle = item.aisle || '';
-      
-      if (!byAccount[accountId][dept]) byAccount[accountId][dept] = {};
-      if (!byAccount[accountId][dept][aisle]) byAccount[accountId][dept][aisle] = [];
-      byAccount[accountId][dept][aisle].push(item);
-    });
-    
-    return byAccount;
-  }
-
-  function renderList() {
-    const allItems = getCurrentItems();
-    const isShoppingMode = state.mode === 'shopping';
-    const items = isShoppingMode
-      ? allItems.filter(i => i.status === 'checked' || i.status === 'maybe')
-      : allItems;
-
     if (items.length === 0) {
-      if (isShoppingMode) {
-        const hasSelected = allItems.some(i => i.status === 'checked' || i.status === 'maybe');
-        if (!hasSelected && allItems.length > 0) {
-          DOM.listContainer.innerHTML = 
-            '<div class="shopping-tip">💡 Switch to Planning mode and select items!</div>' +
-            '<div class="empty-state"><div class="empty-state-icon">✅</div>' +
-            '<div class="empty-state-text">No items selected.</div></div>';
-        } else {
-          DOM.listContainer.innerHTML = 
-            '<div class="empty-state"><div class="empty-state-icon">🎉</div>' +
-            '<div class="empty-state-text">All done!<br>Great shopping!</div></div>';
-        }
+      DOM.statsBar.style.display = 'none';
+    } else {
+      DOM.statsBar.style.display = 'flex';
+      if (state.mode === 'shopping') {
+        DOM.statsText.textContent = `${checked} to buy${maybe ? `, ${maybe} maybe` : ''}`;
+        DOM.btnClear.textContent = 'Done ✓';
       } else {
-        DOM.listContainer.innerHTML = 
-          '<div class="empty-state"><div class="empty-state-icon">📝</div>' +
-          '<div class="empty-state-text">Your list is empty.<br>Add items above!</div></div>';
+        DOM.statsText.textContent = `${checked + maybe} of ${items.length} selected`;
+        DOM.btnClear.textContent = 'Clear ✕';
       }
+    }
+
+    // List
+    renderList();
+  };
+
+  const updateDealStyle = () => {
+    const off = parseFloat(DOM.dealOff.value) || 0;
+    const min = parseFloat(DOM.dealMin.value) || 0;
+    if (off > 0 && min > 0) {
+      DOM.dealRow.classList.add('deal-active');
+    } else {
+      DOM.dealRow.classList.remove('deal-active');
+    }
+  };
+
+  const renderList = () => {
+    const items = getItems();
+    const shopping = state.mode === 'shopping';
+    const visible = shopping ? items.filter(i => i.status === 'checked' || i.status === 'maybe') : items;
+
+    if (visible.length === 0) {
+      DOM.listContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">${shopping ? '✅' : '📝'}</div>
+          <div>${shopping ? 'No items selected for this trip.' : 'Add items above to start your list.'}</div>
+        </div>
+      `;
       return;
     }
 
-    const accounts = getCurrentAccounts();
-    const byAccount = groupItems(items);
-    let html = '';
-
-    // Sort account IDs: items without account first, then by account
-    const accountIds = Object.keys(byAccount).sort((a, b) => {
-      if (a === '') return -1;
-      if (b === '') return 1;
-      return 0;
+    // Group by dept then aisle
+    const groups = {};
+    visible.forEach(item => {
+      const d = item.dept || 'Other';
+      const a = item.aisle || '';
+      if (!groups[d]) groups[d] = {};
+      if (!groups[d][a]) groups[d][a] = [];
+      groups[d][a].push(item);
     });
 
-    accountIds.forEach(accountId => {
-      const account = accountId ? getAccountById(accountId) : null;
-      const groups = byAccount[accountId];
+    const sortedDepts = Object.keys(groups).sort((a,b) => a==='Other'?1:b==='Other'?-1:a.localeCompare(b));
+    
+    let html = '';
+    sortedDepts.forEach(dept => {
+      html += `<div class="department-group"><div class="department-header">🏷️ ${esc(dept)}</div>`;
       
-      // Account header if applicable
-      if (account && isShoppingMode) {
-        html += '<div style="background: #6366f1; color: white; padding: 12px 18px; margin: 0 16px 8px; border-radius: 10px;">';
-        html += '<div style="font-weight: 600;">' + escapeHtml(account.label || 'Account') + '</div>';
-        html += '<div style="font-family: monospace; font-size: 1.1rem;">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
-        html += '</div>';
-      }
+      const aisleKeys = Object.keys(groups[dept]).sort((a,b) => a===''?1:b===''?-1:a.localeCompare(b,undefined,{numeric:true}));
+      
+      aisleKeys.forEach(aisle => {
+        if (aisle) html += `<div class="aisle-header">📍 ${esc(aisle)}</div>`;
+        
+        const sorted = groups[dept][aisle].sort((a,b) => a.name.localeCompare(b.name));
+        sorted.forEach(item => {
+          const status = item.status || 'none';
+          const checkClass = status === 'checked' ? 'checked' : status === 'maybe' ? 'maybe' : '';
+          const checkContent = status === 'checked' ? '✓' : status === 'maybe' ? '?' : '';
+          const doneClass = status !== 'none' && !shopping ? 'done' : '';
+          
+          const acct = item.accountId ? findAccount(item.accountId) : null;
+          const acctIdx = acct ? accountIndex(item.accountId) : -1;
+          const colorClass = acct ? COLORS[acctIdx % COLORS.length] : '';
+          
+          let tags = '';
+          if (item.tag === 'free') tags += '<span class="tag tag-free">FREE</span>';
+          else if (item.tag === 'coupon') tags += '<span class="tag tag-coupon">COUPON</span>';
 
-      const sortedDepts = Object.keys(groups).sort((a, b) => {
-        if (a === 'Other') return 1;
-        if (b === 'Other') return -1;
-        return a.localeCompare(b);
-      });
+          let acctLabel = '';
+          if (acct) {
+            acctLabel = `<div class="item-account">👤 ${esc(acct.label || formatPhone(acct.phone))}</div>`;
+          }
 
-      sortedDepts.forEach(dept => {
-        const aisles = groups[dept];
-        const sortedAisles = Object.keys(aisles).sort((a, b) => {
-          if (a === '') return 1;
-          if (b === '') return -1;
-          return a.localeCompare(b, undefined, { numeric: true });
+          html += `
+            <div class="item ${doneClass} ${colorClass}" data-id="${item.id}">
+              <div class="item-check ${checkClass}" data-action="toggle" data-id="${item.id}">${checkContent}</div>
+              <div class="item-body" data-action="edit" data-id="${item.id}">
+                <div class="item-name">${esc(item.name)} ${tags}</div>
+                ${!shopping && item.aisle ? `<div class="item-meta">${esc(item.aisle)}</div>` : ''}
+                ${acctLabel}
+              </div>
+              <button class="item-delete" data-action="delete" data-id="${item.id}">×</button>
+            </div>
+          `;
         });
-
-        html += '<div class="department-group">';
-        html += '<div class="department-header">🏷️ ' + escapeHtml(dept) + '</div>';
-
-        sortedAisles.forEach(aisle => {
-          const aisleItems = aisles[aisle].sort((a, b) => a.name.localeCompare(b.name));
-
-          html += '<div class="aisle-section">';
-          if (aisle) html += '<div class="aisle-header">📍 ' + escapeHtml(aisle) + '</div>';
-
-          aisleItems.forEach(item => {
-            const status = item.status || 'none';
-            const checkboxClass = status === 'checked' ? 'checked' : (status === 'maybe' ? 'maybe' : '');
-            const checkboxContent = status === 'checked' ? '✓' : (status === 'maybe' ? '?' : '');
-            const itemClass = status !== 'none' && !isShoppingMode ? 'is-done' : '';
-            const itemAccount = item.accountId ? getAccountById(item.accountId) : null;
-
-            html += '<div class="item ' + itemClass + '" data-id="' + item.id + '">';
-            html += '<div class="item-checkbox ' + checkboxClass + '" data-action="toggle" data-id="' + item.id + '">' + checkboxContent + '</div>';
-            html += '<div class="item-content" data-action="edit" data-id="' + item.id + '">';
-            
-            html += '<div class="item-name">' + escapeHtml(item.name);
-            if (item.couponType === 'free') {
-              html += ' <span class="item-tag free">FREE</span>';
-            } else if (item.couponType === 'coupon') {
-              html += ' <span class="item-tag coupon">COUPON</span>';
-            }
-            html += '</div>';
-
-            if (!isShoppingMode && item.aisle) {
-              html += '<div class="item-meta">' + escapeHtml(item.aisle) + '</div>';
-            }
-            
-            if (itemAccount) {
-              html += '<div class="item-account">👤 ' + escapeHtml(itemAccount.label || formatPhoneNumber(itemAccount.phone)) + '</div>';
-            }
-
-            html += '</div>';
-            html += '<button class="item-delete" data-action="delete" data-id="' + item.id + '">×</button>';
-            html += '</div>';
-          });
-
-          html += '</div>';
-        });
-
-        html += '</div>';
       });
+      
+      html += '</div>';
     });
 
     DOM.listContainer.innerHTML = html;
-  }
+  };
 
-  function renderStoreList() {
-    DOM.storeList.innerHTML = state.stores.map(store => {
-      const activeClass = store === state.currentStore ? ' active' : '';
-      const canDelete = state.stores.length > 1;
-      
-      let html = '<div class="store-item' + activeClass + '">';
-      html += '<span class="store-item-name">' + escapeHtml(store);
-      if (store === state.currentStore) html += ' <span style="color:#40916c;font-size:0.8rem">(current)</span>';
-      html += '</span><div class="store-item-actions">';
-      html += '<button class="store-item-btn" data-action="select-store" data-store="' + escapeHtml(store) + '">Select</button>';
-      html += '<button class="store-item-btn" data-action="rename" data-store="' + escapeHtml(store) + '">✏️</button>';
-      if (canDelete) html += '<button class="store-item-btn delete" data-action="delete-store" data-store="' + escapeHtml(store) + '">🗑️</button>';
-      html += '</div></div>';
-      return html;
-    }).join('');
-  }
-
-  function renderAccountsList() {
-    DOM.currentStoreName.textContent = state.currentStore;
-    const storeData = getCurrentStoreData();
-    const accounts = getCurrentAccounts();
-
-    let html = '';
-
-    // EBT Balance section
-    html += '<div class="account-section" style="background: #f3e8ff;">';
-    html += '<div class="account-section-header"><span class="account-section-title">💳 EBT Balance</span></div>';
-    html += '<div class="ebt-input-row">';
-    html += '<label>Balance: $</label>';
-    html += '<input type="number" step="0.01" min="0" id="ebt-balance-input" value="' + (storeData.ebtBalance || '') + '" placeholder="0.00">';
-    html += '<button type="button" id="btn-save-ebt">Save</button>';
-    html += '</div></div>';
+  const renderSettings = () => {
+    // Stores
+    DOM.storeList.innerHTML = state.stores.map(s => `
+      <div class="settings-item">
+        <span>${esc(s)}${s===state.current?' <small>(current)</small>':''}</span>
+        <button data-action="select-store" data-store="${esc(s)}">Select</button>
+        <button data-action="delete-store" data-store="${esc(s)}">🗑️</button>
+      </div>
+    `).join('');
 
     // Accounts
-    accounts.forEach((account, index) => {
-      html += '<div class="account-section">';
-      html += '<div class="account-section-header">';
-      html += '<div>';
-      html += '<div class="account-section-title">📱 ' + escapeHtml(account.label || 'Account ' + (index + 1)) + '</div>';
-      html += '<div class="account-section-phone">' + escapeHtml(formatPhoneNumber(account.phone)) + '</div>';
-      html += '</div>';
-      html += '<div class="account-section-actions">';
-      html += '<button class="account-section-btn delete" data-action="delete-account" data-id="' + account.id + '">🗑️</button>';
-      html += '</div></div>';
-
-      // Coupons list
-      const coupons = account.coupons || [];
-      if (coupons.length > 0) {
-        html += '<div class="coupon-list">';
-        coupons.forEach((coupon, ci) => {
-          const badgeClass = coupon.type === 'free' ? 'free' : (coupon.type === 'threshold' ? 'threshold' : 'discount');
-          const badgeText = coupon.type === 'free' ? 'FREE' : (coupon.type === 'threshold' ? '$$ OFF' : 'COUPON');
-          
-          html += '<div class="coupon-entry">';
-          html += '<span class="coupon-entry-badge ' + badgeClass + '">' + badgeText + '</span>';
-          html += '<div class="coupon-entry-info">';
-          html += '<div class="coupon-entry-name">' + escapeHtml(coupon.name || coupon.description) + '</div>';
-          let detail = '';
-          if (coupon.value) detail += coupon.value;
-          if (coupon.minSpend) detail += (detail ? ' • ' : '') + 'Min $' + coupon.minSpend;
-          if (coupon.expires) detail += (detail ? ' • ' : '') + 'Exp: ' + coupon.expires;
-          if (detail) html += '<div class="coupon-entry-detail">' + escapeHtml(detail) + '</div>';
-          html += '</div>';
-          html += '<button class="coupon-entry-delete" data-action="delete-coupon" data-account="' + account.id + '" data-index="' + ci + '">×</button>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
-
-      // Add coupon form
-      html += '<div class="add-coupon-form">';
-      html += '<div class="form-group"><label>Coupon Type</label>';
-      html += '<select data-coupon-type-for="' + account.id + '">';
-      html += '<option value="free">🆓 Free Item</option>';
-      html += '<option value="discount">🏷️ Personal Coupon</option>';
-      html += '<option value="threshold">💰 Threshold ($X off $Y+)</option>';
-      html += '</select></div>';
-      html += '<div class="form-group"><label>Item / Description</label>';
-      html += '<input type="text" placeholder="e.g., Deli Turkey 1lb" data-coupon-name-for="' + account.id + '"></div>';
-      html += '<div class="form-row">';
-      html += '<div class="form-group"><label>Value (optional)</label>';
-      html += '<input type="text" placeholder="e.g., $2 off" data-coupon-value-for="' + account.id + '"></div>';
-      html += '<div class="form-group"><label>Min Spend</label>';
-      html += '<input type="number" placeholder="e.g., 90" data-coupon-min-for="' + account.id + '"></div>';
-      html += '</div>';
-      html += '<div class="form-group"><label>Expires (optional)</label>';
-      html += '<input type="date" data-coupon-expires-for="' + account.id + '"></div>';
-      html += '<button type="button" data-action="add-coupon" data-account="' + account.id + '">+ Add Coupon</button>';
-      html += '</div></div>';
-    });
-
-    DOM.accountsList.innerHTML = html;
-
-    // Attach EBT save handler
-    const ebtInput = getEl('ebt-balance-input');
-    const btnSaveEbt = getEl('btn-save-ebt');
-    if (btnSaveEbt) {
-      btnSaveEbt.onclick = function() {
-        const val = ebtInput.value.trim();
-        getCurrentStoreData().ebtBalance = val ? parseFloat(val) : null;
-        save();
-        render();
-      };
+    DOM.currentStoreLabel.textContent = state.current;
+    const accts = getAccounts();
+    if (accts.length === 0) {
+      DOM.accountList.innerHTML = '<p style="color:#888;font-size:0.9rem;margin-bottom:10px">No accounts yet.</p>';
+    } else {
+      DOM.accountList.innerHTML = accts.map((a,i) => `
+        <div class="settings-item" style="border-left: 4px solid ${['#6366f1','#ec4899','#f59e0b','#10b981','#06b6d4'][i%5]}">
+          <span>${esc(a.label || 'Account '+(i+1))}<small style="margin-left:8px">${esc(formatPhone(a.phone))}</small></span>
+          <button data-action="delete-account" data-id="${a.id}">🗑️</button>
+        </div>
+      `).join('');
     }
-  }
+  };
 
-  function render() {
-    updateStoreSelect();
-    updateAccountSelects();
-    updateRewardsButton();
-    updateRewardsPanel();
-    updateModeButtons();
-    updateStats();
-    updateDatalists();
-    updateQuickDepartments();
-    updateClearButtons();
-    renderList();
-  }
+  // Actions
+  const setMode = m => { state.mode = m; save(); render(); };
+  const setStore = s => { if(state.stores.includes(s)) { state.current = s; save(); render(); } };
 
-  // === Actions ===
-  function setMode(mode) {
-    state.mode = mode;
-    save();
-    render();
-  }
-
-  function setCurrentStore(storeName) {
-    if (state.stores.includes(storeName)) {
-      state.currentStore = storeName;
-      DOM.rewardsPanel.classList.remove('open');
-      save();
-      render();
-    }
-  }
-
-  function addStore(name) {
-    const trimmed = name.trim();
-    if (!trimmed) return false;
-    if (state.stores.includes(trimmed)) {
-      alert('Store already exists.');
-      return false;
-    }
-
-    state.stores.push(trimmed);
-    state.storeData[trimmed] = { items: [], accounts: [], ebtBalance: null };
-    state.currentStore = trimmed;
-    save();
-    render();
-    renderStoreList();
+  const addStore = name => {
+    const n = name.trim();
+    if (!n || state.stores.includes(n)) return false;
+    state.stores.push(n);
+    state.data[n] = { items: [], accounts: [], ebt: '', dealOff: '', dealMin: '' };
+    state.current = n;
+    save(); render(); renderSettings();
     return true;
-  }
+  };
 
-  function renameStore(oldName, newName) {
-    const trimmed = newName.trim();
-    if (!trimmed) return false;
-    if (trimmed === oldName) return true;
-    if (state.stores.includes(trimmed)) {
-      alert('Store already exists.');
-      return false;
+  const deleteStore = name => {
+    if (state.stores.length <= 1) return alert('Need at least one store.');
+    if (!confirm(`Delete "${name}" and all its data?`)) return;
+    const i = state.stores.indexOf(name);
+    if (i > -1) {
+      state.stores.splice(i, 1);
+      delete state.data[name];
+      if (state.current === name) state.current = state.stores[0];
+      save(); render(); renderSettings();
     }
+  };
 
-    const index = state.stores.indexOf(oldName);
-    if (index === -1) return false;
-
-    state.stores[index] = trimmed;
-    state.storeData[trimmed] = state.storeData[oldName];
-    delete state.storeData[oldName];
-
-    if (state.currentStore === oldName) state.currentStore = trimmed;
-
-    save();
-    render();
-    renderStoreList();
+  const addAccount = (phone, label) => {
+    const p = phone.replace(/\D/g,'');
+    if (!p) return false;
+    getAccounts().push({ id: genId(), phone: p, label: label.trim() });
+    save(); render(); renderSettings();
     return true;
-  }
+  };
 
-  function deleteStore(name) {
-    if (state.stores.length <= 1) {
-      alert('Must have at least one store.');
-      return;
+  const deleteAccount = id => {
+    const accts = getAccounts();
+    const i = accts.findIndex(a => a.id === id);
+    if (i > -1) {
+      accts.splice(i, 1);
+      // Clear from items
+      getItems().forEach(item => { if(item.accountId === id) item.accountId = ''; });
+      save(); render(); renderSettings();
     }
+  };
 
-    if (!confirm('Delete "' + name + '" and all its data?')) return;
-
-    const index = state.stores.indexOf(name);
-    if (index === -1) return;
-
-    state.stores.splice(index, 1);
-    delete state.storeData[name];
-
-    if (state.currentStore === name) state.currentStore = state.stores[0];
-
-    save();
-    render();
-    renderStoreList();
-  }
-
-  function addAccount(phone, label) {
-    const trimmed = phone.replace(/\D/g, '');
-    if (!trimmed) return false;
-
-    const account = {
-      id: generateId(),
-      phone: trimmed,
-      label: label.trim(),
-      coupons: []
-    };
-
-    getCurrentAccounts().push(account);
-    save();
-    render();
-    renderAccountsList();
-    return true;
-  }
-
-  function deleteAccount(accountId) {
-    const accounts = getCurrentAccounts();
-    const index = accounts.findIndex(a => a.id === accountId);
-    if (index === -1) return;
-    
-    if (!confirm('Delete this account and all its coupons?')) return;
-    
-    accounts.splice(index, 1);
-    
-    // Clear accountId from items
-    getCurrentItems().forEach(item => {
-      if (item.accountId === accountId) item.accountId = null;
-    });
-    
-    save();
-    render();
-    renderAccountsList();
-  }
-
-  function addCoupon(accountId, type, name, value, minSpend, expires) {
-    const account = getAccountById(accountId);
-    if (!account) return false;
-    if (!name.trim()) return false;
-
-    if (!account.coupons) account.coupons = [];
-    
-    account.coupons.push({
-      type: type,
+  const addItem = (name, dept, aisle, accountId, tag) => {
+    getItems().push({
+      id: genId(),
       name: name.trim(),
-      value: value.trim(),
-      minSpend: minSpend ? parseFloat(minSpend) : null,
-      expires: expires || null
-    });
-
-    save();
-    renderAccountsList();
-    updateRewardsPanel();
-    return true;
-  }
-
-  function deleteCoupon(accountId, couponIndex) {
-    const account = getAccountById(accountId);
-    if (!account || !account.coupons) return;
-    
-    account.coupons.splice(couponIndex, 1);
-    save();
-    renderAccountsList();
-    updateRewardsPanel();
-  }
-
-  function addItem(name, department, aisle, accountId, couponType) {
-    const item = {
-      id: generateId(),
-      name: name.trim(),
-      department: department.trim() || 'Other',
+      dept: dept.trim() || 'Other',
       aisle: aisle.trim(),
       status: 'none',
-      accountId: accountId || null,
-      couponType: couponType || ''
-    };
+      accountId: accountId || '',
+      tag: tag || ''
+    });
+    save(); render();
+  };
 
-    getCurrentItems().push(item);
-    save();
-    render();
-  }
-
-  function cycleItemStatus(id) {
-    const items = getCurrentItems();
-    const item = items.find(i => i.id === id);
+  const cycleStatus = id => {
+    const item = getItems().find(i => i.id === id);
     if (!item) return;
-
-    const oldStatus = item.status || 'none';
-    item.status = oldStatus === 'none' ? 'checked' : (oldStatus === 'checked' ? 'maybe' : 'none');
+    const was = item.status;
+    item.status = was === 'none' ? 'checked' : was === 'checked' ? 'maybe' : 'none';
     save();
 
     if (state.mode === 'shopping' && item.status === 'none') {
-      const itemEl = DOM.listContainer.querySelector('[data-id="' + id + '"].item');
-      if (itemEl) {
-        itemEl.classList.add('checked-off');
+      const el = DOM.listContainer.querySelector(`[data-id="${id}"].item`);
+      if (el) {
+        el.classList.add('removing');
         setTimeout(render, 300);
         return;
       }
     }
-
     render();
-  }
+  };
 
-  function deleteItem(id) {
-    const items = getCurrentItems();
-    const index = items.findIndex(i => i.id === id);
-    if (index !== -1) items.splice(index, 1);
-    save();
-    render();
-    closeEditModal();
-  }
+  const deleteItem = id => {
+    const items = getItems();
+    const i = items.findIndex(x => x.id === id);
+    if (i > -1) { items.splice(i, 1); save(); render(); }
+  };
 
-  function updateItem(id, name, department, aisle, accountId, couponType, status) {
-    const item = getCurrentItems().find(i => i.id === id);
+  const updateItem = (id, name, dept, aisle, accountId, tag, status) => {
+    const item = getItems().find(i => i.id === id);
     if (!item) return;
-
     item.name = name.trim() || item.name;
-    item.department = department.trim() || 'Other';
+    item.dept = dept.trim() || 'Other';
     item.aisle = aisle.trim();
-    item.accountId = accountId || null;
-    item.couponType = couponType || '';
-    item.status = status || 'none';
+    item.accountId = accountId || '';
+    item.tag = tag || '';
+    item.status = status;
+    save(); render();
+  };
 
-    save();
-    render();
-  }
+  const clearSelections = () => {
+    getItems().forEach(i => i.status = 'none');
+    save(); render();
+  };
 
-  function clearSelection() {
-    getCurrentItems().forEach(item => { item.status = 'none'; });
-    save();
-    render();
-  }
-
-  function clearForm() {
-    DOM.inputName.value = '';
-    DOM.inputDepartment.value = '';
-    DOM.inputAisle.value = '';
-    DOM.inputAccount.value = '';
-    DOM.inputCouponType.value = '';
-    updateClearButtons();
-    updateQuickDepartments();
-  }
-
-  function exportData() {
-    const storeData = getCurrentStoreData();
-    const exportObj = {
-      version: 4,
-      exportDate: new Date().toISOString(),
-      storeName: state.currentStore,
-      items: storeData.items,
-      accounts: storeData.accounts,
-      ebtBalance: storeData.ebtBalance
+  const exportData = () => {
+    const store = getStore();
+    const obj = {
+      version: 6,
+      date: new Date().toISOString(),
+      store: state.current,
+      items: store.items,
+      accounts: store.accounts,
+      ebt: store.ebt,
+      dealOff: store.dealOff,
+      dealMin: store.dealMin
     };
-
-    const json = JSON.stringify(exportObj, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement('a');
     a.href = url;
-    const date = new Date().toISOString().split('T')[0];
-    a.download = sanitizeFilename(state.currentStore) + '-' + date + '.json';
-    document.body.appendChild(a);
+    a.download = `${state.current.replace(/[^a-z0-9]/gi,'_')}-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }
+  };
 
-  function importData(file) {
+  const importData = file => {
     const reader = new FileReader();
-
-    reader.onload = function(e) {
+    reader.onload = e => {
       try {
-        const data = JSON.parse(e.target.result);
-        let items = [], accounts = [], ebtBalance = null;
-        let storeName = data.storeName || 'Imported Store';
+        const d = JSON.parse(e.target.result);
+        let items = Array.isArray(d.items) ? d.items : Array.isArray(d) ? d : [];
+        let accounts = Array.isArray(d.accounts) ? d.accounts : [];
+        let storeName = d.store || d.storeName || 'Imported';
+        let ebt = d.ebt || d.ebtBalance || '';
+        let dealOff = d.dealOff || '';
+        let dealMin = d.dealMin || '';
 
-        if (Array.isArray(data.items)) items = data.items;
-        else if (Array.isArray(data)) items = data;
-
-        if (Array.isArray(data.accounts)) accounts = data.accounts;
-        else if (Array.isArray(data.rewards)) {
-          accounts = data.rewards.map(r => ({
-            id: generateId(),
-            phone: r.phone,
-            label: r.label || '',
-            coupons: []
-          }));
-        }
-
-        if (data.ebtBalance !== undefined) ebtBalance = data.ebtBalance;
-
-        items = items.filter(item => item && item.name).map(item => ({
-          id: item.id || generateId(),
-          name: String(item.name).trim(),
-          department: String(item.department || 'Other').trim(),
-          aisle: String(item.aisle || '').trim(),
-          status: ['none','checked','maybe'].includes(item.status) ? item.status : (item.checked ? 'checked' : 'none'),
-          accountId: item.accountId || null,
-          couponType: item.couponType || ''
+        items = items.filter(i => i && i.name).map(i => ({
+          id: i.id || genId(),
+          name: String(i.name).trim(),
+          dept: String(i.dept || i.department || 'Other').trim(),
+          aisle: String(i.aisle || '').trim(),
+          status: ['none','checked','maybe'].includes(i.status) ? i.status : 'none',
+          accountId: i.accountId || '',
+          tag: i.tag || i.couponType || ''
         }));
 
         accounts = accounts.filter(a => a && a.phone).map(a => ({
-          id: a.id || generateId(),
-          phone: String(a.phone).replace(/\D/g, ''),
-          label: String(a.label || '').trim(),
-          coupons: Array.isArray(a.coupons) ? a.coupons : []
+          id: a.id || genId(),
+          phone: String(a.phone).replace(/\D/g,''),
+          label: String(a.label || '').trim()
         }));
 
-        if (items.length === 0 && accounts.length === 0) {
-          alert('No valid data found.');
-          return;
-        }
+        if (!items.length && !accounts.length) return alert('No valid data found.');
 
-        let targetStore = storeName;
+        let target = storeName;
         if (state.stores.includes(storeName)) {
-          if (!confirm('Replace data in "' + storeName + '"?\n\nCancel to create new store.')) {
+          if (!confirm(`Replace data in "${storeName}"? Cancel to create new store.`)) {
             let c = 2;
-            while (state.stores.includes(storeName + ' (' + c + ')')) c++;
-            targetStore = storeName + ' (' + c + ')';
+            while (state.stores.includes(`${storeName} (${c})`)) c++;
+            target = `${storeName} (${c})`;
           }
         }
 
-        if (!state.stores.includes(targetStore)) state.stores.push(targetStore);
-        state.storeData[targetStore] = { items, accounts, ebtBalance };
-        state.currentStore = targetStore;
+        if (!state.stores.includes(target)) state.stores.push(target);
+        state.data[target] = { items, accounts, ebt, dealOff, dealMin };
+        state.current = target;
         state.mode = 'planning';
-        
-        save();
-        render();
-        
-        alert('Imported to "' + targetStore + '":\n• ' + items.length + ' items\n• ' + accounts.length + ' accounts');
-      } catch (err) {
-        alert('Could not read file.');
+        save(); render();
+        alert(`Imported ${items.length} items, ${accounts.length} accounts to "${target}"`);
+      } catch(err) {
+        alert('Error reading file.');
       }
     };
-
-    reader.onerror = function() { alert('Error reading file.'); };
     reader.readAsText(file);
-  }
+  };
 
-  // === Edit Modal ===
-  function openEditModal(id) {
-    const item = getCurrentItems().find(i => i.id === id);
+  // Edit modal
+  const openEdit = id => {
+    const item = getItems().find(i => i.id === id);
     if (!item) return;
-
-    editingItemId = id;
-    editingStatus = item.status || 'none';
-    
+    editId = id;
+    editStatus = item.status || 'none';
     DOM.editName.value = item.name;
-    DOM.editDepartment.value = item.department;
+    DOM.editDept.value = item.dept;
     DOM.editAisle.value = item.aisle;
     DOM.editAccount.value = item.accountId || '';
-    DOM.editCouponType.value = item.couponType || '';
-    
-    updateStatusToggle();
-    
+    DOM.editTag.value = item.tag || '';
+    updateStatusBtns();
     DOM.editModal.classList.add('active');
     DOM.editName.focus();
-  }
+  };
 
-  function updateStatusToggle() {
-    const options = DOM.statusToggle.querySelectorAll('.status-option');
-    options.forEach(opt => {
-      opt.className = 'status-option';
-      if (opt.dataset.status === editingStatus) {
-        opt.classList.add('active-' + editingStatus);
-      }
+  const closeEdit = () => { editId = null; DOM.editModal.classList.remove('active'); };
+
+  const updateStatusBtns = () => {
+    DOM.statusBtns.querySelectorAll('.status-btn').forEach(b => {
+      b.className = 'status-btn' + (b.dataset.status === editStatus ? ` active-${editStatus}` : '');
     });
-  }
+  };
 
-  function closeEditModal() {
-    editingItemId = null;
-    DOM.editModal.classList.remove('active');
-  }
-
-  function saveEdit() {
-    if (!editingItemId) return;
+  const saveEdit = () => {
+    if (!editId) return;
     const name = DOM.editName.value.trim();
-    if (!name) { DOM.editName.focus(); return; }
+    if (!name) return DOM.editName.focus();
+    updateItem(editId, name, DOM.editDept.value, DOM.editAisle.value, DOM.editAccount.value, DOM.editTag.value, editStatus);
+    closeEdit();
+  };
 
-    updateItem(
-      editingItemId,
-      name,
-      DOM.editDepartment.value,
-      DOM.editAisle.value,
-      DOM.editAccount.value,
-      DOM.editCouponType.value,
-      editingStatus
-    );
+  // Event listeners
+  DOM.storeSelect.onchange = () => setStore(DOM.storeSelect.value);
 
-    closeEditModal();
-  }
+  // Deal inputs
+  DOM.dealOff.onchange = () => {
+    getStore().dealOff = DOM.dealOff.value;
+    save();
+    updateDealStyle();
+  };
 
-  // === Settings Modal ===
-  function openSettingsModal() {
-    renderStoreList();
-    renderAccountsList();
-    DOM.newStoreName.value = '';
-    DOM.settingsModal.classList.add('active');
-    switchSettingsTab('stores');
-  }
+  DOM.dealMin.onchange = () => {
+    getStore().dealMin = DOM.dealMin.value;
+    save();
+    updateDealStyle();
+  };
 
-  function closeSettingsModal() {
-    DOM.settingsModal.classList.remove('active');
-  }
+  DOM.btnEbt.onclick = () => {
+    DOM.ebtBar.classList.toggle('visible');
+    DOM.btnEbt.classList.toggle('active', DOM.ebtBar.classList.contains('visible'));
+  };
 
-  function switchSettingsTab(tab) {
-    currentSettingsTab = tab;
-    DOM.tabStores.style.display = tab === 'stores' ? 'block' : 'none';
-    DOM.tabAccounts.style.display = tab === 'accounts' ? 'block' : 'none';
-    
-    document.querySelectorAll('.settings-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.tab === tab);
-    });
-    
-    if (tab === 'accounts') renderAccountsList();
-  }
+  DOM.ebtInput.onchange = () => {
+    getStore().ebt = DOM.ebtInput.value;
+    save();
+  };
 
-  // === Rename Modal ===
-  function openRenameModal(storeName) {
-    renamingStore = storeName;
-    DOM.renameStoreInput.value = storeName;
-    DOM.renameModal.classList.add('active');
-    DOM.renameStoreInput.focus();
-    DOM.renameStoreInput.select();
-  }
+  DOM.btnPhones.onclick = () => DOM.phonePanel.classList.toggle('visible');
+  DOM.phonePanelClose.onclick = () => DOM.phonePanel.classList.remove('visible');
 
-  function closeRenameModal() {
-    renamingStore = null;
-    DOM.renameModal.classList.remove('active');
-  }
-
-  function saveRename() {
-    if (!renamingStore) return;
-    if (renameStore(renamingStore, DOM.renameStoreInput.value)) {
-      closeRenameModal();
+  DOM.phoneList.onclick = e => {
+    if (e.target.classList.contains('copy-btn')) {
+      copyText(e.target.dataset.phone);
     }
-  }
+  };
 
-  // === Event Handlers ===
-  DOM.btnPlanning.addEventListener('click', () => setMode('planning'));
-  DOM.btnShopping.addEventListener('click', () => setMode('shopping'));
-  DOM.btnSettings.addEventListener('click', openSettingsModal);
+  DOM.btnSettings.onclick = () => { renderSettings(); DOM.settingsModal.classList.add('active'); };
+  DOM.settingsClose.onclick = () => DOM.settingsModal.classList.remove('active');
+  DOM.settingsModal.onclick = e => { if (e.target === DOM.settingsModal) DOM.settingsModal.classList.remove('active'); };
 
-  DOM.btnRewards.addEventListener('click', () => DOM.rewardsPanel.classList.toggle('open'));
-  DOM.rewardsPanelClose.addEventListener('click', () => DOM.rewardsPanel.classList.remove('open'));
+  DOM.storeList.onclick = e => {
+    const action = e.target.dataset.action;
+    const store = e.target.dataset.store;
+    if (action === 'select-store') { setStore(store); renderSettings(); }
+    if (action === 'delete-store') deleteStore(store);
+  };
 
-  DOM.rewardsDisplay.addEventListener('click', function(e) {
-    if (e.target.classList.contains('account-copy-btn')) {
-      copyToClipboard(e.target.dataset.phone);
+  DOM.addStoreBtn.onclick = () => { if(addStore(DOM.newStore.value)) DOM.newStore.value = ''; };
+  DOM.newStore.onkeydown = e => { if(e.key==='Enter') { e.preventDefault(); if(addStore(DOM.newStore.value)) DOM.newStore.value = ''; }};
+
+  DOM.accountList.onclick = e => {
+    if (e.target.dataset.action === 'delete-account') {
+      if (confirm('Delete this account?')) deleteAccount(e.target.dataset.id);
     }
-  });
+  };
 
-  DOM.storeSelect.addEventListener('change', function() { setCurrentStore(this.value); });
+  DOM.addAccountBtn.onclick = () => {
+    if (addAccount(DOM.newPhone.value, DOM.newLabel.value)) {
+      DOM.newPhone.value = '';
+      DOM.newLabel.value = '';
+    }
+  };
 
-  DOM.addForm.addEventListener('submit', function(e) {
+  DOM.btnPlanning.onclick = () => setMode('planning');
+  DOM.btnShopping.onclick = () => setMode('shopping');
+
+  DOM.addForm.onsubmit = e => {
     e.preventDefault();
     const name = DOM.inputName.value.trim();
     if (!name) return;
-
-    addItem(name, DOM.inputDepartment.value, DOM.inputAisle.value, DOM.inputAccount.value, DOM.inputCouponType.value);
-    clearForm();
+    addItem(name, DOM.inputDept.value, DOM.inputAisle.value, DOM.inputAccount.value, DOM.inputTag.value);
+    DOM.inputName.value = '';
     DOM.inputName.focus();
-  });
+  };
 
-  DOM.quickDept.addEventListener('click', function(e) {
-    if (e.target.classList.contains('quick-dept-btn')) {
-      DOM.inputDepartment.value = e.target.dataset.dept;
-      updateClearButtons();
-      updateQuickDepartments();
+  DOM.quickDepts.onclick = e => {
+    if (e.target.dataset.dept) {
+      DOM.inputDept.value = e.target.dataset.dept;
+      render();
     }
-  });
+  };
 
-  DOM.clearDept.addEventListener('click', () => { DOM.inputDepartment.value = ''; updateClearButtons(); updateQuickDepartments(); });
-  DOM.clearAisle.addEventListener('click', () => { DOM.inputAisle.value = ''; updateClearButtons(); });
-  DOM.inputDepartment.addEventListener('input', () => { updateClearButtons(); updateQuickDepartments(); });
-  DOM.inputAisle.addEventListener('input', updateClearButtons);
+  DOM.btnClear.onclick = () => {
+    if (getItems().some(i => i.status !== 'none') && confirm('Clear all selections?')) clearSelections();
+  };
 
-  DOM.btnClear.addEventListener('click', function() {
-    if (getCurrentItems().filter(i => i.status !== 'none').length === 0) return;
-    if (confirm('Clear all selections?')) clearSelection();
-  });
-
-  DOM.listContainer.addEventListener('click', function(e) {
+  DOM.listContainer.onclick = e => {
     const action = e.target.dataset.action;
     const id = e.target.dataset.id;
     if (!action || !id) return;
+    if (action === 'toggle') cycleStatus(id);
+    if (action === 'edit') openEdit(id);
+    if (action === 'delete' && confirm('Delete item?')) deleteItem(id);
+  };
 
-    if (action === 'toggle') cycleItemStatus(id);
-    else if (action === 'edit') openEditModal(id);
-    else if (action === 'delete' && confirm('Delete?')) deleteItem(id);
-  });
+  DOM.btnExport.onclick = exportData;
+  DOM.btnImport.onclick = () => DOM.fileInput.click();
+  DOM.fileInput.onchange = e => { if(e.target.files[0]) importData(e.target.files[0]); e.target.value = ''; };
 
-  DOM.btnExport.addEventListener('click', exportData);
-  DOM.btnImport.addEventListener('click', () => DOM.fileInput.click());
-  DOM.fileInput.addEventListener('change', function(e) {
-    if (e.target.files[0]) importData(e.target.files[0]);
-    e.target.value = '';
-  });
+  DOM.editModal.onclick = e => { if(e.target === DOM.editModal) closeEdit(); };
+  DOM.editCancel.onclick = closeEdit;
+  DOM.editSave.onclick = saveEdit;
+  DOM.editDelete.onclick = () => { if(editId && confirm('Delete?')) { deleteItem(editId); closeEdit(); }};
 
-  // Edit Modal
-  DOM.editModal.addEventListener('click', e => { if (e.target === DOM.editModal) closeEditModal(); });
-  DOM.statusToggle.addEventListener('click', function(e) {
-    const opt = e.target.closest('.status-option');
-    if (opt) { editingStatus = opt.dataset.status; updateStatusToggle(); }
-  });
-  DOM.btnEditCancel.addEventListener('click', closeEditModal);
-  DOM.btnEditSave.addEventListener('click', saveEdit);
-  DOM.btnEditDelete.addEventListener('click', () => { if (editingItemId && confirm('Delete?')) deleteItem(editingItemId); });
-  DOM.editModal.addEventListener('keydown', e => {
+  DOM.statusBtns.onclick = e => {
+    const btn = e.target.closest('.status-btn');
+    if (btn) { editStatus = btn.dataset.status; updateStatusBtns(); }
+  };
+
+  DOM.editModal.onkeydown = e => {
     if (e.key === 'Enter') { e.preventDefault(); saveEdit(); }
-    else if (e.key === 'Escape') closeEditModal();
-  });
+    if (e.key === 'Escape') closeEdit();
+  };
 
-  // Settings Modal
-  DOM.settingsModal.addEventListener('click', e => { if (e.target === DOM.settingsModal) closeSettingsModal(); });
-  DOM.btnSettingsClose.addEventListener('click', closeSettingsModal);
-
-  document.querySelectorAll('.settings-tab').forEach(tab => {
-    tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
-  });
-
-  DOM.btnAddStore.addEventListener('click', () => {
-    if (addStore(DOM.newStoreName.value)) DOM.newStoreName.value = '';
-  });
-  DOM.newStoreName.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); if (addStore(DOM.newStoreName.value)) DOM.newStoreName.value = ''; }
-  });
-
-  DOM.storeList.addEventListener('click', function(e) {
-    const action = e.target.dataset.action;
-    const store = e.target.dataset.store;
-    if (action === 'select-store') setCurrentStore(store);
-    else if (action === 'rename') openRenameModal(store);
-    else if (action === 'delete-store') deleteStore(store);
-  });
-
-  DOM.btnAddAccount.addEventListener('click', () => {
-    if (addAccount(DOM.newAccountPhone.value, DOM.newAccountLabel.value)) {
-      DOM.newAccountPhone.value = '';
-      DOM.newAccountLabel.value = '';
+  // Close panels on outside click
+  document.addEventListener('click', e => {
+    if (DOM.phonePanel.classList.contains('visible') && 
+        !DOM.phonePanel.contains(e.target) && 
+        e.target !== DOM.btnPhones) {
+      DOM.phonePanel.classList.remove('visible');
     }
   });
 
-  DOM.accountsList.addEventListener('click', function(e) {
-    const action = e.target.dataset.action;
-    
-    if (action === 'delete-account') {
-      deleteAccount(e.target.dataset.id);
-    } else if (action === 'delete-coupon') {
-      deleteCoupon(e.target.dataset.account, parseInt(e.target.dataset.index));
-    } else if (action === 'add-coupon') {
-      const accId = e.target.dataset.account;
-      const type = DOM.accountsList.querySelector('[data-coupon-type-for="' + accId + '"]').value;
-      const name = DOM.accountsList.querySelector('[data-coupon-name-for="' + accId + '"]');
-      const value = DOM.accountsList.querySelector('[data-coupon-value-for="' + accId + '"]');
-      const min = DOM.accountsList.querySelector('[data-coupon-min-for="' + accId + '"]');
-      const exp = DOM.accountsList.querySelector('[data-coupon-expires-for="' + accId + '"]');
-      
-      if (addCoupon(accId, type, name.value, value.value, min.value, exp.value)) {
-        name.value = '';
-        value.value = '';
-        min.value = '';
-        exp.value = '';
-      }
-    }
-  });
-
-  // Rename Modal
-  DOM.renameModal.addEventListener('click', e => { if (e.target === DOM.renameModal) closeRenameModal(); });
-  DOM.btnRenameCancel.addEventListener('click', closeRenameModal);
-  DOM.btnRenameSave.addEventListener('click', saveRename);
-  DOM.renameModal.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); saveRename(); }
-    else if (e.key === 'Escape') closeRenameModal();
-  });
-
-  // === PWA Service Worker ===
+  // PWA
   if ('serviceWorker' in navigator) {
-    const swCode = `
-      const CACHE_NAME = 'grocery-v4';
-      const ASSETS = [self.location.href];
-      self.addEventListener('install', e => {
-        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
-      });
-      self.addEventListener('activate', e => {
-        e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim()));
-      });
-      self.addEventListener('fetch', e => {
-        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(self.location.href))));
-      });
+    const sw = `
+      const C='grocery-v6';
+      self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.add(self.location.href)).then(()=>self.skipWaiting())));
+      self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+      self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(self.location.href)))));
     `;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
   }
 
-  // === Initialize ===
+  // Init
   load();
   render();
 
