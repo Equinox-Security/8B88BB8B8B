@@ -130,15 +130,20 @@
     .ebt-bar {
       background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
       padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       font-size: 0.95rem;
       display: none;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .ebt-bar.visible {
       display: flex;
+    }
+
+    .ebt-balance-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .ebt-bar input {
@@ -155,6 +160,33 @@
 
     .ebt-bar input::placeholder {
       color: rgba(255,255,255,0.6);
+    }
+
+    .ebt-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ebt-actions:empty {
+      display: none;
+    }
+
+    .ebt-action-btn {
+      flex: 1;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .ebt-action-btn:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     .mode-toggle {
@@ -182,7 +214,6 @@
       color: #2d6a4f;
     }
 
-    /* Search Bar */
     .search-bar {
       background: white;
       margin: 12px 12px 0;
@@ -249,23 +280,6 @@
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-    }
-
-    .add-toggle {
-      background: white;
-      margin: 12px;
-      padding: 14px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      text-align: center;
-      color: #40916c;
-      font-weight: 600;
-      cursor: pointer;
-      display: none;
-    }
-
-    .add-toggle.visible {
-      display: block;
     }
 
     .add-form input, .add-form select {
@@ -349,7 +363,6 @@
       border-radius: 6px;
     }
 
-    /* Frequency Badge */
     .freq-badge {
       font-size: 0.65rem;
       padding: 2px 6px;
@@ -360,7 +373,6 @@
       margin-left: 6px;
     }
 
-    /* Account Colors */
     .account-color-0 { border-left: 4px solid #6366f1; background: linear-gradient(90deg, #eef2ff 0%, white 20%); }
     .account-color-1 { border-left: 4px solid #ec4899; background: linear-gradient(90deg, #fdf2f8 0%, white 20%); }
     .account-color-2 { border-left: 4px solid #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, white 20%); }
@@ -550,7 +562,6 @@
 
     #file-input { display: none; }
 
-    /* Phone Panel */
     .phone-panel {
       position: fixed;
       bottom: 70px;
@@ -625,7 +636,6 @@
       cursor: pointer;
     }
 
-    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
@@ -708,20 +718,21 @@
     .status-btn.active-maybe { border-color: #f59e0b; background: #fef3c7; }
     .status-btn.active-none { border-color: #666; background: #f5f5f5; }
 
-    /* Settings */
     .settings-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .settings-tab {
       flex: 1;
-      padding: 10px;
+      min-width: 70px;
+      padding: 10px 8px;
       border: none;
       border-radius: 8px;
       background: #f0f0f0;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
       cursor: pointer;
     }
@@ -788,7 +799,6 @@
       font-weight: 600;
     }
 
-    /* Layout Editor */
     .layout-item {
       display: flex;
       align-items: center;
@@ -879,8 +889,7 @@
       .mode-btn { padding: 8px 12px; font-size: 0.8rem; }
       .deal-row { padding: 6px 10px; font-size: 0.8rem; }
       .deal-input { width: 45px; padding: 5px 6px; font-size: 0.85rem; }
-      .settings-tabs { flex-wrap: wrap; }
-      .settings-tab { flex: none; width: calc(50% - 4px); }
+      .settings-tab { min-width: 60px; padding: 8px 6px; font-size: 0.75rem; }
     }
   </style>
 </head>
@@ -911,24 +920,22 @@
 </header>
 
 <div class="ebt-bar" id="ebt-bar">
-  <span>💳 EBT Balance</span>
-  <div>
-    <span>$</span>
-    <input type="number" step="0.01" id="ebt-input" placeholder="0.00">
+  <div class="ebt-balance-row">
+    <span>💳 EBT Balance</span>
+    <div>
+      <span>$</span>
+      <input type="number" step="0.01" id="ebt-input" placeholder="0.00">
+    </div>
   </div>
+  <div class="ebt-actions" id="ebt-actions"></div>
 </div>
 
 <main>
-  <!-- Search Bar (Planning Mode) -->
   <div class="search-bar" id="search-bar" style="display:none">
     <input type="text" id="search-input" placeholder="Search items...">
     <button class="clear-search" id="clear-search">×</button>
   </div>
 
-  <!-- Add Toggle Button -->
-  <div class="add-toggle" id="add-toggle">➕ Add New Item</div>
-
-  <!-- Add Form -->
   <form class="add-form" id="add-form">
     <input type="text" id="input-name" placeholder="Item name..." autocomplete="off" required>
     <div class="quick-btns" id="quick-depts"></div>
@@ -1011,9 +1018,9 @@
       <button class="settings-tab active" data-tab="stores">Stores</button>
       <button class="settings-tab" data-tab="accounts">Accounts</button>
       <button class="settings-tab" data-tab="layout">Layout</button>
+      <button class="settings-tab" data-tab="ebtinfo">EBT</button>
     </div>
 
-    <!-- Stores Tab -->
     <div id="tab-stores" class="tab-content">
       <div class="settings-section">
         <h4>Your Stores</h4>
@@ -1025,7 +1032,6 @@
       </div>
     </div>
     
-    <!-- Accounts Tab -->
     <div id="tab-accounts" class="tab-content" style="display:none">
       <div class="settings-section">
         <h4>Rewards Accounts for <span id="current-store-label"></span></h4>
@@ -1040,13 +1046,27 @@
       </div>
     </div>
 
-    <!-- Layout Tab -->
     <div id="tab-layout" class="tab-content" style="display:none">
       <div class="settings-section">
         <h4>Store Layout for <span id="layout-store-label"></span></h4>
         <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Reorder departments to match your store's layout. This affects Shopping mode only.</p>
         <div id="layout-list"></div>
         <button class="reset-layout-btn" id="reset-layout">↺ Reset to Default Order</button>
+      </div>
+    </div>
+
+    <div id="tab-ebtinfo" class="tab-content" style="display:none">
+      <div class="settings-section">
+        <h4>EBT Balance Check Info</h4>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Add your state's phone number and website for checking EBT balance.</p>
+        
+        <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">📞 Balance Check Phone</label>
+        <input type="tel" id="ebt-phone-input" placeholder="e.g., 1-800-997-2555">
+        
+        <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">🌐 Balance Check Website</label>
+        <input type="url" id="ebt-link-input" placeholder="e.g., https://www.ebtedge.com">
+        
+        <button class="reset-layout-btn" id="save-ebt-info" style="background:#40916c;color:white;margin-top:12px">💾 Save EBT Info</button>
       </div>
     </div>
     
@@ -1063,26 +1083,10 @@
   const STORAGE = 'grocery_v7';
   const COLORS = ['account-color-0','account-color-1','account-color-2','account-color-3','account-color-4'];
   
-  // Default department order (optimized for typical store layout)
   const DEFAULT_DEPT_ORDER = [
-    'Produce',
-    'Bakery',
-    'Deli',
-    'Meat',
-    'Seafood',
-    'Dairy',
-    'Frozen',
-    'Beverages',
-    'Canned',
-    'Pasta & Grains',
-    'Condiments',
-    'Baking',
-    'Breakfast',
-    'Snacks',
-    'Household',
-    'Pet',
-    'Personal Care',
-    'Other'
+    'Produce', 'Bakery', 'Deli', 'Meat', 'Seafood', 'Dairy', 'Frozen',
+    'Beverages', 'Canned', 'Pasta & Grains', 'Condiments', 'Baking',
+    'Breakfast', 'Snacks', 'Household', 'Pet', 'Personal Care', 'Other'
   ];
 
   const DEFAULT_DEPTS = [...DEFAULT_DEPT_ORDER];
@@ -1092,7 +1096,9 @@
     current: 'My Store',
     data: { 'My Store': { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] } },
     mode: 'planning',
-    ebt: ''
+    ebt: '',
+    ebtPhone: '',
+    ebtLink: ''
   };
 
   let editId = null, editStatus = 'none';
@@ -1109,6 +1115,7 @@
     btnEbt: $('btn-ebt'),
     ebtBar: $('ebt-bar'),
     ebtInput: $('ebt-input'),
+    ebtActions: $('ebt-actions'),
     btnPhones: $('btn-phones'),
     phonePanel: $('phone-panel'),
     phonePanelClose: $('phone-panel-close'),
@@ -1119,7 +1126,6 @@
     searchBar: $('search-bar'),
     searchInput: $('search-input'),
     clearSearch: $('clear-search'),
-    addToggle: $('add-toggle'),
     addForm: $('add-form'),
     inputName: $('input-name'),
     inputDept: $('input-dept'),
@@ -1151,6 +1157,7 @@
     tabStores: $('tab-stores'),
     tabAccounts: $('tab-accounts'),
     tabLayout: $('tab-layout'),
+    tabEbtInfo: $('tab-ebtinfo'),
     storeList: $('store-list'),
     newStore: $('new-store'),
     addStoreBtn: $('add-store'),
@@ -1162,10 +1169,12 @@
     addAccountBtn: $('add-account'),
     layoutList: $('layout-list'),
     resetLayout: $('reset-layout'),
+    ebtPhoneInput: $('ebt-phone-input'),
+    ebtLinkInput: $('ebt-link-input'),
+    saveEbtInfo: $('save-ebt-info'),
     settingsClose: $('settings-close')
   };
 
-  // Helpers
   const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
   const esc = t => { const d = document.createElement('div'); d.textContent = t||''; return d.innerHTML; };
   
@@ -1206,17 +1215,17 @@
             if (state.data[s].dealOff === undefined) state.data[s].dealOff = '';
             if (state.data[s].dealMin === undefined) state.data[s].dealMin = '';
             if (!state.data[s].deptOrder) state.data[s].deptOrder = [...DEFAULT_DEPT_ORDER];
-            // Migrate old per-store EBT to global
             if (state.data[s].ebt) {
               state.ebt = state.data[s].ebt;
               delete state.data[s].ebt;
             }
           }
           if (state.ebt === undefined) state.ebt = '';
+          if (state.ebtPhone === undefined) state.ebtPhone = '';
+          if (state.ebtLink === undefined) state.ebtLink = '';
           return;
         }
       }
-      // Try migrate older versions
       for (const k of ['grocery_v6','grocery_v5','grocery_app_v4','grocery_app_v3']) {
         const old = localStorage.getItem(k);
         if (old) {
@@ -1226,6 +1235,8 @@
             state.current = p.current || p.currentStore || p.stores?.[0] || 'My Store';
             state.mode = p.mode || 'planning';
             state.ebt = p.ebt || '';
+            state.ebtPhone = p.ebtPhone || '';
+            state.ebtLink = p.ebtLink || '';
             state.data = {};
             const srcData = p.data || p.storeData || {};
             for (const s of state.stores) {
@@ -1250,7 +1261,6 @@
                 dealMin: sd.dealMin || '',
                 deptOrder: sd.deptOrder || [...DEFAULT_DEPT_ORDER]
               };
-              // Migrate EBT
               if (sd.ebt) state.ebt = sd.ebt;
             }
             save();
@@ -1282,29 +1292,21 @@
     }
   };
 
-  // Get all unique departments used in items
   const getUsedDepts = () => {
     const items = getItems();
-    const used = new Set(items.map(i => i.dept).filter(Boolean));
-    return [...used];
+    return [...new Set(items.map(i => i.dept).filter(Boolean))];
   };
 
-  // Ensure dept order includes all used depts
   const ensureDeptOrder = () => {
     const store = getStore();
     const used = getUsedDepts();
     const order = store.deptOrder || [...DEFAULT_DEPT_ORDER];
     
-    // Add any new departments not in order
     used.forEach(d => {
       if (!order.includes(d)) {
-        // Insert before 'Other' or at end
         const otherIdx = order.indexOf('Other');
-        if (otherIdx > -1) {
-          order.splice(otherIdx, 0, d);
-        } else {
-          order.push(d);
-        }
+        if (otherIdx > -1) order.splice(otherIdx, 0, d);
+        else order.push(d);
       }
     });
     
@@ -1312,25 +1314,30 @@
     return order;
   };
 
-  // Rendering
   const render = () => {
     const store = getStore();
     ensureDeptOrder();
     
-    // Store select
     DOM.storeSelect.innerHTML = state.stores.map(s => 
       `<option value="${esc(s)}" ${s===state.current?'selected':''}>${esc(s)}</option>`
     ).join('');
 
-    // Deal row
     DOM.dealOff.value = store.dealOff || '';
     DOM.dealMin.value = store.dealMin || '';
     updateDealStyle();
 
-    // EBT (global)
     DOM.ebtInput.value = state.ebt || '';
+    
+    let ebtActionsHtml = '';
+    if (state.ebtPhone) {
+      const phoneDigits = state.ebtPhone.replace(/\D/g, '');
+      ebtActionsHtml += `<a href="tel:${phoneDigits}" class="ebt-action-btn">📞 Check Balance</a>`;
+    }
+    if (state.ebtLink) {
+      ebtActionsHtml += `<a href="${esc(state.ebtLink)}" target="_blank" class="ebt-action-btn">🌐 Check Online</a>`;
+    }
+    DOM.ebtActions.innerHTML = ebtActionsHtml;
 
-    // Account selects
     const accts = getAccounts();
     const accOpts = '<option value="">No account</option>' + accts.map(a => 
       `<option value="${a.id}">${esc(a.label || formatPhone(a.phone))}</option>`
@@ -1338,7 +1345,6 @@
     DOM.inputAccount.innerHTML = accOpts;
     DOM.editAccount.innerHTML = accOpts;
 
-    // Phone panel
     if (accts.length === 0) {
       DOM.phoneList.innerHTML = '<p style="color:#888;text-align:center">No accounts. Add in Settings.</p>';
     } else {
@@ -1353,17 +1359,13 @@
       `).join('');
     }
 
-    // Mode
     const planning = state.mode === 'planning';
     DOM.btnPlanning.classList.toggle('active', planning);
     DOM.btnShopping.classList.toggle('active', !planning);
     
-    // Show/hide search and add form based on mode
     DOM.searchBar.style.display = planning ? 'block' : 'none';
     DOM.addForm.classList.toggle('collapsed', !planning);
-    DOM.addToggle.classList.toggle('visible', false); // Can add toggle later if needed
 
-    // Datalists
     const items = getItems();
     const depts = [...new Set([...DEFAULT_DEPTS, ...items.map(i=>i.dept).filter(Boolean)])].sort();
     const aisles = [...new Set(items.map(i=>i.aisle).filter(Boolean))].sort((a,b) => {
@@ -1374,7 +1376,6 @@
     DOM.dlDepts.innerHTML = depts.map(d => `<option value="${esc(d)}">`).join('');
     DOM.dlAisles.innerHTML = aisles.map(a => `<option value="${esc(a)}">`).join('');
 
-    // Quick depts
     const counts = {};
     items.forEach(i => { if(i.dept) counts[i.dept] = (counts[i.dept]||0)+1; });
     let quick = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>e[0]);
@@ -1387,7 +1388,6 @@
       `<button type="button" class="quick-btn ${DOM.inputDept.value===d?'active':''}" data-dept="${esc(d)}">${esc(d)}</button>`
     ).join('');
 
-    // Stats
     const checked = items.filter(i => i.status === 'checked').length;
     const maybe = items.filter(i => i.status === 'maybe').length;
     if (items.length === 0) {
@@ -1403,10 +1403,8 @@
       }
     }
 
-    // Search clear button
     DOM.clearSearch.classList.toggle('visible', searchQuery.length > 0);
 
-    // List
     renderList();
   };
 
@@ -1423,10 +1421,8 @@
     let visible;
     
     if (shopping) {
-      // Shopping mode: only checked/maybe items
       visible = items.filter(i => i.status === 'checked' || i.status === 'maybe');
     } else {
-      // Planning mode: filter by search, sort by frequency
       visible = items;
       
       if (searchQuery) {
@@ -1438,7 +1434,6 @@
         );
       }
       
-      // Sort by frequency (most bought first), then alphabetically
       visible = [...visible].sort((a, b) => {
         const freqA = a.freq || 0;
         const freqB = b.freq || 0;
@@ -1473,7 +1468,6 @@
       return;
     }
 
-    // Group items
     const groups = {};
     visible.forEach(item => {
       const d = item.dept || 'Other';
@@ -1483,10 +1477,8 @@
       groups[d][a].push(item);
     });
 
-    // Get department order
     let sortedDepts;
     if (shopping) {
-      // Shopping mode: use custom store layout order
       const deptOrder = getDeptOrder();
       sortedDepts = Object.keys(groups).sort((a, b) => {
         let idxA = deptOrder.indexOf(a);
@@ -1496,7 +1488,6 @@
         return idxA - idxB;
       });
     } else {
-      // Planning mode: alphabetical with Other last
       sortedDepts = Object.keys(groups).sort((a,b) => a==='Other'?1:b==='Other'?-1:a.localeCompare(b));
     }
     
@@ -1504,7 +1495,6 @@
     sortedDepts.forEach(dept => {
       html += `<div class="department-group"><div class="department-header">🏷️ ${esc(dept)}</div>`;
       
-      // Sort aisles numerically if possible
       const aisleKeys = Object.keys(groups[dept]).sort((a,b) => {
         if (a === '') return 1;
         if (b === '') return -1;
@@ -1516,7 +1506,6 @@
       aisleKeys.forEach(aisle => {
         if (aisle) html += `<div class="aisle-header">📍 ${esc(aisle)}</div>`;
         
-        // Sort items within aisle
         const sorted = groups[dept][aisle].sort((a,b) => a.name.localeCompare(b.name));
         
         sorted.forEach(item => {
@@ -1533,7 +1522,6 @@
           if (item.tag === 'free') tags += '<span class="tag tag-free">FREE</span>';
           else if (item.tag === 'coupon') tags += '<span class="tag tag-coupon">COUPON</span>';
 
-          // Show frequency badge in planning mode for frequently bought items
           let freqBadge = '';
           if (!shopping && item.freq && item.freq >= 3) {
             freqBadge = `<span class="freq-badge">⭐${item.freq}</span>`;
@@ -1565,7 +1553,6 @@
   };
 
   const renderSettings = () => {
-    // Stores
     DOM.storeList.innerHTML = state.stores.map(s => `
       <div class="settings-item">
         <span>${esc(s)}${s===state.current?' <small>(current)</small>':''}</span>
@@ -1574,7 +1561,6 @@
       </div>
     `).join('');
 
-    // Accounts
     DOM.currentStoreLabel.textContent = state.current;
     const accts = getAccounts();
     if (accts.length === 0) {
@@ -1588,7 +1574,6 @@
       `).join('');
     }
 
-    // Layout
     renderLayoutEditor();
   };
 
@@ -1596,7 +1581,6 @@
     DOM.layoutStoreLabel.textContent = state.current;
     const order = ensureDeptOrder();
     
-    // Only show departments that are actually used
     const usedDepts = getUsedDepts();
     const displayOrder = order.filter(d => usedDepts.includes(d) || DEFAULT_DEPT_ORDER.includes(d));
     
@@ -1617,11 +1601,15 @@
     DOM.tabStores.style.display = tab === 'stores' ? 'block' : 'none';
     DOM.tabAccounts.style.display = tab === 'accounts' ? 'block' : 'none';
     DOM.tabLayout.style.display = tab === 'layout' ? 'block' : 'none';
+    DOM.tabEbtInfo.style.display = tab === 'ebtinfo' ? 'block' : 'none';
     
     if (tab === 'layout') renderLayoutEditor();
+    if (tab === 'ebtinfo') {
+      DOM.ebtPhoneInput.value = state.ebtPhone || '';
+      DOM.ebtLinkInput.value = state.ebtLink || '';
+    }
   };
 
-  // Actions
   const setMode = m => { state.mode = m; searchQuery = ''; DOM.searchInput.value = ''; save(); render(); };
   const setStore = s => { if(state.stores.includes(s)) { state.current = s; save(); render(); } };
 
@@ -1673,7 +1661,6 @@
     const newIdx = idx + direction;
     if (newIdx < 0 || newIdx >= order.length) return;
     
-    // Swap
     [order[idx], order[newIdx]] = [order[newIdx], order[idx]];
     save();
     renderLayoutEditor();
@@ -1707,7 +1694,6 @@
     const was = item.status;
     item.status = was === 'none' ? 'checked' : was === 'checked' ? 'maybe' : 'none';
     
-    // Increase frequency when checking item (buying it)
     if (item.status === 'checked' && was === 'none') {
       item.freq = (item.freq || 0) + 1;
     }
@@ -1836,7 +1822,6 @@
     reader.readAsText(file);
   };
 
-  // Edit modal
   const openEdit = id => {
     const item = getItems().find(i => i.id === id);
     if (!item) return;
@@ -1868,7 +1853,7 @@
     closeEdit();
   };
 
-  // Event listeners
+  // Event Listeners
   DOM.storeSelect.onchange = () => setStore(DOM.storeSelect.value);
 
   DOM.dealOff.onchange = () => { getStore().dealOff = DOM.dealOff.value; save(); updateDealStyle(); };
@@ -1928,10 +1913,17 @@
 
   DOM.resetLayout.onclick = resetLayout;
 
+  DOM.saveEbtInfo.onclick = () => {
+    state.ebtPhone = DOM.ebtPhoneInput.value.trim();
+    state.ebtLink = DOM.ebtLinkInput.value.trim();
+    save();
+    render();
+    showToast('EBT info saved!');
+  };
+
   DOM.btnPlanning.onclick = () => setMode('planning');
   DOM.btnShopping.onclick = () => setMode('shopping');
 
-  // Search
   DOM.searchInput.oninput = () => {
     searchQuery = DOM.searchInput.value;
     DOM.clearSearch.classList.toggle('visible', searchQuery.length > 0);
@@ -1995,7 +1987,6 @@
     if (e.key === 'Escape') closeEdit();
   };
 
-  // Close panels on outside click
   document.addEventListener('click', e => {
     if (DOM.phonePanel.classList.contains('visible') && 
         !DOM.phonePanel.contains(e.target) && 
@@ -2015,7 +2006,6 @@
     navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
   }
 
-  // Init
   load();
   render();
 
