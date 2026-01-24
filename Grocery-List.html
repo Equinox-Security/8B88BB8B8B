@@ -851,11 +851,12 @@
   const COLORS = ['account-color-0','account-color-1','account-color-2','account-color-3','account-color-4'];
   const DEFAULT_DEPTS = ['Produce','Dairy','Meat','Seafood','Bakery','Deli','Frozen','Canned','Snacks','Beverages','Household','Other'];
 
-  let state = {
+let state = {
     stores: ['My Store'],
     current: 'My Store',
-    data: { 'My Store': { items: [], accounts: [], ebt: '', dealOff: '', dealMin: '' } },
-    mode: 'planning'
+    data: { 'My Store': { items: [], accounts: [], dealOff: '', dealMin: '' } },
+    mode: 'planning',
+    ebt: ''
   };
 
   let editId = null, editStatus = 'none';
@@ -921,7 +922,7 @@
   const esc = t => { const d = document.createElement('div'); d.textContent = t||''; return d.innerHTML; };
   const getStore = () => {
     if (!state.data[state.current]) {
-      state.data[state.current] = { items: [], accounts: [], ebt: '', dealOff: '', dealMin: '' };
+      state.data[state.current] = { items: [], accounts: [], dealOff: '', dealMin: '' };
     }
     return state.data[state.current];
   };
@@ -946,13 +947,18 @@
         const p = JSON.parse(d);
         if (p.stores && p.data) {
           state = p;
-          for (const s in state.data) {
+for (const s in state.data) {
             if (!state.data[s].accounts) state.data[s].accounts = [];
             if (!state.data[s].items) state.data[s].items = [];
-            if (state.data[s].ebt === undefined) state.data[s].ebt = '';
             if (state.data[s].dealOff === undefined) state.data[s].dealOff = '';
             if (state.data[s].dealMin === undefined) state.data[s].dealMin = '';
+            // Migrate old per-store EBT to global
+            if (state.data[s].ebt) {
+              state.ebt = state.data[s].ebt;
+              delete state.data[s].ebt;
+            }
           }
+          if (state.ebt === undefined) state.ebt = '';
           return;
         }
       }
@@ -1032,8 +1038,8 @@
     DOM.dealMin.value = store.dealMin || '';
     updateDealStyle();
 
-    // EBT
-    DOM.ebtInput.value = store.ebt || '';
+    // EBT (global, not per-store)
+    DOM.ebtInput.value = state.ebt || '';
 
     // Account selects
     const accts = getAccounts();
@@ -1321,10 +1327,10 @@
       store: state.current,
       items: store.items,
       accounts: store.accounts,
-      ebt: store.ebt,
       dealOff: store.dealOff,
       dealMin: store.dealMin
     };
+	
     const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1342,7 +1348,6 @@
         let items = Array.isArray(d.items) ? d.items : Array.isArray(d) ? d : [];
         let accounts = Array.isArray(d.accounts) ? d.accounts : [];
         let storeName = d.store || d.storeName || 'Imported';
-        let ebt = d.ebt || d.ebtBalance || '';
         let dealOff = d.dealOff || '';
         let dealMin = d.dealMin || '';
 
@@ -1376,14 +1381,13 @@
         if (!state.stores.includes(target)) {
   // New store - use everything from import
   state.stores.push(target);
-  state.data[target] = { items, accounts, ebt, dealOff, dealMin };
+  state.data[target] = { items, accounts, dealOff, dealMin };
 } else {
-  // Existing store - preserve accounts, EBT, and deal if not in import file
+  // Existing store - preserve accounts, and deal if not in import file
   const existing = state.data[target];
   state.data[target] = {
     items: items,
     accounts: (accounts.length > 0) ? accounts : (existing.accounts || []),
-    ebt: ebt || existing.ebt || '',
     dealOff: dealOff || existing.dealOff || '',
     dealMin: dealMin || existing.dealMin || ''
   };
@@ -1453,7 +1457,7 @@ state.current = target;
   };
 
   DOM.ebtInput.onchange = () => {
-    getStore().ebt = DOM.ebtInput.value;
+    state.ebt = DOM.ebtInput.value;
     save();
   };
 
