@@ -1373,9 +1373,22 @@
           }
         }
 
-        if (!state.stores.includes(target)) state.stores.push(target);
-        state.data[target] = { items, accounts, ebt, dealOff, dealMin };
-        state.current = target;
+        if (!state.stores.includes(target)) {
+  // New store - use everything from import
+  state.stores.push(target);
+  state.data[target] = { items, accounts, ebt, dealOff, dealMin };
+} else {
+  // Existing store - preserve accounts, EBT, and deal if not in import file
+  const existing = state.data[target];
+  state.data[target] = {
+    items: items,
+    accounts: (accounts.length > 0) ? accounts : (existing.accounts || []),
+    ebt: ebt || existing.ebt || '',
+    dealOff: dealOff || existing.dealOff || '',
+    dealMin: dealMin || existing.dealMin || ''
+  };
+}
+state.current = target;
         state.mode = 'planning';
         save(); render();
         alert(`Imported ${items.length} items, ${accounts.length} accounts to "${target}"`);
