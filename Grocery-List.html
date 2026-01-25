@@ -128,7 +128,7 @@
     }
 
     .ebt-bar {
-      background: linear-gradient(135deg, #a9a9a9 0%, #2d6a4f 100%); 
+      background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
       padding: 10px 16px;
       font-size: 0.95rem;
       display: none;
@@ -670,6 +670,13 @@
       color: #2d6a4f;
     }
 
+    .modal p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
     .modal input, .modal select {
       width: 100%;
       padding: 12px;
@@ -694,9 +701,19 @@
       cursor: pointer;
     }
 
+    .modal-btns.stacked {
+      flex-direction: column;
+    }
+
+    .modal-btns.stacked button {
+      width: 100%;
+    }
+
     .btn-cancel { background: #f0f0f0; color: #666; }
     .btn-save { background: #40916c; color: white; }
     .btn-delete { background: #e74c3c; color: white; }
+    .btn-merge { background: #6366f1; color: white; }
+    .btn-replace { background: #f59e0b; color: white; }
 
     .status-btns {
       display: flex;
@@ -1009,6 +1026,20 @@
   </div>
 </div>
 
+<!-- Import Choice Modal -->
+<div class="modal" id="import-modal">
+  <div class="modal-box">
+    <h3>📥 Import Options</h3>
+    <p id="import-message"></p>
+    <div class="modal-btns stacked">
+      <button class="btn-merge" id="import-merge">🔀 Merge Lists</button>
+      <button class="btn-replace" id="import-replace">🔄 Replace All</button>
+      <button class="btn-save" id="import-new">➕ New Store</button>
+      <button class="btn-cancel" id="import-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- Settings Modal -->
 <div class="modal" id="settings-modal">
   <div class="modal-box">
@@ -1061,7 +1092,7 @@
         <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Add your state's phone number and website for checking EBT balance.</p>
         
         <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">📞 Balance Check Phone</label>
-        <input type="tel" id="ebt-phone-input" placeholder="e.g., 1-800-997-2555">
+        <input type="tel" id="ebt-phone-input" placeholder="e.g., 1-888-997-9333">
         
         <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">🌐 Balance Check Website</label>
         <input type="url" id="ebt-link-input" placeholder="e.g., https://www.ebtedge.com">
@@ -1080,7 +1111,7 @@
 (function() {
   'use strict';
 
-  const STORAGE = 'grocery_v7';
+  const STORAGE = 'grocery_v8';
   const COLORS = ['account-color-0','account-color-1','account-color-2','account-color-3','account-color-4'];
   
   const DEFAULT_DEPT_ORDER = [
@@ -1104,6 +1135,7 @@
   let editId = null, editStatus = 'none';
   let searchQuery = '';
   let currentTab = 'stores';
+  let pendingImport = null;
 
   const $ = id => document.getElementById(id);
 
@@ -1153,6 +1185,12 @@
     editDelete: $('edit-delete'),
     editCancel: $('edit-cancel'),
     editSave: $('edit-save'),
+    importModal: $('import-modal'),
+    importMessage: $('import-message'),
+    importMerge: $('import-merge'),
+    importReplace: $('import-replace'),
+    importNew: $('import-new'),
+    importCancel: $('import-cancel'),
     settingsModal: $('settings-modal'),
     tabStores: $('tab-stores'),
     tabAccounts: $('tab-accounts'),
@@ -1226,7 +1264,7 @@
           return;
         }
       }
-      for (const k of ['grocery_v6','grocery_v5','grocery_app_v4','grocery_app_v3']) {
+      for (const k of ['grocery_v7','grocery_v6','grocery_v5','grocery_app_v4']) {
         const old = localStorage.getItem(k);
         if (old) {
           const p = JSON.parse(old);
@@ -1738,7 +1776,7 @@
   const exportData = () => {
     const store = getStore();
     const obj = {
-      version: 7,
+      version: 8,
       date: new Date().toISOString(),
       store: state.current,
       items: store.items,
@@ -1756,64 +1794,136 @@
     URL.revokeObjectURL(url);
   };
 
+  const parseImportData = (raw) => {
+    let items = Array.isArray(raw.items) ? raw.items : Array.isArray(raw) ? raw : [];
+    let accounts = Array.isArray(raw.accounts) ? raw.accounts : [];
+    let storeName = raw.store || raw.storeName || 'Imported';
+    let dealOff = raw.dealOff || '';
+    let dealMin = raw.dealMin || '';
+    let deptOrder = Array.isArray(raw.deptOrder) ? raw.deptOrder : [...DEFAULT_DEPT_ORDER];
+
+    items = items.filter(i => i && i.name).map(i => ({
+      id: i.id || genId(),
+      name: String(i.name).trim(),
+      dept: String(i.dept || i.department || 'Other').trim(),
+      aisle: String(i.aisle || '').trim(),
+      status: ['none','checked','maybe'].includes(i.status) ? i.status : 'none',
+      accountId: i.accountId || '',
+      tag: i.tag || i.couponType || '',
+      freq: i.freq || 0
+    }));
+
+    accounts = accounts.filter(a => a && a.phone).map(a => ({
+      id: a.id || genId(),
+      phone: String(a.phone).replace(/\D/g,''),
+      label: String(a.label || '').trim()
+    }));
+
+    return { items, accounts, storeName, dealOff, dealMin, deptOrder };
+  };
+
+  const doImport = (mode) => {
+    if (!pendingImport) return;
+    const { items, accounts, storeName, dealOff, dealMin, deptOrder } = pendingImport;
+
+    if (mode === 'new') {
+      let target = storeName;
+      let c = 2;
+      while (state.stores.includes(target)) {
+        target = `${storeName} (${c++})`;
+      }
+      state.stores.push(target);
+      state.data[target] = { items, accounts, dealOff, dealMin, deptOrder };
+      state.current = target;
+      showToast(`Created "${target}" with ${items.length} items`);
+    } else if (mode === 'replace') {
+      const existing = state.data[storeName];
+      state.data[storeName] = {
+        items: items,
+        accounts: (accounts.length > 0) ? accounts : (existing?.accounts || []),
+        dealOff: dealOff || existing?.dealOff || '',
+        dealMin: dealMin || existing?.dealMin || '',
+        deptOrder: deptOrder.length > 0 ? deptOrder : (existing?.deptOrder || [...DEFAULT_DEPT_ORDER])
+      };
+      state.current = storeName;
+      showToast(`Replaced with ${items.length} items`);
+    } else if (mode === 'merge') {
+      const existing = state.data[storeName];
+      const existingItems = existing?.items || [];
+      
+      let added = 0, updated = 0;
+      
+      items.forEach(newItem => {
+        const existingItem = existingItems.find(e => 
+          e.name.toLowerCase().trim() === newItem.name.toLowerCase().trim()
+        );
+        
+        if (existingItem) {
+          // Update existing item with new status/account/tag if set
+          if (newItem.status !== 'none') existingItem.status = newItem.status;
+          if (newItem.accountId) existingItem.accountId = newItem.accountId;
+          if (newItem.tag) existingItem.tag = newItem.tag;
+          if (newItem.aisle && !existingItem.aisle) existingItem.aisle = newItem.aisle;
+          if (newItem.dept && existingItem.dept === 'Other') existingItem.dept = newItem.dept;
+          updated++;
+        } else {
+          // Add new item
+          existingItems.push(newItem);
+          added++;
+        }
+      });
+
+      // Merge accounts (add new ones only)
+      const existingAccounts = existing?.accounts || [];
+      accounts.forEach(newAcct => {
+        const exists = existingAccounts.find(e => e.phone === newAcct.phone);
+        if (!exists) existingAccounts.push(newAcct);
+      });
+
+      state.data[storeName] = {
+        items: existingItems,
+        accounts: existingAccounts,
+        dealOff: dealOff || existing?.dealOff || '',
+        dealMin: dealMin || existing?.dealMin || '',
+        deptOrder: existing?.deptOrder || deptOrder
+      };
+      state.current = storeName;
+      showToast(`Added ${added}, updated ${updated} items`);
+    }
+
+    state.mode = 'planning';
+    pendingImport = null;
+    DOM.importModal.classList.remove('active');
+    save();
+    render();
+  };
+
   const importData = file => {
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const d = JSON.parse(e.target.result);
-        let items = Array.isArray(d.items) ? d.items : Array.isArray(d) ? d : [];
-        let accounts = Array.isArray(d.accounts) ? d.accounts : [];
-        let storeName = d.store || d.storeName || 'Imported';
-        let dealOff = d.dealOff || '';
-        let dealMin = d.dealMin || '';
-        let deptOrder = Array.isArray(d.deptOrder) ? d.deptOrder : [...DEFAULT_DEPT_ORDER];
-
-        items = items.filter(i => i && i.name).map(i => ({
-          id: i.id || genId(),
-          name: String(i.name).trim(),
-          dept: String(i.dept || i.department || 'Other').trim(),
-          aisle: String(i.aisle || '').trim(),
-          status: ['none','checked','maybe'].includes(i.status) ? i.status : 'none',
-          accountId: i.accountId || '',
-          tag: i.tag || i.couponType || '',
-          freq: i.freq || 0
-        }));
-
-        accounts = accounts.filter(a => a && a.phone).map(a => ({
-          id: a.id || genId(),
-          phone: String(a.phone).replace(/\D/g,''),
-          label: String(a.label || '').trim()
-        }));
-
-        if (!items.length && !accounts.length) return alert('No valid data found.');
-
-        let target = storeName;
-        if (state.stores.includes(storeName)) {
-          if (!confirm(`Replace data in "${storeName}"? Cancel to create new store.`)) {
-            let c = 2;
-            while (state.stores.includes(`${storeName} (${c})`)) c++;
-            target = `${storeName} (${c})`;
-          }
-        }
-
-        if (!state.stores.includes(target)) {
-          state.stores.push(target);
-          state.data[target] = { items, accounts, dealOff, dealMin, deptOrder };
-        } else {
-          const existing = state.data[target];
-          state.data[target] = {
-            items: items,
-            accounts: (accounts.length > 0) ? accounts : (existing.accounts || []),
-            dealOff: dealOff || existing.dealOff || '',
-            dealMin: dealMin || existing.dealMin || '',
-            deptOrder: deptOrder.length > 0 ? deptOrder : (existing.deptOrder || [...DEFAULT_DEPT_ORDER])
-          };
-        }
+        const raw = JSON.parse(e.target.result);
+        const parsed = parseImportData(raw);
         
-        state.current = target;
-        state.mode = 'planning';
-        save(); render();
-        alert(`Imported ${items.length} items to "${target}"`);
+        if (!parsed.items.length && !parsed.accounts.length) {
+          return alert('No valid data found.');
+        }
+
+        pendingImport = parsed;
+
+        // Check if store exists
+        if (state.stores.includes(parsed.storeName)) {
+          const existing = state.data[parsed.storeName];
+          const existingCount = existing?.items?.length || 0;
+          DOM.importMessage.innerHTML = `
+            <strong>"${esc(parsed.storeName)}"</strong> already exists with ${existingCount} items.<br><br>
+            Importing ${parsed.items.length} items. What would you like to do?
+          `;
+          DOM.importModal.classList.add('active');
+        } else {
+          // New store - just create it
+          doImport('new');
+        }
       } catch(err) {
         console.error(err);
         alert('Error reading file.');
@@ -1921,6 +2031,13 @@
     showToast('EBT info saved!');
   };
 
+  // Import modal buttons
+  DOM.importMerge.onclick = () => doImport('merge');
+  DOM.importReplace.onclick = () => doImport('replace');
+  DOM.importNew.onclick = () => doImport('new');
+  DOM.importCancel.onclick = () => { pendingImport = null; DOM.importModal.classList.remove('active'); };
+  DOM.importModal.onclick = e => { if (e.target === DOM.importModal) { pendingImport = null; DOM.importModal.classList.remove('active'); }};
+
   DOM.btnPlanning.onclick = () => setMode('planning');
   DOM.btnShopping.onclick = () => setMode('shopping');
 
@@ -1998,7 +2115,7 @@
   // PWA
   if ('serviceWorker' in navigator) {
     const sw = `
-      const C='grocery-v7';
+      const C='grocery-v8';
       self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.add(self.location.href)).then(()=>self.skipWaiting())));
       self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
       self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(self.location.href)))));
