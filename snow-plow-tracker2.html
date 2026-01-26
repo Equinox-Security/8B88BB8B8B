@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Plow Tracker">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a365d">
+    <title>Plow Tracker</title>
+
+    <!-- Custom App Icons (Plow Truck Emoji) -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a365d' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a365d' rx='15'/><text x='50' y='65' font-size='50' text-anchor='middle'>🚜</text></svg>">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .app-header {
+            background: #1a365d;
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(26, 54, 93, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon {
+            font-size: 48px;
+            line-height: 1;
+        }
+
+        .header-icon img {
+            display: block;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-text p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Sync Card Special Styling */
+        .sync-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 1px solid #9ca3af;
+        }
+
+        .sync-card .card-header {
+            border-bottom-color: rgba(156, 163, 175, 0.4);
+        }
+
+        .sync-card .card-header-icon {
+            background: rgba(156, 163, 175, 0.3);
+        }
+
+        .sync-card h2 {
+            color: #374151;
+        }
+
+        .sync-card p {
+            color: #4b5563;
+        }
+
+        /* Payment Card Special Styling */
+        .payment-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #6ee7b7;
+        }
+
+        .payment-card .card-header {
+            border-bottom-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .payment-card .card-header-icon {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .payment-card h2 {
+            color: #065f46;
+        }
+
+        /* Form Elements */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        input[type="date"],
+        select,
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #334155;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 44px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(75, 85, 99, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            box-shadow: 0 4px 6px rgba(75, 85, 99, 0.4);
+        }
+
+        .btn-payment {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-payment:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        th:first-child {
+            border-radius: 7px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 7px 0 0;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        tr.paid-row {
+            background: #f0fdf4;
+        }
+
+        tr.paid-row:hover {
+            background: #dcfce7;
+        }
+
+        tr.shoveled-row {
+            background: #f0f9ff;
+        }
+
+        tr.shoveled-row:hover {
+            background: #e0f2fe;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-first {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+
+        .badge-additional {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #374151;
+        }
+
+        .badge-custom {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            color: #5b21b6;
+        }
+
+        .badge-shoveled {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            color: #0369a1;
+        }
+
+        .badge-paid {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+
+        .badge-owed {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .badge-na {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: #64748b;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+            margin-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .summary-item.total-services {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .summary-item.total-paid {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .summary-item.balance-owed {
+            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+        }
+
+        .summary-item.balance-owed.zero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .summary-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .summary-amount {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .summary-item.total-services .summary-amount {
+            color: #2563eb;
+        }
+
+        .summary-item.total-paid .summary-amount {
+            color: #16a34a;
+        }
+
+        .summary-item.balance-owed .summary-amount {
+            color: #d97706;
+        }
+
+        .summary-item.balance-owed.zero .summary-amount {
+            color: #16a34a;
+        }
+
+        /* Total Section */
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px 0 0;
+            margin-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #475569;
+            margin-right: 16px;
+        }
+
+        .total-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        /* Success/Info Messages */
+        .success-message {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            margin: 16px 0;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .import-result {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #1e40af;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 16px 0;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .import-result.show {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: rgba(156, 163, 175, 0.4);
+            margin: 20px 0;
+        }
+
+        /* Payment History Table */
+        .payment-table th {
+            background: #065f46;
+        }
+
+        /* Info text */
+        .info-text {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* Payment Section */
+        .payment-card {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 1px solid #3b82f6;
+        }
+
+        .payment-card .card-header {
+            border-bottom-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .payment-card .card-header-icon {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .payment-info {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        .payment-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .payment-info-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .payment-info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .payment-info-value.unpaid {
+            color: #dc2626;
+        }
+
+        .btn-paypal {
+            background: linear-gradient(135deg, #0070ba 0%, #003087 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 112, 186, 0.3);
+            font-weight: 600;
+        }
+
+        .btn-paypal:hover {
+            background: linear-gradient(135deg, #005ea6 0%, #001f5b 100%);
+            box-shadow: 0 4px 6px rgba(0, 112, 186, 0.4);
+        }
+
+        .btn-paypal:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .badge-unpaid {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #334155;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 12px;
+            }
+
+            .app-header {
+                padding: 16px 20px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .header-text h1 {
+                font-size: 24px;
+                margin: 0;
+            }
+
+            .header-text p {
+                margin: 2px 0 0;
+                font-size: 13px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
+
+            .total-section {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .total-amount {
+                font-size: 28px;
+            }
+
+            .summary-amount {
+                font-size: 24px;
+            }
+
+            .payment-info-row {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-icon">
+                <img src="https://equinox-security.github.io/8B88BB8B8B/PlowLOGO.png" alt="PlowLOGO" width="72"
+                    height="64" />
+            </div>
+            <div class="header-text">
+                <h1>Snow Plow Tracker</h1>
+                <p>Track your snow plowing expenses & payments</p>
+            </div>
+        </header>
+
+        <!-- Sync Section -->
+        <div class="card sync-card">
+            <div class="card-header">
+                <div class="card-header-icon">📱</div>
+                <h2>Share Updates</h2>
+            </div>
+
+            <p><strong>After adding entries or payments, click below to copy and text to your partner:</strong></p>
+
+            <button class="btn btn-success" onclick="copyToClipboard()">
+                <span>📋</span> Copy All Data to Share
+            </button>
+
+            <div class="success-message" id="copySuccess">
+                <span>✅</span> Copied! Now text/email it to your partner!
+            </div>
+
+            <div class="divider"></div>
+
+            <p><strong>Got an update from your partner? Paste it here:</strong></p>
+
+            <textarea id="importData" placeholder="Paste the data your partner sent you here..."></textarea>
+
+            <div style="margin-top: 16px;">
+                <button class="btn btn-primary" onclick="importData()">
+                    <span>⬇️</span> Update My List
+                </button>
+            </div>
+
+            <div class="success-message" id="importSuccess">
+                <span>✅</span> List updated successfully!
+            </div>
+
+            <div class="import-result" id="importResult">
+                <span id="importResultText"></span>
+            </div>
+
+            <!-- PayPal Payment Section -->
+            <div class="card payment-card">
+                <div class="card-header">
+                    <div class="card-header-icon">💳</div>
+                    <h2>Pay with PayPal</h2>
+                </div>
+
+                <p><strong>Quick payment to your plow service via PayPal:</strong></p>
+
+                <div class="form-group">
+                    <label for="paypalEmail">Plow Service PayPal Email</label>
+                    <input type="email" id="paypalEmail" placeholder="plowservice@example.com" value="">
+                </div>
+
+                <div class="payment-info">
+                    <div class="payment-info-row">
+                        <span class="payment-info-label">Balance Owed:</span>
+                        <span class="payment-info-value unpaid" id="paypalUnpaidAmount">$0.00</span>
+                    </div>
+                    <div class="payment-info-row">
+                        <span class="payment-info-label">Already Paid:</span>
+                        <span class="payment-info-value" id="paypalPaidAmount">$0.00</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-paypal" onclick="payWithPayPal()" id="paypalButton">
+                    <span>💰</span> Pay Outstanding Balance with PayPal
+                </button>
+
+                <div class="success-message" id="paypalSuccess">
+                    <span>✅</span> Opening PayPal for payment...
+                </div>
+
+                <p style="margin-top: 16px; font-size: 13px; color: #64748b; font-style: italic;">
+                    💡 <strong>Tip:</strong> After making the payment through PayPal, use the "Record Payment" section
+                    below to track it in your app.
+                </p>
+            </div>
+
+            <!-- Add New Entry -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon">➕</div>
+                    <h2>Add New Entry</h2>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="plowDate">Date</label>
+                        <input type="date" id="plowDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plowType">Type</label>
+                        <select id="plowType" onchange="toggleCustomAmount()">
+                            <option value="first">First Plow of Storm ($50.00)</option>
+                            <option value="additional">Additional Plow ($25.00)</option>
+                            <option value="custom">Custom Amount</option>
+                            <option value="shoveled">No Service / Shoveled ($0.00)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="customAmountGroup" style="display: none;">
+                    <label for="customAmount">Custom Amount ($)</label>
+                    <input type="number" id="customAmount" placeholder="0.00" step="0.01" min="0">
+                </div>
+
+                <button class="btn btn-primary" onclick="addEntry()">
+                    <span>💾</span> Add Entry
+                </button>
+            </div>
+
+            <!-- Record Payment -->
+            <div class="card payment-card">
+                <div class="card-header">
+                    <div class="card-header-icon">💳</div>
+                    <h2>Record Payment</h2>
+                </div>
+
+                <p style="margin-top: 0; color: #065f46;">Record a payment for services within a date range (e.g.,
+                    paying an
+                    invoice for December)</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paymentStartDate">Services From</label>
+                        <input type="date" id="paymentStartDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentEndDate">Services To</label>
+                        <input type="date" id="paymentEndDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paymentAmount">Amount Paid ($)</label>
+                        <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentDate">Payment Date</label>
+                        <input type="date" id="paymentDate" required>
+                    </div>
+                </div>
+
+                <div id="paymentPreview" class="info-text"></div>
+
+                <button class="btn btn-payment" onclick="recordPayment()">
+                    <span>✅</span> Record Payment
+                </button>
+
+                <div class="success-message" id="paymentSuccess">
+                    <span>✅</span> Payment recorded successfully!
+                </div>
+            </div>
+
+            <!-- Plow History -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon">📋</div>
+                    <h2>Service History</h2>
+                </div>
+
+                <div id="entriesContainer">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No entries yet. Add your first entry above!</p>
+                    </div>
+
+                    <div class="table-container" id="tableContainer" style="display: none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Cost</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="plowTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="summary-section" id="summarySection" style="display: none;">
+                        <div class="summary-item total-services">
+                            <div class="summary-label">Total Services</div>
+                            <div class="summary-amount" id="totalServices">$0.00</div>
+                        </div>
+                        <div class="summary-item total-paid">
+                            <div class="summary-label">Total Paid</div>
+                            <div class="summary-amount" id="totalPaid">$0.00</div>
+                        </div>
+                        <div class="summary-item balance-owed" id="balanceOwedContainer">
+                            <div class="summary-label">Balance Owed</div>
+                            <div class="summary-amount" id="balanceOwed">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment History -->
+            <div class="card" id="paymentHistoryCard" style="display: none;">
+                <div class="card-header">
+                    <div class="card-header-icon">💰</div>
+                    <h2>Payment History</h2>
+                </div>
+
+                <div class="table-container">
+                    <table class="payment-table">
+                        <thead>
+                            <tr>
+                                <th>Payment Date</th>
+                                <th>Period Covered</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="total-section">
+                    <span class="total-label">Total Payments:</span>
+                    <span class="total-amount" id="totalPayments">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Set today's date as default
+            document.getElementById('plowDate').valueAsDate = new Date();
+            document.getElementById('paymentDate').valueAsDate = new Date();
+
+            // Load data from localStorage
+            let plowEntries = JSON.parse(localStorage.getItem('plowEntries')) || [];
+            let payments = JSON.parse(localStorage.getItem('plowPayments')) || [];
+
+            // Update payment preview when dates change
+            document.getElementById('paymentStartDate').addEventListener('change', updatePaymentPreview);
+            document.getElementById('paymentEndDate').addEventListener('change', updatePaymentPreview);
+
+            function updatePaymentPreview() {
+                const startDate = document.getElementById('paymentStartDate').value;
+                const endDate = document.getElementById('paymentEndDate').value;
+                const preview = document.getElementById('paymentPreview');
+
+                if (startDate && endDate) {
+                    // Only count entries that have a cost > 0 (exclude shoveled entries)
+                    const entriesInRange = getEntriesInDateRange(startDate, endDate).filter(e => e.cost > 0);
+                    const unpaidEntries = entriesInRange.filter(e => !isEntryPaid(e));
+                    const totalUnpaid = unpaidEntries.reduce((sum, e) => sum + e.cost, 0);
+
+                    if (unpaidEntries.length > 0) {
+                        preview.innerHTML = `📊 Found <strong>${unpaidEntries.length}</strong> unpaid service(s) in this range totaling <strong>$${totalUnpaid.toFixed(2)}</strong>`;
+                    } else if (entriesInRange.length > 0) {
+                        preview.innerHTML = `✅ All ${entriesInRange.length} service(s) in this range are already paid`;
+                    } else {
+                        preview.innerHTML = `ℹ️ No paid services found in this date range`;
+                    }
+                } else {
+                    preview.innerHTML = '';
+                }
+            }
+
+            function getEntriesInDateRange(startDate, endDate) {
+                const start = new Date(startDate + 'T00:00:00');
+                const end = new Date(endDate + 'T23:59:59');
+
+                return plowEntries.filter(entry => {
+                    const entryDate = new Date(entry.date + 'T00:00:00');
+                    return entryDate >= start && entryDate <= end;
+                });
+            }
+
+            function isEntryPaid(entry) {
+                const entryDate = new Date(entry.date + 'T00:00:00');
+
+                return payments.some(payment => {
+                    const startDate = new Date(payment.startDate + 'T00:00:00');
+                    const endDate = new Date(payment.endDate + 'T23:59:59');
+                    return entryDate >= startDate && entryDate <= endDate;
+                });
+            }
+
+            function toggleCustomAmount() {
+                const type = document.getElementById('plowType').value;
+                const customGroup = document.getElementById('customAmountGroup');
+                const customInput = document.getElementById('customAmount');
+
+                if (type === 'custom') {
+                    customGroup.style.display = 'block';
+                    customInput.required = true;
+                    customInput.focus();
+                } else {
+                    customGroup.style.display = 'none';
+                    customInput.required = false;
+                    customInput.value = '';
+                }
+            }
+
+            function addEntry() {
+                const date = document.getElementById('plowDate').value;
+                const type = document.getElementById('plowType').value;
+                let cost;
+
+                if (!date) {
+                    alert('Please select a date');
+                    return;
+                }
+
+                if (type === 'first') {
+                    cost = 50.00;
+                } else if (type === 'additional') {
+                    cost = 25.00;
+                } else if (type === 'shoveled') {
+                    cost = 0.00;
+                } else if (type === 'custom') {
+                    const customAmount = parseFloat(document.getElementById('customAmount').value);
+                    if (isNaN(customAmount) || customAmount < 0) {
+                        alert('Please enter a valid custom amount');
+                        return;
+                    }
+                    cost = customAmount;
+                }
+
+                const entry = {
+                    id: Date.now(),
+                    date: date,
+                    type: type,
+                    cost: cost
+                };
+
+                plowEntries.push(entry);
+                plowEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                saveAndRender();
+
+                // Reset form
+                document.getElementById('plowDate').valueAsDate = new Date();
+                document.getElementById('plowType').value = 'first';
+                document.getElementById('customAmount').value = '';
+                document.getElementById('customAmountGroup').style.display = 'none';
+
+                // Show reminder to share
+                alert('Entry added! Don\'t forget to click "Copy All Data to Share" to update your partner.');
+            }
+
+            function recordPayment() {
+                const startDate = document.getElementById('paymentStartDate').value;
+                const endDate = document.getElementById('paymentEndDate').value;
+                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const paymentDate = document.getElementById('paymentDate').value;
+
+                if (!startDate || !endDate) {
+                    alert('Please select the service date range');
+                    return;
+                }
+
+                if (new Date(startDate) > new Date(endDate)) {
+                    alert('Start date must be before end date');
+                    return;
+                }
+
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid payment amount');
+                    return;
+                }
+
+                if (!paymentDate) {
+                    alert('Please select the payment date');
+                    return;
+                }
+
+                const payment = {
+                    id: Date.now(),
+                    startDate: startDate,
+                    endDate: endDate,
+                    amount: amount,
+                    paymentDate: paymentDate
+                };
+
+                payments.push(payment);
+                payments.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+
+                saveAndRender();
+
+                // Reset form
+                document.getElementById('paymentStartDate').value = '';
+                document.getElementById('paymentEndDate').value = '';
+                document.getElementById('paymentAmount').value = '';
+                document.getElementById('paymentDate').valueAsDate = new Date();
+                document.getElementById('paymentPreview').innerHTML = '';
+
+                showSuccess('paymentSuccess');
+            }
+
+            function deleteEntry(id) {
+                if (confirm('Delete this entry?')) {
+                    plowEntries = plowEntries.filter(entry => entry.id !== id);
+                    saveAndRender();
+                }
+            }
+
+            function deletePayment(id) {
+                if (confirm('Delete this payment? Services covered by this payment will show as unpaid.')) {
+                    payments = payments.filter(payment => payment.id !== id);
+                    saveAndRender();
+                }
+            }
+
+            function saveAndRender() {
+                localStorage.setItem('plowEntries', JSON.stringify(plowEntries));
+                localStorage.setItem('plowPayments', JSON.stringify(payments));
+                renderEntries();
+                renderPayments();
+                updatePayPalAmounts();
+            }
+
+            function renderEntries() {
+                const tbody = document.getElementById('plowTableBody');
+                const tableContainer = document.getElementById('tableContainer');
+                const summarySection = document.getElementById('summarySection');
+                const emptyState = document.getElementById('emptyState');
+
+                if (plowEntries.length === 0) {
+                    tableContainer.style.display = 'none';
+                    summarySection.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                tableContainer.style.display = 'block';
+                summarySection.style.display = 'grid';
+                emptyState.style.display = 'none';
+                tbody.innerHTML = '';
+
+                let totalServices = 0;
+                let totalPaidAmount = 0;
+
+                plowEntries.forEach(entry => {
+                    const isPaid = isEntryPaid(entry);
+                    const isShoveled = entry.type === 'shoveled';
+                    const row = tbody.insertRow();
+
+                    if (isShoveled) {
+                        row.className = 'shoveled-row';
+                    } else if (isPaid) {
+                        row.className = 'paid-row';
+                    }
+
+                    const dateCell = row.insertCell(0);
+                    dateCell.textContent = new Date(entry.date + 'T00:00:00').toLocaleDateString();
+
+                    const typeCell = row.insertCell(1);
+                    const badge = document.createElement('span');
+
+                    if (entry.type === 'first') {
+                        badge.className = 'badge badge-first';
+                        badge.innerHTML = '🚜 First Plow';
+                    } else if (entry.type === 'additional') {
+                        badge.className = 'badge badge-additional';
+                        badge.innerHTML = '❄️ Additional';
+                    } else if (entry.type === 'shoveled') {
+                        badge.className = 'badge badge-shoveled';
+                        badge.innerHTML = '🧹 Shoveled';
+                    } else {
+                        badge.className = 'badge badge-custom';
+                        badge.innerHTML = '⭐ Custom';
+                    }
+
+                    typeCell.appendChild(badge);
+
+                    const costCell = row.insertCell(2);
+                    if (isShoveled) {
+                        costCell.innerHTML = `<span style="color: #64748b;">$0.00</span>`;
+                    } else {
+                        costCell.innerHTML = `<strong>$${entry.cost.toFixed(2)}</strong>`;
+                    }
+
+                    const statusCell = row.insertCell(3);
+                    const statusBadge = document.createElement('span');
+
+                    if (isShoveled) {
+                        // Shoveled entries don't need payment tracking
+                        statusBadge.className = 'badge badge-na';
+                        statusBadge.innerHTML = '— N/A';
+                    } else if (isPaid) {
+                        statusBadge.className = 'badge badge-paid';
+                        statusBadge.innerHTML = '✅ PAID';
+                        totalPaidAmount += entry.cost;
+                    } else {
+                        statusBadge.className = 'badge badge-owed';
+                        statusBadge.innerHTML = '⏳ OWED';
+                    }
+                    statusCell.appendChild(statusBadge);
+
+                    const actionCell = row.insertCell(4);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.style.width = 'auto';
+                    deleteBtn.style.padding = '8px 16px';
+                    deleteBtn.style.fontSize = '14px';
+                    deleteBtn.textContent = '🗑️';
+                    deleteBtn.onclick = () => deleteEntry(entry.id);
+                    actionCell.appendChild(deleteBtn);
+
+                    // Only add to totals if not shoveled
+                    if (!isShoveled) {
+                        totalServices += entry.cost;
+                    }
+                });
+
+                const balanceOwed = totalServices - totalPaidAmount;
+
+                document.getElementById('totalServices').textContent = `$${totalServices.toFixed(2)}`;
+                document.getElementById('totalPaid').textContent = `$${totalPaidAmount.toFixed(2)}`;
+                document.getElementById('balanceOwed').textContent = `$${balanceOwed.toFixed(2)}`;
+
+                const balanceContainer = document.getElementById('balanceOwedContainer');
+                if (balanceOwed <= 0) {
+                    balanceContainer.classList.add('zero');
+                } else {
+                    balanceContainer.classList.remove('zero');
+                }
+            }
+
+            function renderPayments() {
+                const tbody = document.getElementById('paymentTableBody');
+                const card = document.getElementById('paymentHistoryCard');
+
+                if (payments.length === 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                card.style.display = 'block';
+                tbody.innerHTML = '';
+
+                let totalPayments = 0;
+
+                payments.forEach(payment => {
+                    const row = tbody.insertRow();
+
+                    const dateCell = row.insertCell(0);
+                    dateCell.textContent = new Date(payment.paymentDate + 'T00:00:00').toLocaleDateString();
+
+                    const periodCell = row.insertCell(1);
+                    const startFormatted = new Date(payment.startDate + 'T00:00:00').toLocaleDateString();
+                    const endFormatted = new Date(payment.endDate + 'T00:00:00').toLocaleDateString();
+                    periodCell.textContent = `${startFormatted} - ${endFormatted}`;
+
+                    const amountCell = row.insertCell(2);
+                    amountCell.innerHTML = `<strong>$${payment.amount.toFixed(2)}</strong>`;
+
+                    const actionCell = row.insertCell(3);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.style.width = 'auto';
+                    deleteBtn.style.padding = '8px 16px';
+                    deleteBtn.style.fontSize = '14px';
+                    deleteBtn.textContent = '🗑️';
+                    deleteBtn.onclick = () => deletePayment(payment.id);
+                    actionCell.appendChild(deleteBtn);
+
+                    totalPayments += payment.amount;
+                });
+
+                document.getElementById('totalPayments').textContent = `$${totalPayments.toFixed(2)}`;
+            }
+
+            // ============================================
+            // SMART MERGE FUNCTIONS - Content-based deduplication
+            // ============================================
+
+            // Create a unique signature for an entry based on its content
+            function getEntrySignature(entry) {
+                return `${entry.date}|${entry.type}|${entry.cost.toFixed(2)}`;
+            }
+
+            // Create a unique signature for a payment based on its content
+            function getPaymentSignature(payment) {
+                return `${payment.startDate}|${payment.endDate}|${payment.amount.toFixed(2)}|${payment.paymentDate}`;
+            }
+
+            // Smart merge entries - keeps maximum count of each unique entry type
+            // This allows legitimate duplicates (2 plows same day) while preventing sync duplicates
+            function smartMergeEntries(currentEntries, importedEntries) {
+                // Group current entries by signature
+                const currentBySignature = {};
+                currentEntries.forEach(entry => {
+                    const sig = getEntrySignature(entry);
+                    if (!currentBySignature[sig]) {
+                        currentBySignature[sig] = [];
+                    }
+                    currentBySignature[sig].push(entry);
+                });
+
+                // Group imported entries by signature
+                const importedBySignature = {};
+                importedEntries.forEach(entry => {
+                    const sig = getEntrySignature(entry);
+                    if (!importedBySignature[sig]) {
+                        importedBySignature[sig] = [];
+                    }
+                    importedBySignature[sig].push(entry);
+                });
+
+                // Start with all current entries
+                const result = [...currentEntries];
+                let addedCount = 0;
+
+                // For each signature in imported, add entries if imported has MORE than current
+                Object.keys(importedBySignature).forEach(sig => {
+                    const currentCount = currentBySignature[sig] ? currentBySignature[sig].length : 0;
+                    const importedCount = importedBySignature[sig].length;
+
+                    if (importedCount > currentCount) {
+                        // Add only the extra entries from imported (the difference)
+                        const entriesToAdd = importedBySignature[sig].slice(0, importedCount - currentCount);
+                        result.push(...entriesToAdd);
+                        addedCount += entriesToAdd.length;
+                    }
+                });
+
+                // Sort by date
+                const sorted = result.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                return { entries: sorted, added: addedCount };
+            }
+
+            // Smart merge payments - same logic as entries
+            function smartMergePayments(currentPayments, importedPayments) {
+                const currentBySignature = {};
+                currentPayments.forEach(payment => {
+                    const sig = getPaymentSignature(payment);
+                    if (!currentBySignature[sig]) {
+                        currentBySignature[sig] = [];
+                    }
+                    currentBySignature[sig].push(payment);
+                });
+
+                const importedBySignature = {};
+                importedPayments.forEach(payment => {
+                    const sig = getPaymentSignature(payment);
+                    if (!importedBySignature[sig]) {
+                        importedBySignature[sig] = [];
+                    }
+                    importedBySignature[sig].push(payment);
+                });
+
+                const result = [...currentPayments];
+                let addedCount = 0;
+
+                Object.keys(importedBySignature).forEach(sig => {
+                    const currentCount = currentBySignature[sig] ? currentBySignature[sig].length : 0;
+                    const importedCount = importedBySignature[sig].length;
+
+                    if (importedCount > currentCount) {
+                        const paymentsToAdd = importedBySignature[sig].slice(0, importedCount - currentCount);
+                        result.push(...paymentsToAdd);
+                        addedCount += paymentsToAdd.length;
+                    }
+                });
+
+                const sorted = result.sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+
+                return { payments: sorted, added: addedCount };
+            }
+
+            function copyToClipboard() {
+                const data = JSON.stringify({
+                    entries: plowEntries,
+                    payments: payments,
+                    version: 2
+                });
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(data).then(() => {
+                        showSuccess('copySuccess');
+                    });
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = data;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showSuccess('copySuccess');
+                }
+            }
+
+            function importData() {
+                const data = document.getElementById('importData').value.trim();
+
+                if (!data) {
+                    alert('Please paste the data from your partner first');
+                    return;
+                }
+
+                try {
+                    const parsed = JSON.parse(data);
+
+                    // Handle both old format (array) and new format (object with entries & payments)
+                    let importedEntries, importedPayments;
+
+                    if (Array.isArray(parsed)) {
+                        // Old format - just entries
+                        importedEntries = parsed;
+                        importedPayments = [];
+                    } else if (parsed.version === 2) {
+                        // New format with payments
+                        importedEntries = parsed.entries || [];
+                        importedPayments = parsed.payments || [];
+                    } else {
+                        throw new Error('Unknown format');
+                    }
+
+                    // Use smart merge to handle duplicates properly
+                    const entryResult = smartMergeEntries(plowEntries, importedEntries);
+                    const paymentResult = smartMergePayments(payments, importedPayments);
+
+                    plowEntries = entryResult.entries;
+                    payments = paymentResult.payments;
+
+                    saveAndRender();
+
+                    document.getElementById('importData').value = '';
+
+                    // Show detailed result
+                    const resultText = document.getElementById('importResultText');
+                    const resultDiv = document.getElementById('importResult');
+
+                    if (entryResult.added === 0 && paymentResult.added === 0) {
+                        resultText.innerHTML = `✅ <strong>Already up to date!</strong><br>No new entries or payments to add.`;
+                    } else {
+                        let message = '✅ <strong>Import complete!</strong><br>';
+                        if (entryResult.added > 0) {
+                            message += `• Added ${entryResult.added} new entr${entryResult.added === 1 ? 'y' : 'ies'}<br>`;
+                        }
+                        if (paymentResult.added > 0) {
+                            message += `• Added ${paymentResult.added} new payment${paymentResult.added === 1 ? '' : 's'}`;
+                        }
+                        resultText.innerHTML = message;
+                    }
+
+                    resultDiv.classList.add('show');
+                    setTimeout(() => {
+                        resultDiv.classList.remove('show');
+                    }, 5000);
+
+                } catch (e) {
+                    alert('Hmm, that doesn\'t look right. Make sure you copied the entire message from your partner.');
+                }
+            }
+
+            function showSuccess(id) {
+                const elem = document.getElementById(id);
+                elem.classList.add('show');
+                setTimeout(() => {
+                    elem.classList.remove('show');
+                }, 3000);
+            }
+
+            // PayPal Payment Function
+            function payWithPayPal() {
+                const paypalEmail = document.getElementById('paypalEmail').value.trim();
+
+                if (!paypalEmail) {
+                    alert('Please enter the plow service\'s PayPal email address');
+                    document.getElementById('paypalEmail').focus();
+                    return;
+                }
+
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(paypalEmail)) {
+                    alert('Please enter a valid email address');
+                    document.getElementById('paypalEmail').focus();
+                    return;
+                }
+
+                // Calculate unpaid balance
+                const unpaidEntries = plowEntries.filter(entry => !isEntryPaid(entry) && entry.cost > 0);
+                const unpaidAmount = unpaidEntries.reduce((sum, entry) => sum + entry.cost, 0);
+
+                if (unpaidAmount <= 0) {
+                    alert('You have no outstanding balance to pay!');
+                    return;
+                }
+
+                // Save the PayPal email for future use
+                localStorage.setItem('plowServicePayPalEmail', paypalEmail);
+
+                // Generate PayPal payment URL
+                // Using PayPal's standard payment link format
+                const paypalUrl = `https://www.paypal.com/paypalme/${encodeURIComponent(paypalEmail.split('@')[0])}/${unpaidAmount.toFixed(2)}USD`;
+
+                // Alternative format using PayPal's merchant link (more compatible)
+                const paypalMerchantUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(paypalEmail)}&amount=${unpaidAmount.toFixed(2)}&currency_code=USD&item_name=${encodeURIComponent('Snow Plow Service')}&return=about:blank&cancel_return=about:blank`;
+
+                // Show success message
+                showSuccess('paypalSuccess');
+
+                // Open PayPal in a new window
+                // Try PayPal.me first (cleaner URL), fall back to merchant URL
+                const newWindow = window.open(paypalMerchantUrl, '_blank', 'width=800,height=600');
+
+                if (!newWindow) {
+                    alert('Pop-up blocked! Please allow pop-ups for this site, or manually visit:\n\n' + paypalMerchantUrl);
+                } else {
+                    // Remind user to record payment after completing it
+                    setTimeout(() => {
+                        const recordPayment = confirm(
+                            `PayPal window opened!\n\n` +
+                            `Amount: $${unpaidAmount.toFixed(2)}\n` +
+                            `To: ${paypalEmail}\n\n` +
+                            `After completing your payment in PayPal, would you like to record it now in the app?`
+                        );
+
+                        if (recordPayment) {
+                            // Pre-fill the payment recording form
+                            if (unpaidEntries.length > 0) {
+                                const earliestDate = unpaidEntries[0].date;
+                                const latestDate = unpaidEntries[unpaidEntries.length - 1].date;
+
+                                document.getElementById('paymentStartDate').value = earliestDate;
+                                document.getElementById('paymentEndDate').value = latestDate;
+                                document.getElementById('paymentAmount').value = unpaidAmount.toFixed(2);
+                                document.getElementById('paymentDate').valueAsDate = new Date();
+
+                                // Scroll to payment recording section
+                                document.querySelector('.payment-card').scrollIntoView({ behavior: 'smooth' });
+                                updatePaymentPreview();
+                            }
+                        }
+                    }, 2000);
+                }
+            }
+
+            // Update PayPal section amounts whenever data changes
+            function updatePayPalAmounts() {
+                const unpaidEntries = plowEntries.filter(entry => !isEntryPaid(entry) && entry.cost > 0);
+                const unpaidAmount = unpaidEntries.reduce((sum, entry) => sum + entry.cost, 0);
+
+                const paidEntries = plowEntries.filter(entry => isEntryPaid(entry) && entry.cost > 0);
+                const paidAmount = paidEntries.reduce((sum, entry) => sum + entry.cost, 0);
+
+                document.getElementById('paypalUnpaidAmount').textContent = `$${unpaidAmount.toFixed(2)}`;
+                document.getElementById('paypalPaidAmount').textContent = `$${paidAmount.toFixed(2)}`;
+
+                // Enable/disable PayPal button based on whether there's an unpaid balance
+                const paypalButton = document.getElementById('paypalButton');
+                if (unpaidAmount <= 0) {
+                    paypalButton.disabled = true;
+                    paypalButton.innerHTML = '<span>✅</span> All Paid - No Balance Due';
+                } else {
+                    paypalButton.disabled = false;
+                    paypalButton.innerHTML = '<span>💰</span> Pay Outstanding Balance with PayPal';
+                }
+
+                // Load saved PayPal email if exists
+                const savedEmail = localStorage.getItem('plowServicePayPalEmail');
+                if (savedEmail && !document.getElementById('paypalEmail').value) {
+                    document.getElementById('paypalEmail').value = savedEmail;
+                }
+            }
+
+            // Initial render
+            renderEntries();
+            renderPayments();
+            updatePayPalAmounts();
+        </script>
+</body>
+
+</html>
