@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest"
+    href="data:application/json,%7B%22name%22%3A%22Grocery%20List%22%2C%22short_name%22%3A%22Groceries%22%2C%22description%22%3A%22Smart%20grocery%20shopping%20list%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f0f4f0%22%2C%22theme_color%22%3A%22%232d6a4f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520100%2520100%27%253E%253Crect%2520fill%3D%27%25232d6a4f%27%2520width%3D%27100%27%2520height%3D%27100%27%2520rx%3D%2720%27%2F%253E%253Cpath%2520fill%3D%27white%27%2520d%3D%27M25%252028a3%25203%25200%25200%25201%25203-3h4a3%25203%25200%25200%25201%25202.9%25202.2L37%252032h38a3%25203%25200%25200%25201%25202.9%25203.8l-6%252024A3%25203%25200%25200%25201%252069%252062H41a3%25203%25200%25200%25201-2.9-2.2L28.2%252031H28a3%25203%25200%25200%25201-3-3zm17%252044a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10zm24%25200a5%25205%25200%25201%25201%25200%252010%25205%25205%25200%25200%25201%25200-10z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <meta name="theme-color" content="#2d6a4f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Groceries">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232d6a4f' width='100' height='100' rx='20'/><path fill='white' d='M25 28a3 3 0 0 1 3-3h4a3 3 0 0 1 2.9 2.2L37 32h38a3 3 0 0 1 2.9 3.8l-6 24A3 3 0 0 1 69 62H41a3 3 0 0 1-2.9-2.2L28.2 31H28a3 3 0 0 1-3-3zm17 44a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm24 0a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'/></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Grocery List</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+      min-height: 100vh;
+      color: var(--text-main);
+      padding-bottom: 100px;
+      line-height: 1.5;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text-main);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .header-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      flex: 1;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .header-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .store-select {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      background: var(--card-bg);
+      color: var(--text-main);
+      min-width: 0;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 40px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+
+    .store-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .deal-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(99, 102, 241, 0.05);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+    }
+
+    .deal-row span {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .deal-input {
+      width: 70px;
+      padding: 6px 4px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      background: var(--card-bg);
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+
+    .deal-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .deal-active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.2) 100%);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .deal-active span {
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .deal-active .deal-input {
+      color: #92400e;
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .ebt-bar {
+      background: linear-gradient(120deg, #1c1c1c1a 30%, #1c1c1c1a 70%);
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ebt-bar.visible {
+      display: flex;
+    }
+
+    .ebt-balance-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ebt-bar input {
+      background: rgba(28, 28, 28, 0.39);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      width: 100px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-align: right;
+    }
+
+    .ebt-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .ebt-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ebt-actions:empty {
+      display: none;
+    }
+
+    .ebt-action-btn {
+      flex: 1;
+      padding: 10px 12px;
+      background: rgba(28, 28, 28, 0.39);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .ebt-action-btn:hover {
+      background: rgba(64, 145, 108, 0.75);
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-top: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mode-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text-main);
+    }
+
+    .mode-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-bar {
+      background: var(--card-bg);
+      margin: 20px 20px 0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-1px);
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      border: none;
+      font-size: 1.05rem;
+      background: transparent;
+      font-family: inherit;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .search-bar input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-bar::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.7;
+    }
+
+    .search-bar .clear-search {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ddd;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-bar .clear-search.visible {
+      display: flex;
+    }
+
+    .add-form {
+      background: var(--card-bg);
+      padding: 20px;
+      margin: 20px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .add-form.collapsed {
+      padding: 0;
+      margin: 0 12px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .add-form input,
+    .add-form select {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      background: var(--bg);
+      font-family: inherit;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .add-form input:focus,
+    .add-form select:focus {
+      border-color: var(--primary);
+      background: var(--card-bg);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-row>* {
+      flex: 1;
+    }
+
+    .add-form button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      margin-top: 8px;
+    }
+
+    .add-form button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    .add-form button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    .quick-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .quick-btn {
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: #f1f5f9;
+      border-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .quick-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      margin: 20px 20px 10px;
+      background: white;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--text-main);
+      font-weight: 600;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .clear-btn {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: #fecaca;
+      transform: scale(1.05);
+    }
+
+    .freq-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: #e0e7ff;
+      color: #4338ca;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .account-color-0 {
+      border-left: 4px solid #6366f1;
+      background: linear-gradient(90deg, #eef2ff 0%, white 20%);
+    }
+
+    .account-color-1 {
+      border-left: 4px solid #ec4899;
+      background: linear-gradient(90deg, #fdf2f8 0%, white 20%);
+    }
+
+    .account-color-2 {
+      border-left: 4px solid #f59e0b;
+      background: linear-gradient(90deg, #fffbeb 0%, white 20%);
+    }
+
+    .account-color-3 {
+      border-left: 4px solid #10b981;
+      background: linear-gradient(90deg, #ecfdf5 0%, white 20%);
+    }
+
+    .account-color-4 {
+      border-left: 4px solid #06b6d4;
+      background: linear-gradient(90deg, #ecfeff 0%, white 20%);
+    }
+
+    .department-group {
+      margin: 0 20px 20px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+    }
+
+    .department-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .aisle-header {
+      padding: 10px 20px;
+      background: rgba(241, 245, 249, 0.5);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item:hover {
+      background: rgba(99, 102, 241, 0.02);
+    }
+
+    .item.removing {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+
+    .item-check {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      margin-right: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+      transition: all 0.2s;
+      background: var(--bg);
+    }
+
+    .item-check.checked {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .item-check.maybe {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .item-body {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .item-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .item.done .item-name {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .tag-free {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .tag-coupon {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .item-meta {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .item-account {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 3px;
+      padding: 2px 8px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .item-delete {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 8px;
+      margin: -8px -8px -8px 4px;
+      border-radius: 50%;
+    }
+
+    .item-delete:hover {
+      color: #e74c3c;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 30px;
+      color: #888;
+    }
+
+    .empty-state-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 16px 20px;
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      z-index: 100;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-btn {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .footer-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--bg);
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .phone-panel {
+      position: fixed;
+      bottom: 70px;
+      left: 12px;
+      right: 12px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      z-index: 150;
+      display: none;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .phone-panel.visible {
+      display: block;
+    }
+
+    .phone-panel h4 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .phone-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .phone-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .phone-info strong {
+      display: block;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .phone-number {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2d6a4f;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn {
+      padding: 8px 14px;
+      background: #e8f5e9;
+      border: none;
+      border-radius: 8px;
+      color: #2d6a4f;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .phone-panel-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #999;
+      cursor: pointer;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .modal h3 {
+      margin-bottom: 16px;
+      color: #2d6a4f;
+    }
+
+    .modal p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .modal input,
+    .modal select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .modal-btns button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btns.stacked {
+      flex-direction: column;
+    }
+
+    .modal-btns.stacked button {
+      width: 100%;
+    }
+
+    .btn-cancel {
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-cancel:hover {
+      background: var(--border);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-delete:hover {
+      background: #fecaca;
+    }
+
+    .btn-merge {
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+    }
+
+    .btn-replace {
+      background: var(--accent);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+
+    .status-btns {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .status-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .status-btn.active-checked {
+      border-color: #10b981;
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .status-btn.active-maybe {
+      border-color: var(--accent);
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .status-btn.active-none {
+      border-color: var(--text-muted);
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .settings-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .settings-tab {
+      flex: 1;
+      padding: 12px 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .settings-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .settings-section {
+      margin-bottom: 20px;
+    }
+
+    .settings-section h4 {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8f8f8;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .settings-item span {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .settings-item small {
+      color: #888;
+      margin-left: 8px;
+    }
+
+    .settings-item button {
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .add-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-row input {
+      flex: 1;
+      margin: 0;
+    }
+
+    .add-row button {
+      padding: 12px 16px;
+      background: #40916c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .layout-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+
+    .layout-item span {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .layout-arrows {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .layout-arrows button {
+      background: #e0e0e0;
+      border: none;
+      width: 28px;
+      height: 22px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .layout-arrows button:hover {
+      background: #40916c;
+      color: white;
+    }
+
+    .layout-arrows button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .reset-layout-btn {
+      width: 100%;
+      padding: 10px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      transition: all 0.2s;
+      z-index: 300;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: #888;
+    }
+
+    .no-results-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 380px) {
+      .header h1 {
+        font-size: 1.1rem;
+      }
+
+      .mode-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+
+      .deal-row {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+
+      .deal-input {
+        width: 45px;
+        padding: 5px 6px;
+        font-size: 0.85rem;
+      }
+
+      .settings-tab {
+        min-width: 60px;
+        padding: 8px 6px;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-row">
+      <h1>🛒 Grocery List</h1>
+      <button class="header-btn" id="btn-ebt" title="EBT Balance">💳</button>
+      <button class="header-btn" id="btn-phones" title="Phone Numbers">📱</button>
+      <button class="header-btn" id="btn-settings" title="Settings">⚙️</button>
+    </div>
+    <div class="header-row">
+      <select class="store-select" id="store-select"></select>
+      <div class="deal-row" id="deal-row">
+        <span>$</span>
+        <input type="number" class="deal-input" id="deal-off" placeholder="0" min="0" step="0.01">
+        <span>off</span>
+        <span>$</span>
+        <input type="number" class="deal-input" id="deal-min" placeholder="0" min="0" step="0.01">
+        <span>+</span>
+      </div>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-planning">📝 Planning</button>
+      <button class="mode-btn" id="btn-shopping">🛒 Shopping</button>
+    </div>
+  </header>
+
+  <div class="ebt-bar" id="ebt-bar">
+    <div class="ebt-balance-row">
+      <span><b>💳 EBT Balance</b></span>
+      <div>
+        <span>$</span>
+        <input type="number" step="0.01" id="ebt-input" placeholder="0.00">
+      </div>
+    </div>
+    <div class="ebt-actions" id="ebt-actions"></div>
+  </div>
+
+  <main>
+    <div class="search-bar" id="search-bar" style="display:none">
+      <input type="text" id="search-input" placeholder="Search items...">
+      <button class="clear-search" id="clear-search">×</button>
+    </div>
+
+    <form class="add-form" id="add-form">
+      <input type="text" id="input-name" placeholder="Item name..." autocomplete="off" required>
+      <div class="quick-btns" id="quick-depts"></div>
+      <div class="form-row">
+        <input type="text" id="input-dept" placeholder="Department" list="dl-depts">
+        <input type="text" id="input-aisle" placeholder="Aisle" list="dl-aisles">
+      </div>
+      <div class="form-row">
+        <select id="input-account">
+          <option value="">No account</option>
+        </select>
+        <select id="input-tag">
+          <option value="">No tag</option>
+          <option value="free">🆓 FREE</option>
+          <option value="coupon">🏷️ Coupon</option>
+        </select>
+      </div>
+      <button type="submit">+ Add Item</button>
+      <datalist id="dl-depts"></datalist>
+      <datalist id="dl-aisles"></datalist>
+    </form>
+
+    <div class="stats-bar" id="stats-bar" style="display:none">
+      <span id="stats-text"></span>
+      <button class="clear-btn" id="btn-clear">Clear ✕</button>
+    </div>
+
+    <div id="list-container"></div>
+  </main>
+
+  <footer class="footer">
+    <button class="footer-btn" id="btn-export">📤 Export</button>
+    <button class="footer-btn" id="btn-import">📥 Import</button>
+  </footer>
+
+  <input type="file" id="file-input" accept=".json">
+
+  <div class="phone-panel" id="phone-panel">
+    <button class="phone-panel-close" id="phone-panel-close">×</button>
+    <h4>📱 Rewards Phone Numbers</h4>
+    <div id="phone-list"></div>
+  </div>
+
+  <div class="toast" id="toast">Copied!</div>
+
+  <!-- Edit Modal -->
+  <div class="modal" id="edit-modal">
+    <div class="modal-box">
+      <h3>✏️ Edit Item</h3>
+      <input type="text" id="edit-name" placeholder="Item name">
+      <div class="form-row">
+        <input type="text" id="edit-dept" placeholder="Department" list="dl-depts">
+        <input type="text" id="edit-aisle" placeholder="Aisle" list="dl-aisles">
+      </div>
+      <select id="edit-account"></select>
+      <select id="edit-tag">
+        <option value="">No tag</option>
+        <option value="free">🆓 FREE</option>
+        <option value="coupon">🏷️ Coupon</option>
+      </select>
+      <div class="status-btns" id="status-btns">
+        <div class="status-btn" data-status="none">○ None</div>
+        <div class="status-btn" data-status="checked">✓ Buy</div>
+        <div class="status-btn" data-status="maybe">? Maybe</div>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-delete" id="edit-delete">Delete</button>
+        <button class="btn-cancel" id="edit-cancel">Cancel</button>
+        <button class="btn-save" id="edit-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Choice Modal -->
+  <div class="modal" id="import-modal">
+    <div class="modal-box">
+      <h3>📥 Import Options</h3>
+      <p id="import-message"></p>
+      <div class="modal-btns stacked">
+        <button class="btn-merge" id="import-merge">🔀 Merge Lists</button>
+        <button class="btn-replace" id="import-replace">🔄 Replace All</button>
+        <button class="btn-save" id="import-new">➕ New Store</button>
+        <button class="btn-cancel" id="import-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-box">
+      <h3>⚙️ Settings</h3>
+
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="stores">Stores</button>
+        <button class="settings-tab" data-tab="accounts">Accounts</button>
+        <button class="settings-tab" data-tab="layout">Layout</button>
+        <button class="settings-tab" data-tab="ebtinfo">EBT</button>
+      </div>
+
+      <div id="tab-stores" class="tab-content">
+        <div class="settings-section">
+          <h4>Your Stores</h4>
+          <div id="store-list"></div>
+          <div class="add-row">
+            <input type="text" id="new-store" placeholder="New store...">
+            <button id="add-store">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-accounts" class="tab-content" style="display:none">
+        <div class="settings-section">
+          <h4>Rewards Accounts for <span id="current-store-label"></span></h4>
+          <div id="account-list"></div>
+          <div class="add-row" style="margin-bottom:8px">
+            <input type="tel" id="new-phone" placeholder="Phone number">
+          </div>
+          <div class="add-row">
+            <input type="text" id="new-label" placeholder="Label (e.g., Mom)">
+            <button id="add-account">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-layout" class="tab-content" style="display:none">
+        <div class="settings-section">
+          <h4>Store Layout for <span id="layout-store-label"></span></h4>
+          <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Reorder departments to match your store's layout.
+            This affects Shopping mode only.</p>
+          <div id="layout-list"></div>
+          <button class="reset-layout-btn" id="reset-layout">↺ Reset to Default Order</button>
+        </div>
+      </div>
+
+      <div id="tab-ebtinfo" class="tab-content" style="display:none">
+        <div class="settings-section">
+          <h4>EBT Balance Check Info</h4>
+          <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Add your state's phone number and website for
+            checking EBT balance.</p>
+
+          <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">📞 Balance Check Phone</label>
+          <input type="tel" id="ebt-phone-input" placeholder="e.g., 1-888-997-9333">
+
+          <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">🌐 Balance Check Website</label>
+          <input type="url" id="ebt-link-input" placeholder="e.g., https://www.ebtedge.com">
+
+          <button class="reset-layout-btn" id="save-ebt-info" style="background:#40916c;color:white;margin-top:12px">💾
+            Save EBT Info</button>
+        </div>
+      </div>
+
+      <div class="modal-btns">
+        <button class="btn-save" id="settings-close" style="flex:1">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE = 'grocery_v8';
+      const COLORS = ['account-color-0', 'account-color-1', 'account-color-2', 'account-color-3', 'account-color-4'];
+
+      const DEFAULT_DEPT_ORDER = [
+        'Produce', 'Bakery', 'Deli', 'Meat', 'Seafood', 'Dairy', 'Frozen',
+        'Beverages', 'Canned', 'Pasta & Grains', 'Condiments', 'Baking',
+        'Breakfast', 'Snacks', 'Household', 'Pet', 'Personal Care', 'Pharmacy', 'Other'
+      ];
+
+      const DEFAULT_DEPTS = [...DEFAULT_DEPT_ORDER];
+
+      let state = {
+        stores: ['My Store'],
+        current: 'My Store',
+        data: { 'My Store': { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] } },
+        mode: 'planning',
+        ebt: '',
+        ebtPhone: '',
+        ebtLink: ''
+      };
+
+      let editId = null, editStatus = 'none';
+      let searchQuery = '';
+      let currentTab = 'stores';
+      let pendingImport = null;
+
+      const $ = id => document.getElementById(id);
+
+      const DOM = {
+        storeSelect: $('store-select'),
+        dealRow: $('deal-row'),
+        dealOff: $('deal-off'),
+        dealMin: $('deal-min'),
+        btnEbt: $('btn-ebt'),
+        ebtBar: $('ebt-bar'),
+        ebtInput: $('ebt-input'),
+        ebtActions: $('ebt-actions'),
+        btnPhones: $('btn-phones'),
+        phonePanel: $('phone-panel'),
+        phonePanelClose: $('phone-panel-close'),
+        phoneList: $('phone-list'),
+        btnSettings: $('btn-settings'),
+        btnPlanning: $('btn-planning'),
+        btnShopping: $('btn-shopping'),
+        searchBar: $('search-bar'),
+        searchInput: $('search-input'),
+        clearSearch: $('clear-search'),
+        addForm: $('add-form'),
+        inputName: $('input-name'),
+        inputDept: $('input-dept'),
+        inputAisle: $('input-aisle'),
+        inputAccount: $('input-account'),
+        inputTag: $('input-tag'),
+        quickDepts: $('quick-depts'),
+        dlDepts: $('dl-depts'),
+        dlAisles: $('dl-aisles'),
+        statsBar: $('stats-bar'),
+        statsText: $('stats-text'),
+        btnClear: $('btn-clear'),
+        listContainer: $('list-container'),
+        btnExport: $('btn-export'),
+        btnImport: $('btn-import'),
+        fileInput: $('file-input'),
+        toast: $('toast'),
+        editModal: $('edit-modal'),
+        editName: $('edit-name'),
+        editDept: $('edit-dept'),
+        editAisle: $('edit-aisle'),
+        editAccount: $('edit-account'),
+        editTag: $('edit-tag'),
+        statusBtns: $('status-btns'),
+        editDelete: $('edit-delete'),
+        editCancel: $('edit-cancel'),
+        editSave: $('edit-save'),
+        importModal: $('import-modal'),
+        importMessage: $('import-message'),
+        importMerge: $('import-merge'),
+        importReplace: $('import-replace'),
+        importNew: $('import-new'),
+        importCancel: $('import-cancel'),
+        settingsModal: $('settings-modal'),
+        tabStores: $('tab-stores'),
+        tabAccounts: $('tab-accounts'),
+        tabLayout: $('tab-layout'),
+        tabEbtInfo: $('tab-ebtinfo'),
+        storeList: $('store-list'),
+        newStore: $('new-store'),
+        addStoreBtn: $('add-store'),
+        currentStoreLabel: $('current-store-label'),
+        layoutStoreLabel: $('layout-store-label'),
+        accountList: $('account-list'),
+        newPhone: $('new-phone'),
+        newLabel: $('new-label'),
+        addAccountBtn: $('add-account'),
+        layoutList: $('layout-list'),
+        resetLayout: $('reset-layout'),
+        ebtPhoneInput: $('ebt-phone-input'),
+        ebtLinkInput: $('ebt-link-input'),
+        saveEbtInfo: $('save-ebt-info'),
+        settingsClose: $('settings-close')
+      };
+
+      const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      const esc = t => { const d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
+
+      const getStore = () => {
+        if (!state.data[state.current]) {
+          state.data[state.current] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] };
+        }
+        const store = state.data[state.current];
+        if (!store.deptOrder) store.deptOrder = [...DEFAULT_DEPT_ORDER];
+        return store;
+      };
+
+      const getItems = () => getStore().items;
+      const getAccounts = () => getStore().accounts;
+      const getDeptOrder = () => getStore().deptOrder || DEFAULT_DEPT_ORDER;
+      const findAccount = id => getAccounts().find(a => a.id === id);
+      const accountIndex = id => getAccounts().findIndex(a => a.id === id);
+
+      const formatPhone = p => {
+        const d = (p || '').replace(/\D/g, '');
+        if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+        if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+        return p;
+      };
+
+      const save = () => { try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch (e) { } };
+
+      const load = () => {
+        try {
+          const d = localStorage.getItem(STORAGE);
+          if (d) {
+            const p = JSON.parse(d);
+            if (p.stores && p.data) {
+              state = p;
+              for (const s in state.data) {
+                if (!state.data[s].accounts) state.data[s].accounts = [];
+                if (!state.data[s].items) state.data[s].items = [];
+                if (state.data[s].dealOff === undefined) state.data[s].dealOff = '';
+                if (state.data[s].dealMin === undefined) state.data[s].dealMin = '';
+                if (!state.data[s].deptOrder) state.data[s].deptOrder = [...DEFAULT_DEPT_ORDER];
+                if (state.data[s].ebt) {
+                  state.ebt = state.data[s].ebt;
+                  delete state.data[s].ebt;
+                }
+              }
+              if (state.ebt === undefined) state.ebt = '';
+              if (state.ebtPhone === undefined) state.ebtPhone = '';
+              if (state.ebtLink === undefined) state.ebtLink = '';
+              return;
+            }
+          }
+          for (const k of ['grocery_v7', 'grocery_v6', 'grocery_v5', 'grocery_app_v4']) {
+            const old = localStorage.getItem(k);
+            if (old) {
+              const p = JSON.parse(old);
+              if (p.stores || p.data) {
+                state.stores = p.stores || ['My Store'];
+                state.current = p.current || p.currentStore || p.stores?.[0] || 'My Store';
+                state.mode = p.mode || 'planning';
+                state.ebt = p.ebt || '';
+                state.ebtPhone = p.ebtPhone || '';
+                state.ebtLink = p.ebtLink || '';
+                state.data = {};
+                const srcData = p.data || p.storeData || {};
+                for (const s of state.stores) {
+                  const sd = srcData[s] || {};
+                  state.data[s] = {
+                    items: (sd.items || []).map(i => ({
+                      id: i.id || genId(),
+                      name: i.name,
+                      dept: i.department || i.dept || 'Other',
+                      aisle: i.aisle || '',
+                      status: i.status || (i.checked ? 'checked' : 'none'),
+                      accountId: i.accountId || '',
+                      tag: i.couponType || i.tag || '',
+                      freq: i.freq || 0
+                    })),
+                    accounts: (sd.accounts || sd.rewards || []).map(a => ({
+                      id: a.id || genId(),
+                      phone: (a.phone || '').replace(/\D/g, ''),
+                      label: a.label || ''
+                    })),
+                    dealOff: sd.dealOff || '',
+                    dealMin: sd.dealMin || '',
+                    deptOrder: sd.deptOrder || [...DEFAULT_DEPT_ORDER]
+                  };
+                  if (sd.ebt) state.ebt = sd.ebt;
+                }
+                save();
+                return;
+              }
+            }
+          }
+        } catch (e) { console.error(e); }
+      };
+
+      const showToast = (msg = 'Copied!') => {
+        DOM.toast.textContent = msg;
+        DOM.toast.classList.add('show');
+        setTimeout(() => DOM.toast.classList.remove('show'), 1500);
+      };
+
+      const copyText = t => {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(t).then(() => showToast());
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = t;
+          ta.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast();
+        }
+      };
+
+      const getUsedDepts = () => {
+        const items = getItems();
+        return [...new Set(items.map(i => i.dept).filter(Boolean))];
+      };
+
+      const ensureDeptOrder = () => {
+        const store = getStore();
+        const used = getUsedDepts();
+        const order = store.deptOrder || [...DEFAULT_DEPT_ORDER];
+
+        used.forEach(d => {
+          if (!order.includes(d)) {
+            const otherIdx = order.indexOf('Other');
+            if (otherIdx > -1) order.splice(otherIdx, 0, d);
+            else order.push(d);
+          }
+        });
+
+        store.deptOrder = order;
+        return order;
+      };
+
+      const render = () => {
+        const store = getStore();
+        ensureDeptOrder();
+
+        DOM.storeSelect.innerHTML = state.stores.map(s =>
+          `<option value="${esc(s)}" ${s === state.current ? 'selected' : ''}>${esc(s)}</option>`
+        ).join('');
+
+        DOM.dealOff.value = store.dealOff || '';
+        DOM.dealMin.value = store.dealMin || '';
+        updateDealStyle();
+
+        DOM.ebtInput.value = state.ebt || '';
+
+        let ebtActionsHtml = '';
+        if (state.ebtPhone) {
+          const phoneDigits = state.ebtPhone.replace(/\D/g, '');
+          ebtActionsHtml += `<a href="tel:${phoneDigits}" class="ebt-action-btn">📞 Check Balance</a>`;
+        }
+        if (state.ebtLink) {
+          ebtActionsHtml += `<a href="${esc(state.ebtLink)}" target="_blank" class="ebt-action-btn">🌐 Check Online</a>`;
+        }
+        DOM.ebtActions.innerHTML = ebtActionsHtml;
+
+        const accts = getAccounts();
+        const accOpts = '<option value="">No account</option>' + accts.map(a =>
+          `<option value="${a.id}">${esc(a.label || formatPhone(a.phone))}</option>`
+        ).join('');
+        DOM.inputAccount.innerHTML = accOpts;
+        DOM.editAccount.innerHTML = accOpts;
+
+        if (accts.length === 0) {
+          DOM.phoneList.innerHTML = '<p style="color:#888;text-align:center">No accounts. Add in Settings.</p>';
+        } else {
+          DOM.phoneList.innerHTML = accts.map((a, i) => `
+        <div class="phone-card">
+          <div class="phone-info">
+            <strong>${esc(a.label || 'Account ' + (i + 1))}</strong>
+            <div class="phone-number">${esc(formatPhone(a.phone))}</div>
+          </div>
+          <button class="copy-btn" data-phone="${a.phone}">📋 Copy</button>
+        </div>
+      `).join('');
+        }
+
+        const planning = state.mode === 'planning';
+        DOM.btnPlanning.classList.toggle('active', planning);
+        DOM.btnShopping.classList.toggle('active', !planning);
+
+        DOM.searchBar.style.display = planning ? 'block' : 'none';
+        DOM.addForm.classList.toggle('collapsed', !planning);
+
+        const items = getItems();
+        const depts = [...new Set([...DEFAULT_DEPTS, ...items.map(i => i.dept).filter(Boolean)])].sort();
+        const aisles = [...new Set(items.map(i => i.aisle).filter(Boolean))].sort((a, b) => {
+          const aNum = parseInt(a), bNum = parseInt(b);
+          if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+          return a.localeCompare(b);
+        });
+        DOM.dlDepts.innerHTML = depts.map(d => `<option value="${esc(d)}">`).join('');
+        DOM.dlAisles.innerHTML = aisles.map(a => `<option value="${esc(a)}">`).join('');
+
+        const counts = {};
+        items.forEach(i => { if (i.dept) counts[i.dept] = (counts[i.dept] || 0) + 1; });
+        let quick = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
+        if (quick.length < 6) {
+          for (const d of ['Produce', 'Dairy', 'Meat', 'Frozen', 'Bakery', 'Deli']) {
+            if (!quick.includes(d) && quick.length < 6) quick.push(d);
+          }
+        }
+        DOM.quickDepts.innerHTML = quick.map(d =>
+          `<button type="button" class="quick-btn ${DOM.inputDept.value === d ? 'active' : ''}" data-dept="${esc(d)}">${esc(d)}</button>`
+        ).join('');
+
+        const checked = items.filter(i => i.status === 'checked').length;
+        const maybe = items.filter(i => i.status === 'maybe').length;
+        if (items.length === 0) {
+          DOM.statsBar.style.display = 'none';
+        } else {
+          DOM.statsBar.style.display = 'flex';
+          if (state.mode === 'shopping') {
+            DOM.statsText.textContent = `${checked} to buy${maybe ? `, ${maybe} maybe` : ''}`;
+            DOM.btnClear.textContent = 'Done ✓';
+          } else {
+            DOM.statsText.textContent = `${checked + maybe} of ${items.length} selected`;
+            DOM.btnClear.textContent = 'Clear ✕';
+          }
+        }
+
+        DOM.clearSearch.classList.toggle('visible', searchQuery.length > 0);
+
+        renderList();
+      };
+
+      const updateDealStyle = () => {
+        const off = parseFloat(DOM.dealOff.value) || 0;
+        const min = parseFloat(DOM.dealMin.value) || 0;
+        DOM.dealRow.classList.toggle('deal-active', off > 0 && min > 0);
+      };
+
+      const renderList = () => {
+        const items = getItems();
+        const shopping = state.mode === 'shopping';
+
+        let visible;
+
+        if (shopping) {
+          visible = items.filter(i => i.status === 'checked' || i.status === 'maybe');
+        } else {
+          visible = items;
+
+          if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            visible = visible.filter(i =>
+              i.name.toLowerCase().includes(q) ||
+              (i.dept && i.dept.toLowerCase().includes(q)) ||
+              (i.aisle && i.aisle.toLowerCase().includes(q))
+            );
+          }
+
+          visible = [...visible].sort((a, b) => {
+            const freqA = a.freq || 0;
+            const freqB = b.freq || 0;
+            if (freqB !== freqA) return freqB - freqA;
+            return a.name.localeCompare(b.name);
+          });
+        }
+
+        if (visible.length === 0) {
+          if (searchQuery) {
+            DOM.listContainer.innerHTML = `
+          <div class="no-results">
+            <div class="no-results-icon">🔍</div>
+            <div>No items match "${esc(searchQuery)}"</div>
+          </div>
+        `;
+          } else if (shopping) {
+            DOM.listContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">✅</div>
+            <div>No items selected for this trip.<br>Use Planning mode to select items.</div>
+          </div>
+        `;
+          } else {
+            DOM.listContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📝</div>
+            <div>Add items above to start your list.</div>
+          </div>
+        `;
+          }
+          return;
+        }
+
+        const groups = {};
+        visible.forEach(item => {
+          const d = item.dept || 'Other';
+          const a = item.aisle || '';
+          if (!groups[d]) groups[d] = {};
+          if (!groups[d][a]) groups[d][a] = [];
+          groups[d][a].push(item);
+        });
+
+        let sortedDepts;
+        if (shopping) {
+          const deptOrder = getDeptOrder();
+          sortedDepts = Object.keys(groups).sort((a, b) => {
+            let idxA = deptOrder.indexOf(a);
+            let idxB = deptOrder.indexOf(b);
+            if (idxA === -1) idxA = 999;
+            if (idxB === -1) idxB = 999;
+            return idxA - idxB;
+          });
+        } else {
+          sortedDepts = Object.keys(groups).sort((a, b) => a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b));
+        }
+
+        let html = '';
+        sortedDepts.forEach(dept => {
+          html += `<div class="department-group"><div class="department-header">🏷️ ${esc(dept)}</div>`;
+
+          const aisleKeys = Object.keys(groups[dept]).sort((a, b) => {
+            if (a === '') return 1;
+            if (b === '') return -1;
+            const aNum = parseInt(a), bNum = parseInt(b);
+            if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+            return a.localeCompare(b, undefined, { numeric: true });
+          });
+
+          aisleKeys.forEach(aisle => {
+            if (aisle) html += `<div class="aisle-header">📍 ${esc(aisle)}</div>`;
+
+            const sorted = groups[dept][aisle].sort((a, b) => a.name.localeCompare(b.name));
+
+            sorted.forEach(item => {
+              const status = item.status || 'none';
+              const checkClass = status === 'checked' ? 'checked' : status === 'maybe' ? 'maybe' : '';
+              const checkContent = status === 'checked' ? '✓' : status === 'maybe' ? '?' : '';
+              const doneClass = status !== 'none' && !shopping ? 'done' : '';
+
+              const acct = item.accountId ? findAccount(item.accountId) : null;
+              const acctIdx = acct ? accountIndex(item.accountId) : -1;
+              const colorClass = acct ? COLORS[acctIdx % COLORS.length] : '';
+
+              let tags = '';
+              if (item.tag === 'free') tags += '<span class="tag tag-free">FREE</span>';
+              else if (item.tag === 'coupon') tags += '<span class="tag tag-coupon">COUPON</span>';
+
+              let freqBadge = '';
+              if (!shopping && item.freq && item.freq >= 3) {
+                freqBadge = `<span class="freq-badge">⭐${item.freq}</span>`;
+              }
+
+              let acctLabel = '';
+              if (acct) {
+                acctLabel = `<div class="item-account">👤 ${esc(acct.label || formatPhone(acct.phone))}</div>`;
+              }
+
+              html += `
+            <div class="item ${doneClass} ${colorClass}" data-id="${item.id}">
+              <div class="item-check ${checkClass}" data-action="toggle" data-id="${item.id}">${checkContent}</div>
+              <div class="item-body" data-action="edit" data-id="${item.id}">
+                <div class="item-name">${esc(item.name)} ${tags} ${freqBadge}</div>
+                ${!shopping && item.aisle ? `<div class="item-meta">${esc(item.aisle)}</div>` : ''}
+                ${acctLabel}
+              </div>
+              <button class="item-delete" data-action="delete" data-id="${item.id}">×</button>
+            </div>
+          `;
+            });
+          });
+
+          html += '</div>';
+        });
+
+        DOM.listContainer.innerHTML = html;
+      };
+
+      const renderSettings = () => {
+        DOM.storeList.innerHTML = state.stores.map(s => `
+      <div class="settings-item">
+        <span>${esc(s)}${s === state.current ? ' <small>(current)</small>' : ''}</span>
+        <button data-action="select-store" data-store="${esc(s)}">Select</button>
+        <button data-action="delete-store" data-store="${esc(s)}">🗑️</button>
+      </div>
+    `).join('');
+
+        DOM.currentStoreLabel.textContent = state.current;
+        const accts = getAccounts();
+        if (accts.length === 0) {
+          DOM.accountList.innerHTML = '<p style="color:#888;font-size:0.9rem;margin-bottom:10px">No accounts yet.</p>';
+        } else {
+          DOM.accountList.innerHTML = accts.map((a, i) => `
+        <div class="settings-item" style="border-left: 4px solid ${['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][i % 5]}">
+          <span>${esc(a.label || 'Account ' + (i + 1))}<small style="margin-left:8px">${esc(formatPhone(a.phone))}</small></span>
+          <button data-action="delete-account" data-id="${a.id}">🗑️</button>
+        </div>
+      `).join('');
+        }
+
+        renderLayoutEditor();
+      };
+
+      const renderLayoutEditor = () => {
+        DOM.layoutStoreLabel.textContent = state.current;
+        const order = ensureDeptOrder();
+
+        const usedDepts = getUsedDepts();
+        const displayOrder = order.filter(d => usedDepts.includes(d) || DEFAULT_DEPT_ORDER.includes(d));
+
+        DOM.layoutList.innerHTML = displayOrder.map((dept, i) => `
+      <div class="layout-item" data-dept="${esc(dept)}">
+        <span>${esc(dept)}</span>
+        <div class="layout-arrows">
+          <button data-action="move-up" data-dept="${esc(dept)}" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button data-action="move-down" data-dept="${esc(dept)}" ${i === displayOrder.length - 1 ? 'disabled' : ''}>▼</button>
+        </div>
+      </div>
+    `).join('');
+      };
+
+      const switchTab = (tab) => {
+        currentTab = tab;
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+        DOM.tabStores.style.display = tab === 'stores' ? 'block' : 'none';
+        DOM.tabAccounts.style.display = tab === 'accounts' ? 'block' : 'none';
+        DOM.tabLayout.style.display = tab === 'layout' ? 'block' : 'none';
+        DOM.tabEbtInfo.style.display = tab === 'ebtinfo' ? 'block' : 'none';
+
+        if (tab === 'layout') renderLayoutEditor();
+        if (tab === 'ebtinfo') {
+          DOM.ebtPhoneInput.value = state.ebtPhone || '';
+          DOM.ebtLinkInput.value = state.ebtLink || '';
+        }
+      };
+
+      const setMode = m => { state.mode = m; searchQuery = ''; DOM.searchInput.value = ''; save(); render(); };
+      const setStore = s => { if (state.stores.includes(s)) { state.current = s; save(); render(); } };
+
+      const addStore = name => {
+        const n = name.trim();
+        if (!n || state.stores.includes(n)) return false;
+        state.stores.push(n);
+        state.data[n] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] };
+        state.current = n;
+        save(); render(); renderSettings();
+        return true;
+      };
+
+      const deleteStore = name => {
+        if (state.stores.length <= 1) return alert('Need at least one store.');
+        if (!confirm(`Delete "${name}" and all its data?`)) return;
+        const i = state.stores.indexOf(name);
+        if (i > -1) {
+          state.stores.splice(i, 1);
+          delete state.data[name];
+          if (state.current === name) state.current = state.stores[0];
+          save(); render(); renderSettings();
+        }
+      };
+
+      const addAccount = (phone, label) => {
+        const p = phone.replace(/\D/g, '');
+        if (!p) return false;
+        getAccounts().push({ id: genId(), phone: p, label: label.trim() });
+        save(); render(); renderSettings();
+        return true;
+      };
+
+      const deleteAccount = id => {
+        const accts = getAccounts();
+        const i = accts.findIndex(a => a.id === id);
+        if (i > -1) {
+          accts.splice(i, 1);
+          getItems().forEach(item => { if (item.accountId === id) item.accountId = ''; });
+          save(); render(); renderSettings();
+        }
+      };
+
+      const moveDept = (dept, direction) => {
+        const order = getStore().deptOrder;
+        const idx = order.indexOf(dept);
+        if (idx === -1) return;
+
+        const newIdx = idx + direction;
+        if (newIdx < 0 || newIdx >= order.length) return;
+
+        [order[idx], order[newIdx]] = [order[newIdx], order[idx]];
+        save();
+        renderLayoutEditor();
+      };
+
+      const resetLayout = () => {
+        getStore().deptOrder = [...DEFAULT_DEPT_ORDER];
+        save();
+        renderLayoutEditor();
+        showToast('Layout reset!');
+      };
+
+      const addItem = (name, dept, aisle, accountId, tag) => {
+        getItems().push({
+          id: genId(),
+          name: name.trim(),
+          dept: dept.trim() || 'Other',
+          aisle: aisle.trim(),
+          status: 'none',
+          accountId: accountId || '',
+          tag: tag || '',
+          freq: 0
+        });
+        ensureDeptOrder();
+        save(); render();
+      };
+
+      const cycleStatus = id => {
+        const item = getItems().find(i => i.id === id);
+        if (!item) return;
+        const was = item.status;
+        item.status = was === 'none' ? 'checked' : was === 'checked' ? 'maybe' : 'none';
+
+        if (item.status === 'checked' && was === 'none') {
+          item.freq = (item.freq || 0) + 1;
+        }
+
+        save();
+
+        if (state.mode === 'shopping' && item.status === 'none') {
+          const el = DOM.listContainer.querySelector(`[data-id="${id}"].item`);
+          if (el) {
+            el.classList.add('removing');
+            setTimeout(render, 300);
+            return;
+          }
+        }
+        render();
+      };
+
+      const deleteItem = id => {
+        const items = getItems();
+        const i = items.findIndex(x => x.id === id);
+        if (i > -1) { items.splice(i, 1); save(); render(); }
+      };
+
+      const updateItem = (id, name, dept, aisle, accountId, tag, status) => {
+        const item = getItems().find(i => i.id === id);
+        if (!item) return;
+        item.name = name.trim() || item.name;
+        item.dept = dept.trim() || 'Other';
+        item.aisle = aisle.trim();
+        item.accountId = accountId || '';
+        item.tag = tag || '';
+        item.status = status;
+        ensureDeptOrder();
+        save(); render();
+      };
+
+      const clearSelections = () => {
+        getItems().forEach(i => i.status = 'none');
+        save(); render();
+      };
+
+      const exportData = () => {
+        const store = getStore();
+        const obj = {
+          version: 8,
+          date: new Date().toISOString(),
+          store: state.current,
+          items: store.items,
+          accounts: store.accounts,
+          dealOff: store.dealOff,
+          dealMin: store.dealMin,
+          deptOrder: store.deptOrder
+        };
+        const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${state.current.replace(/[^a-z0-9]/gi, '_')}-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      const parseImportData = (raw) => {
+        let items = Array.isArray(raw.items) ? raw.items : Array.isArray(raw) ? raw : [];
+        let accounts = Array.isArray(raw.accounts) ? raw.accounts : [];
+        let storeName = raw.store || raw.storeName || 'Imported';
+        let dealOff = raw.dealOff || '';
+        let dealMin = raw.dealMin || '';
+        let deptOrder = Array.isArray(raw.deptOrder) ? raw.deptOrder : [...DEFAULT_DEPT_ORDER];
+
+        items = items.filter(i => i && i.name).map(i => ({
+          id: i.id || genId(),
+          name: String(i.name).trim(),
+          dept: String(i.dept || i.department || 'Other').trim(),
+          aisle: String(i.aisle || '').trim(),
+          status: ['none', 'checked', 'maybe'].includes(i.status) ? i.status : 'none',
+          accountId: i.accountId || '',
+          tag: i.tag || i.couponType || '',
+          freq: i.freq || 0
+        }));
+
+        accounts = accounts.filter(a => a && a.phone).map(a => ({
+          id: a.id || genId(),
+          phone: String(a.phone).replace(/\D/g, ''),
+          label: String(a.label || '').trim()
+        }));
+
+        return { items, accounts, storeName, dealOff, dealMin, deptOrder };
+      };
+
+      const doImport = (mode) => {
+        if (!pendingImport) return;
+        const { items, accounts, storeName, dealOff, dealMin, deptOrder } = pendingImport;
+
+        if (mode === 'new') {
+          let target = storeName;
+          let c = 2;
+          while (state.stores.includes(target)) {
+            target = `${storeName} (${c++})`;
+          }
+          state.stores.push(target);
+          state.data[target] = { items, accounts, dealOff, dealMin, deptOrder };
+          state.current = target;
+          showToast(`Created "${target}" with ${items.length} items`);
+        } else if (mode === 'replace') {
+          const existing = state.data[storeName];
+          state.data[storeName] = {
+            items: items,
+            accounts: (accounts.length > 0) ? accounts : (existing?.accounts || []),
+            dealOff: dealOff || existing?.dealOff || '',
+            dealMin: dealMin || existing?.dealMin || '',
+            deptOrder: deptOrder.length > 0 ? deptOrder : (existing?.deptOrder || [...DEFAULT_DEPT_ORDER])
+          };
+          state.current = storeName;
+          showToast(`Replaced with ${items.length} items`);
+        } else if (mode === 'merge') {
+          const existing = state.data[storeName];
+          const existingItems = existing?.items || [];
+
+          let added = 0, updated = 0;
+
+          items.forEach(newItem => {
+            const existingItem = existingItems.find(e =>
+              e.name.toLowerCase().trim() === newItem.name.toLowerCase().trim()
+            );
+
+            if (existingItem) {
+              // Update existing item with new status/account/tag if set
+              if (newItem.status !== 'none') existingItem.status = newItem.status;
+              if (newItem.accountId) existingItem.accountId = newItem.accountId;
+              if (newItem.tag) existingItem.tag = newItem.tag;
+              if (newItem.aisle && !existingItem.aisle) existingItem.aisle = newItem.aisle;
+              if (newItem.dept && existingItem.dept === 'Other') existingItem.dept = newItem.dept;
+              updated++;
+            } else {
+              // Add new item
+              existingItems.push(newItem);
+              added++;
+            }
+          });
+
+          // Merge accounts (add new ones only)
+          const existingAccounts = existing?.accounts || [];
+          accounts.forEach(newAcct => {
+            const exists = existingAccounts.find(e => e.phone === newAcct.phone);
+            if (!exists) existingAccounts.push(newAcct);
+          });
+
+          state.data[storeName] = {
+            items: existingItems,
+            accounts: existingAccounts,
+            dealOff: dealOff || existing?.dealOff || '',
+            dealMin: dealMin || existing?.dealMin || '',
+            deptOrder: existing?.deptOrder || deptOrder
+          };
+          state.current = storeName;
+          showToast(`Added ${added}, updated ${updated} items`);
+        }
+
+        state.mode = 'planning';
+        pendingImport = null;
+        DOM.importModal.classList.remove('active');
+        save();
+        render();
+      };
+
+      const importData = file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          try {
+            const raw = JSON.parse(e.target.result);
+            const parsed = parseImportData(raw);
+
+            if (!parsed.items.length && !parsed.accounts.length) {
+              return alert('No valid data found.');
+            }
+
+            pendingImport = parsed;
+
+            // Check if store exists
+            if (state.stores.includes(parsed.storeName)) {
+              const existing = state.data[parsed.storeName];
+              const existingCount = existing?.items?.length || 0;
+              DOM.importMessage.innerHTML = `
+            <strong>"${esc(parsed.storeName)}"</strong> already exists with ${existingCount} items.<br><br>
+            Importing ${parsed.items.length} items. What would you like to do?
+          `;
+              DOM.importModal.classList.add('active');
+            } else {
+              // New store - just create it
+              doImport('new');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Error reading file.');
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      const openEdit = id => {
+        const item = getItems().find(i => i.id === id);
+        if (!item) return;
+        editId = id;
+        editStatus = item.status || 'none';
+        DOM.editName.value = item.name;
+        DOM.editDept.value = item.dept;
+        DOM.editAisle.value = item.aisle;
+        DOM.editAccount.value = item.accountId || '';
+        DOM.editTag.value = item.tag || '';
+        updateStatusBtns();
+        DOM.editModal.classList.add('active');
+        DOM.editName.focus();
+      };
+
+      const closeEdit = () => { editId = null; DOM.editModal.classList.remove('active'); };
+
+      const updateStatusBtns = () => {
+        DOM.statusBtns.querySelectorAll('.status-btn').forEach(b => {
+          b.className = 'status-btn' + (b.dataset.status === editStatus ? ` active-${editStatus}` : '');
+        });
+      };
+
+      const saveEdit = () => {
+        if (!editId) return;
+        const name = DOM.editName.value.trim();
+        if (!name) return DOM.editName.focus();
+        updateItem(editId, name, DOM.editDept.value, DOM.editAisle.value, DOM.editAccount.value, DOM.editTag.value, editStatus);
+        closeEdit();
+      };
+
+      // Event Listeners
+      DOM.storeSelect.onchange = () => setStore(DOM.storeSelect.value);
+
+      DOM.dealOff.onchange = () => { getStore().dealOff = DOM.dealOff.value; save(); updateDealStyle(); };
+      DOM.dealMin.onchange = () => { getStore().dealMin = DOM.dealMin.value; save(); updateDealStyle(); };
+
+      DOM.btnEbt.onclick = () => {
+        DOM.ebtBar.classList.toggle('visible');
+        DOM.btnEbt.classList.toggle('active', DOM.ebtBar.classList.contains('visible'));
+      };
+
+      DOM.ebtInput.onchange = () => { state.ebt = DOM.ebtInput.value; save(); };
+
+      DOM.btnPhones.onclick = () => DOM.phonePanel.classList.toggle('visible');
+      DOM.phonePanelClose.onclick = () => DOM.phonePanel.classList.remove('visible');
+
+      DOM.phoneList.onclick = e => {
+        if (e.target.classList.contains('copy-btn')) copyText(e.target.dataset.phone);
+      };
+
+      DOM.btnSettings.onclick = () => { renderSettings(); DOM.settingsModal.classList.add('active'); };
+      DOM.settingsClose.onclick = () => DOM.settingsModal.classList.remove('active');
+      DOM.settingsModal.onclick = e => { if (e.target === DOM.settingsModal) DOM.settingsModal.classList.remove('active'); };
+
+      document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.onclick = () => switchTab(tab.dataset.tab);
+      });
+
+      DOM.storeList.onclick = e => {
+        const action = e.target.dataset.action;
+        const store = e.target.dataset.store;
+        if (action === 'select-store') { setStore(store); renderSettings(); }
+        if (action === 'delete-store') deleteStore(store);
+      };
+
+      DOM.addStoreBtn.onclick = () => { if (addStore(DOM.newStore.value)) DOM.newStore.value = ''; };
+      DOM.newStore.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); if (addStore(DOM.newStore.value)) DOM.newStore.value = ''; } };
+
+      DOM.accountList.onclick = e => {
+        if (e.target.dataset.action === 'delete-account') {
+          if (confirm('Delete this account?')) deleteAccount(e.target.dataset.id);
+        }
+      };
+
+      DOM.addAccountBtn.onclick = () => {
+        if (addAccount(DOM.newPhone.value, DOM.newLabel.value)) {
+          DOM.newPhone.value = '';
+          DOM.newLabel.value = '';
+        }
+      };
+
+      DOM.layoutList.onclick = e => {
+        const action = e.target.dataset.action;
+        const dept = e.target.dataset.dept;
+        if (action === 'move-up') moveDept(dept, -1);
+        if (action === 'move-down') moveDept(dept, 1);
+      };
+
+      DOM.resetLayout.onclick = resetLayout;
+
+      DOM.saveEbtInfo.onclick = () => {
+        state.ebtPhone = DOM.ebtPhoneInput.value.trim();
+        state.ebtLink = DOM.ebtLinkInput.value.trim();
+        save();
+        render();
+        showToast('EBT info saved!');
+      };
+
+      // Import modal buttons
+      DOM.importMerge.onclick = () => doImport('merge');
+      DOM.importReplace.onclick = () => doImport('replace');
+      DOM.importNew.onclick = () => doImport('new');
+      DOM.importCancel.onclick = () => { pendingImport = null; DOM.importModal.classList.remove('active'); };
+      DOM.importModal.onclick = e => { if (e.target === DOM.importModal) { pendingImport = null; DOM.importModal.classList.remove('active'); } };
+
+      DOM.btnPlanning.onclick = () => setMode('planning');
+      DOM.btnShopping.onclick = () => setMode('shopping');
+
+      DOM.searchInput.oninput = () => {
+        searchQuery = DOM.searchInput.value;
+        DOM.clearSearch.classList.toggle('visible', searchQuery.length > 0);
+        render();
+      };
+
+      DOM.clearSearch.onclick = () => {
+        searchQuery = '';
+        DOM.searchInput.value = '';
+        render();
+        DOM.searchInput.focus();
+      };
+
+      DOM.addForm.onsubmit = e => {
+        e.preventDefault();
+        const name = DOM.inputName.value.trim();
+        if (!name) return;
+        addItem(name, DOM.inputDept.value, DOM.inputAisle.value, DOM.inputAccount.value, DOM.inputTag.value);
+        DOM.inputName.value = '';
+        DOM.inputName.focus();
+      };
+
+      DOM.quickDepts.onclick = e => {
+        if (e.target.dataset.dept) {
+          DOM.inputDept.value = e.target.dataset.dept;
+          render();
+        }
+      };
+
+      DOM.btnClear.onclick = () => {
+        if (getItems().some(i => i.status !== 'none') && confirm('Clear all selections?')) clearSelections();
+      };
+
+      DOM.listContainer.onclick = e => {
+        const actionEl = e.target.closest('[data-action]');
+        if (!actionEl) return;
+        const action = actionEl.dataset.action;
+        const id = actionEl.dataset.id;
+        if (!action || !id) return;
+        if (action === 'toggle') cycleStatus(id);
+        if (action === 'edit') openEdit(id);
+        if (action === 'delete' && confirm('Delete item?')) deleteItem(id);
+      };
+
+      DOM.btnExport.onclick = exportData;
+      DOM.btnImport.onclick = () => DOM.fileInput.click();
+      DOM.fileInput.onchange = e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ''; };
+
+      DOM.editModal.onclick = e => { if (e.target === DOM.editModal) closeEdit(); };
+      DOM.editCancel.onclick = closeEdit;
+      DOM.editSave.onclick = saveEdit;
+      DOM.editDelete.onclick = () => { if (editId && confirm('Delete?')) { deleteItem(editId); closeEdit(); } };
+
+      DOM.statusBtns.onclick = e => {
+        const btn = e.target.closest('.status-btn');
+        if (btn) { editStatus = btn.dataset.status; updateStatusBtns(); }
+      };
+
+      DOM.editModal.onkeydown = e => {
+        if (e.key === 'Enter') { e.preventDefault(); saveEdit(); }
+        if (e.key === 'Escape') closeEdit();
+      };
+
+      document.addEventListener('click', e => {
+        if (DOM.phonePanel.classList.contains('visible') &&
+          !DOM.phonePanel.contains(e.target) &&
+          e.target !== DOM.btnPhones) {
+          DOM.phonePanel.classList.remove('visible');
+        }
+      });
+
+      // PWA
+      if ('serviceWorker' in navigator) {
+        const sw = `
+      const C='grocery-v8';
+      self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.add(self.location.href)).then(()=>self.skipWaiting())));
+      self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+      self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(self.location.href)))));
+    `;
+        navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw], { type: 'application/javascript' }))).catch(() => { });
+      }
+
+      load();
+      render();
+
+    })();
+  </script>
+
+</body>
+
+</html>
