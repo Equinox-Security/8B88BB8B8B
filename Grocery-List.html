@@ -1172,18 +1172,20 @@
 
     .layout-arrows {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      flex-direction: row;
+      align-items: center;
+      gap: 4px;
     }
 
     .layout-arrows button {
       background: #e0e0e0;
       border: none;
       width: 28px;
-      height: 22px;
+      height: 28px;
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.8rem;
+      transition: all 0.2s;
     }
 
     .layout-arrows button:hover {
@@ -1191,9 +1193,19 @@
       color: white;
     }
 
+    .layout-arrows button[data-action="aisle-delete"]:hover {
+      background: #dc2626;
+      color: white;
+    }
+
     .layout-arrows button:disabled {
       opacity: 0.3;
       cursor: not-allowed;
+    }
+
+    .layout-arrows button:disabled:hover {
+      background: #e0e0e0;
+      color: inherit;
     }
 
     .reset-layout-btn {
@@ -1462,11 +1474,11 @@
       <div id="tab-aisles" class="tab-content" style="display:none">
         <div class="settings-section">
           <h4>Aisle Order for <span id="aisle-store-label"></span></h4>
-          <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Reorder custom aisles to match your shopping path.
-            Numbered aisles (1-30) sort automatically. This affects Shopping mode only.</p>
+          <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Arrange all aisles to match your shopping path.
+            Use ✕ to delete custom aisles. This affects Shopping mode only.</p>
           <div id="aisle-list"></div>
-          <p id="no-custom-aisles" style="font-size:0.85rem;color:#888;text-align:center;padding:20px">No custom aisles
-            yet. Add items with custom aisle names like "Back Wall" to see them here.</p>
+          <p id="no-custom-aisles" style="font-size:0.85rem;color:#888;text-align:center;padding:20px">No aisles
+            yet. Add items with aisle numbers or custom names like "Back Wall" to see them here.</p>
           <button class="reset-layout-btn" id="reset-aisles">↺ Reset Aisle Order</button>
         </div>
       </div>
@@ -2135,20 +2147,46 @@
     `).join('');
       };
 
-      const getCustomAisles = () => {
+      // Get ALL aisles in use (both numbered and custom)
+      const getAllAislesInUse = () => {
         const items = getItems();
         const aisles = [...new Set(items.map(i => i.aisle).filter(Boolean))];
-        return aisles.filter(a => isNaN(parseInt(a))).sort((a, b) => a.localeCompare(b));
+        return aisles;
       };
+
+      // Check if an aisle is a custom (non-numbered) aisle
+      const isCustomAisle = (aisle) => isNaN(parseInt(aisle));
 
       const ensureAisleOrder = () => {
         const store = getStore();
-        const customAisles = getCustomAisles();
-        customAisles.forEach(a => {
-          if (!store.aisleOrder.includes(a)) store.aisleOrder.push(a);
+        const allAisles = getAllAislesInUse();
+
+        // Add any new aisles not in the order yet
+        allAisles.forEach(a => {
+          if (!store.aisleOrder.includes(a)) {
+            // For numbered aisles, try to insert in numeric order
+            if (!isCustomAisle(a)) {
+              const num = parseInt(a);
+              // Find the right position among existing numbered aisles
+              let inserted = false;
+              for (let i = 0; i < store.aisleOrder.length; i++) {
+                const existing = store.aisleOrder[i];
+                if (!isCustomAisle(existing) && parseInt(existing) > num) {
+                  store.aisleOrder.splice(i, 0, a);
+                  inserted = true;
+                  break;
+                }
+              }
+              if (!inserted) store.aisleOrder.push(a);
+            } else {
+              // Custom aisles go at the end
+              store.aisleOrder.push(a);
+            }
+          }
         });
+
         // Remove aisles no longer in use
-        store.aisleOrder = store.aisleOrder.filter(a => customAisles.includes(a));
+        store.aisleOrder = store.aisleOrder.filter(a => allAisles.includes(a));
         return store.aisleOrder;
       };
 
@@ -2163,16 +2201,58 @@
         } else {
           DOM.noCustomAisles.style.display = 'none';
           DOM.resetAisles.style.display = 'block';
-          DOM.aisleList.innerHTML = order.map((aisle, i) => `
+          DOM.aisleList.innerHTML = order.map((aisle, i) => {
+            const isCustom = isCustomAisle(aisle);
+            const displayName = isCustom ? aisle : `Aisle ${aisle}`;
+            const deleteBtn = isCustom
+              ? `<button data-action="aisle-delete" data-aisle="${esc(aisle)}" title="Delete this aisle" style="background:#fee2e2;color:#b91c1c;">✕</button>`
+              : '';
+            return `
         <div class="layout-item" data-aisle="${esc(aisle)}">
-          <span>${esc(aisle)}</span>
+          <span>${esc(displayName)}</span>
           <div class="layout-arrows">
             <button data-action="aisle-up" data-aisle="${esc(aisle)}" ${i === 0 ? 'disabled' : ''}>▲</button>
             <button data-action="aisle-down" data-aisle="${esc(aisle)}" ${i === order.length - 1 ? 'disabled' : ''}>▼</button>
+            ${deleteBtn}
           </div>
         </div>
-      `).join('');
+      `;
+          }).join('');
         }
+      };
+
+      const deleteCustomAisle = (aisle) => {
+        // Only allow deleting custom aisles
+        if (!isCustomAisle(aisle)) {
+          showToast('Cannot delete numbered aisles');
+          return;
+        }
+
+        // Count how many items use this aisle
+        const items = getItems();
+        const affectedItems = items.filter(i => i.aisle === aisle);
+        const count = affectedItems.length;
+
+        const confirmMsg = count > 0
+          ? `Delete "${aisle}"? This will remove the aisle from ${count} item${count !== 1 ? 's' : ''}.`
+          : `Delete "${aisle}"?`;
+
+        if (!confirm(confirmMsg)) return;
+
+        // Remove aisle from all items that use it
+        affectedItems.forEach(item => {
+          item.aisle = '';
+        });
+
+        // Remove from aisle order
+        const store = getStore();
+        const idx = store.aisleOrder.indexOf(aisle);
+        if (idx > -1) store.aisleOrder.splice(idx, 1);
+
+        save();
+        render();
+        renderAisleEditor();
+        showToast(`"${aisle}" deleted!`);
       };
 
       const switchTab = (tab) => {
@@ -2609,6 +2689,7 @@
         const aisle = e.target.dataset.aisle;
         if (action === 'aisle-up') moveAisle(aisle, -1);
         if (action === 'aisle-down') moveAisle(aisle, 1);
+        if (action === 'aisle-delete') deleteCustomAisle(aisle);
       };
 
       DOM.resetAisles.onclick = resetAisleOrder;
