@@ -457,6 +457,65 @@
       box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
     }
 
+    .aisle-combo {
+      position: relative;
+      flex: 1;
+    }
+
+    .aisle-combo input {
+      width: 100%;
+      padding-right: 36px;
+    }
+
+    .aisle-combo select {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 36px;
+      opacity: 0;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .aisle-combo::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+      pointer-events: none;
+    }
+
+    /* Fix aisle combo inside modal - override modal's generic styles */
+    .modal .aisle-combo {
+      position: relative;
+      flex: 1;
+    }
+
+    .modal .aisle-combo input {
+      width: 100%;
+      padding-right: 36px;
+      margin-bottom: 0;
+    }
+
+    .modal .aisle-combo select {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 36px;
+      opacity: 0;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+
     .stats-bar {
       display: flex;
       justify-content: space-between;
@@ -1260,7 +1319,12 @@
       <div class="quick-btns" id="quick-depts"></div>
       <div class="form-row">
         <input type="text" id="input-dept" placeholder="Department" list="dl-depts">
-        <input type="text" id="input-aisle" placeholder="Aisle" list="dl-aisles">
+        <div class="aisle-combo">
+          <input type="text" id="input-aisle" placeholder="Aisle" list="dl-aisles">
+          <select id="input-aisle-select" aria-label="Select aisle">
+            <option value="">--</option>
+          </select>
+        </div>
       </div>
       <div class="form-row">
         <select id="input-account">
@@ -1307,7 +1371,12 @@
       <input type="text" id="edit-name" placeholder="Item name">
       <div class="form-row">
         <input type="text" id="edit-dept" placeholder="Department" list="dl-depts">
-        <input type="text" id="edit-aisle" placeholder="Aisle" list="dl-aisles">
+        <div class="aisle-combo">
+          <input type="text" id="edit-aisle" placeholder="Aisle" list="dl-aisles">
+          <select id="edit-aisle-select" aria-label="Select aisle">
+            <option value="">--</option>
+          </select>
+        </div>
       </div>
       <select id="edit-account"></select>
       <select id="edit-tag">
@@ -1351,6 +1420,7 @@
         <button class="settings-tab active" data-tab="stores">Stores</button>
         <button class="settings-tab" data-tab="accounts">Accounts</button>
         <button class="settings-tab" data-tab="layout">Layout</button>
+        <button class="settings-tab" data-tab="aisles">Aisles</button>
         <button class="settings-tab" data-tab="ebtinfo">EBT</button>
       </div>
 
@@ -1386,6 +1456,18 @@
             This affects Shopping mode only.</p>
           <div id="layout-list"></div>
           <button class="reset-layout-btn" id="reset-layout">↺ Reset to Default Order</button>
+        </div>
+      </div>
+
+      <div id="tab-aisles" class="tab-content" style="display:none">
+        <div class="settings-section">
+          <h4>Aisle Order for <span id="aisle-store-label"></span></h4>
+          <p style="font-size:0.85rem;color:#666;margin-bottom:12px">Reorder custom aisles to match your shopping path.
+            Numbered aisles (1-30) sort automatically. This affects Shopping mode only.</p>
+          <div id="aisle-list"></div>
+          <p id="no-custom-aisles" style="font-size:0.85rem;color:#888;text-align:center;padding:20px">No custom aisles
+            yet. Add items with custom aisle names like "Back Wall" to see them here.</p>
+          <button class="reset-layout-btn" id="reset-aisles">↺ Reset Aisle Order</button>
         </div>
       </div>
 
@@ -1430,7 +1512,7 @@
       let state = {
         stores: ['My Store'],
         current: 'My Store',
-        data: { 'My Store': { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] } },
+        data: { 'My Store': { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER], aisleOrder: [] } },
         mode: 'planning',
         ebt: '',
         ebtPhone: '',
@@ -1468,6 +1550,7 @@
         inputName: $('input-name'),
         inputDept: $('input-dept'),
         inputAisle: $('input-aisle'),
+        inputAisleSelect: $('input-aisle-select'),
         inputAccount: $('input-account'),
         inputTag: $('input-tag'),
         quickDepts: $('quick-depts'),
@@ -1485,6 +1568,7 @@
         editName: $('edit-name'),
         editDept: $('edit-dept'),
         editAisle: $('edit-aisle'),
+        editAisleSelect: $('edit-aisle-select'),
         editAccount: $('edit-account'),
         editTag: $('edit-tag'),
         statusBtns: $('status-btns'),
@@ -1513,6 +1597,11 @@
         addAccountBtn: $('add-account'),
         layoutList: $('layout-list'),
         resetLayout: $('reset-layout'),
+        tabAisles: $('tab-aisles'),
+        aisleStoreLabel: $('aisle-store-label'),
+        aisleList: $('aisle-list'),
+        noCustomAisles: $('no-custom-aisles'),
+        resetAisles: $('reset-aisles'),
         ebtPhoneInput: $('ebt-phone-input'),
         ebtLinkInput: $('ebt-link-input'),
         saveEbtInfo: $('save-ebt-info'),
@@ -1524,16 +1613,18 @@
 
       const getStore = () => {
         if (!state.data[state.current]) {
-          state.data[state.current] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] };
+          state.data[state.current] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER], aisleOrder: [] };
         }
         const store = state.data[state.current];
         if (!store.deptOrder) store.deptOrder = [...DEFAULT_DEPT_ORDER];
+        if (!store.aisleOrder) store.aisleOrder = [];
         return store;
       };
 
       const getItems = () => getStore().items;
       const getAccounts = () => getStore().accounts;
       const getDeptOrder = () => getStore().deptOrder || DEFAULT_DEPT_ORDER;
+      const getAisleOrder = () => getStore().aisleOrder || [];
       const findAccount = id => getAccounts().find(a => a.id === id);
       const accountIndex = id => getAccounts().findIndex(a => a.id === id);
 
@@ -1559,6 +1650,7 @@
                 if (state.data[s].dealOff === undefined) state.data[s].dealOff = '';
                 if (state.data[s].dealMin === undefined) state.data[s].dealMin = '';
                 if (!state.data[s].deptOrder) state.data[s].deptOrder = [...DEFAULT_DEPT_ORDER];
+                if (!state.data[s].aisleOrder) state.data[s].aisleOrder = [];
                 if (state.data[s].ebt) {
                   state.ebt = state.data[s].ebt;
                   delete state.data[s].ebt;
@@ -1789,6 +1881,18 @@
         DOM.dlDepts.innerHTML = depts.map(d => `<option value="${esc(d)}">`).join('');
         DOM.dlAisles.innerHTML = aisles.map(a => `<option value="${esc(a)}">`).join('');
 
+        // Populate aisle combo box selects with 1-30 plus custom aisles
+        const aisleOptions = ['<option value="">--</option>'];
+        for (let i = 1; i <= 30; i++) aisleOptions.push(`<option value="${i}">${i}</option>`);
+        const customAisles = aisles.filter(a => isNaN(parseInt(a)));
+        if (customAisles.length > 0) {
+          aisleOptions.push('<option disabled>───────</option>');
+          customAisles.forEach(a => aisleOptions.push(`<option value="${esc(a)}">${esc(a)}</option>`));
+        }
+        const aisleOptionsHtml = aisleOptions.join('');
+        DOM.inputAisleSelect.innerHTML = aisleOptionsHtml;
+        DOM.editAisleSelect.innerHTML = aisleOptionsHtml;
+
         const counts = {};
         items.forEach(i => { if (i.dept) counts[i.dept] = (counts[i.dept] || 0) + 1; });
         let quick = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
@@ -1921,7 +2025,21 @@
             if (a === '') return 1;
             if (b === '') return -1;
             const aNum = parseInt(a), bNum = parseInt(b);
-            if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+            const aIsNum = !isNaN(aNum), bIsNum = !isNaN(bNum);
+            // Both numeric: sort numerically
+            if (aIsNum && bIsNum) return aNum - bNum;
+            // One numeric, one custom: numeric first
+            if (aIsNum && !bIsNum) return -1;
+            if (!aIsNum && bIsNum) return 1;
+            // Both custom: use aisleOrder in shopping mode
+            if (shopping) {
+              const aisleOrder = getAisleOrder();
+              const idxA = aisleOrder.indexOf(a);
+              const idxB = aisleOrder.indexOf(b);
+              if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+              if (idxA !== -1) return -1;
+              if (idxB !== -1) return 1;
+            }
             return a.localeCompare(b, undefined, { numeric: true });
           });
 
@@ -2017,19 +2135,82 @@
     `).join('');
       };
 
+      const getCustomAisles = () => {
+        const items = getItems();
+        const aisles = [...new Set(items.map(i => i.aisle).filter(Boolean))];
+        return aisles.filter(a => isNaN(parseInt(a))).sort((a, b) => a.localeCompare(b));
+      };
+
+      const ensureAisleOrder = () => {
+        const store = getStore();
+        const customAisles = getCustomAisles();
+        customAisles.forEach(a => {
+          if (!store.aisleOrder.includes(a)) store.aisleOrder.push(a);
+        });
+        // Remove aisles no longer in use
+        store.aisleOrder = store.aisleOrder.filter(a => customAisles.includes(a));
+        return store.aisleOrder;
+      };
+
+      const renderAisleEditor = () => {
+        DOM.aisleStoreLabel.textContent = state.current;
+        const order = ensureAisleOrder();
+
+        if (order.length === 0) {
+          DOM.aisleList.innerHTML = '';
+          DOM.noCustomAisles.style.display = 'block';
+          DOM.resetAisles.style.display = 'none';
+        } else {
+          DOM.noCustomAisles.style.display = 'none';
+          DOM.resetAisles.style.display = 'block';
+          DOM.aisleList.innerHTML = order.map((aisle, i) => `
+        <div class="layout-item" data-aisle="${esc(aisle)}">
+          <span>${esc(aisle)}</span>
+          <div class="layout-arrows">
+            <button data-action="aisle-up" data-aisle="${esc(aisle)}" ${i === 0 ? 'disabled' : ''}>▲</button>
+            <button data-action="aisle-down" data-aisle="${esc(aisle)}" ${i === order.length - 1 ? 'disabled' : ''}>▼</button>
+          </div>
+        </div>
+      `).join('');
+        }
+      };
+
       const switchTab = (tab) => {
         currentTab = tab;
         document.querySelectorAll('.settings-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
         DOM.tabStores.style.display = tab === 'stores' ? 'block' : 'none';
         DOM.tabAccounts.style.display = tab === 'accounts' ? 'block' : 'none';
         DOM.tabLayout.style.display = tab === 'layout' ? 'block' : 'none';
+        DOM.tabAisles.style.display = tab === 'aisles' ? 'block' : 'none';
         DOM.tabEbtInfo.style.display = tab === 'ebtinfo' ? 'block' : 'none';
 
         if (tab === 'layout') renderLayoutEditor();
+        if (tab === 'aisles') renderAisleEditor();
         if (tab === 'ebtinfo') {
           DOM.ebtPhoneInput.value = state.ebtPhone || '';
           DOM.ebtLinkInput.value = state.ebtLink || '';
         }
+      };
+
+      const moveAisle = (aisle, direction) => {
+        const order = getStore().aisleOrder;
+        const idx = order.indexOf(aisle);
+        if (idx === -1) return;
+
+        const newIdx = idx + direction;
+        if (newIdx < 0 || newIdx >= order.length) return;
+
+        [order[idx], order[newIdx]] = [order[newIdx], order[idx]];
+        save();
+        renderAisleEditor();
+      };
+
+      const resetAisleOrder = () => {
+        getStore().aisleOrder = [];
+        ensureAisleOrder();
+        save();
+        renderAisleEditor();
+        showToast('Aisle order reset!');
       };
 
       const setMode = m => { state.mode = m; searchQuery = ''; DOM.searchInput.value = ''; activeAccountFilter = null; save(); render(); };
@@ -2039,7 +2220,7 @@
         const n = name.trim();
         if (!n || state.stores.includes(n)) return false;
         state.stores.push(n);
-        state.data[n] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER] };
+        state.data[n] = { items: [], accounts: [], dealOff: '', dealMin: '', deptOrder: [...DEFAULT_DEPT_ORDER], aisleOrder: [] };
         state.current = n;
         save(); render(); renderSettings();
         return true;
@@ -2423,6 +2604,15 @@
 
       DOM.resetLayout.onclick = resetLayout;
 
+      DOM.aisleList.onclick = e => {
+        const action = e.target.dataset.action;
+        const aisle = e.target.dataset.aisle;
+        if (action === 'aisle-up') moveAisle(aisle, -1);
+        if (action === 'aisle-down') moveAisle(aisle, 1);
+      };
+
+      DOM.resetAisles.onclick = resetAisleOrder;
+
       DOM.saveEbtInfo.onclick = () => {
         state.ebtPhone = DOM.ebtPhoneInput.value.trim();
         state.ebtLink = DOM.ebtLinkInput.value.trim();
@@ -2461,6 +2651,21 @@
         addItem(name, DOM.inputDept.value, DOM.inputAisle.value, DOM.inputAccount.value, DOM.inputTag.value);
         DOM.inputName.value = '';
         DOM.inputName.focus();
+      };
+
+      // Aisle combo box select → input sync
+      DOM.inputAisleSelect.onchange = () => {
+        if (DOM.inputAisleSelect.value) {
+          DOM.inputAisle.value = DOM.inputAisleSelect.value;
+          DOM.inputAisleSelect.value = '';
+        }
+      };
+
+      DOM.editAisleSelect.onchange = () => {
+        if (DOM.editAisleSelect.value) {
+          DOM.editAisle.value = DOM.editAisleSelect.value;
+          DOM.editAisleSelect.value = '';
+        }
       };
 
       DOM.quickDepts.onclick = e => {
