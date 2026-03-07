@@ -2119,8 +2119,9 @@
           DOM.accountList.innerHTML = '<p style="color:#888;font-size:0.9rem;margin-bottom:10px">No accounts yet.</p>';
         } else {
           DOM.accountList.innerHTML = accts.map((a, i) => `
-        <div class="settings-item" style="border-left: 4px solid ${['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][i % 5]}">
+        <div class="settings-item" data-account-id="${a.id}" style="border-left: 4px solid ${['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][i % 5]}">
           <span>${esc(a.label || 'Account ' + (i + 1))}<small style="margin-left:8px">${esc(formatPhone(a.phone))}</small></span>
+          <button data-action="edit-account" data-id="${a.id}">✏️</button>
           <button data-action="delete-account" data-id="${a.id}">🗑️</button>
         </div>
       `).join('');
@@ -2326,7 +2327,7 @@
         return true;
       };
 
-      const deleteAccount = id => {
+            const deleteAccount = id => {
         const accts = getAccounts();
         const i = accts.findIndex(a => a.id === id);
         if (i > -1) {
@@ -2334,6 +2335,48 @@
           getItems().forEach(item => { if (item.accountId === id) item.accountId = ''; });
           save(); render(); renderSettings();
         }
+      };
+
+      const startEditAccount = (id) => {
+        const acct = findAccount(id);
+        if (!acct) return;
+        const idx = accountIndex(id);
+        const item = DOM.accountList.querySelector(`[data-account-id="${id}"]`);
+        if (!item) return;
+        const borderColor = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][idx % 5];
+        item.style.borderLeft = `4px solid ${borderColor}`;
+        item.style.flexWrap = 'wrap';
+        item.innerHTML = `
+          <div style="flex:1;min-width:100%;display:flex;flex-direction:column;gap:6px;margin-bottom:6px">
+            <input type="text" data-edit-label="${id}" value="${esc(acct.label)}" placeholder="Label (e.g., Mom)" style="padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;font-family:inherit">
+            <input type="tel" data-edit-phone="${id}" value="${esc(formatPhone(acct.phone))}" placeholder="Phone number" style="padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:6px;width:100%;justify-content:flex-end">
+            <button data-action="cancel-account-edit" data-id="${id}" style="padding:8px 14px;background:#e0e0e0;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.85rem">Cancel</button>
+            <button data-action="save-account-edit" data-id="${id}" style="padding:8px 14px;background:#40916c;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.85rem">Save</button>
+          </div>
+        `;
+        const labelInput = item.querySelector(`[data-edit-label="${id}"]`);
+        labelInput.focus();
+        const handleKey = (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); saveAccountEdit(id); }
+          if (e.key === 'Escape') { renderSettings(); }
+        };
+        item.querySelectorAll('input').forEach(inp => inp.addEventListener('keydown', handleKey));
+      };
+
+      const saveAccountEdit = (id) => {
+        const acct = findAccount(id);
+        if (!acct) return;
+        const labelInput = DOM.accountList.querySelector(`[data-edit-label="${id}"]`);
+        const phoneInput = DOM.accountList.querySelector(`[data-edit-phone="${id}"]`);
+        if (!labelInput || !phoneInput) return;
+        const newPhone = phoneInput.value.replace(/\D/g, '');
+        if (!newPhone) { phoneInput.focus(); showToast('Phone number required'); return; }
+        acct.label = labelInput.value.trim();
+        acct.phone = newPhone;
+        save(); render(); renderSettings();
+        showToast('Account updated!');
       };
 
       const moveDept = (dept, direction) => {
@@ -2662,9 +2705,22 @@
       DOM.addStoreBtn.onclick = () => { if (addStore(DOM.newStore.value)) DOM.newStore.value = ''; };
       DOM.newStore.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); if (addStore(DOM.newStore.value)) DOM.newStore.value = ''; } };
 
-      DOM.accountList.onclick = e => {
-        if (e.target.dataset.action === 'delete-account') {
-          if (confirm('Delete this account?')) deleteAccount(e.target.dataset.id);
+            DOM.accountList.onclick = e => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (action === 'delete-account') {
+          if (confirm('Delete this account?')) deleteAccount(id);
+        }
+        if (action === 'edit-account') {
+          startEditAccount(id);
+        }
+        if (action === 'save-account-edit') {
+          saveAccountEdit(id);
+        }
+        if (action === 'cancel-account-edit') {
+          renderSettings();
         }
       };
 
