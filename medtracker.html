@@ -716,6 +716,7 @@ function rSched() {
         '<div class="mc" style="background:' + (med.color || COLORS[0]) + '"></div>' +
         '<div class="mi"><div class="mn">' + med.name + '</div>' +
         '<div class="md">' + (med.dose || '') + '</div>' +
+                (med.treatment ? '<div class="mx">For: ' + med.treatment + '</div>' : '') +
         (med.instr ? '<div class="mx">' + med.instr + '</div>' : '') + '</div>';
 
       if (cf) {
@@ -769,7 +770,10 @@ function rMeds() {
       '<div class="mc" style="background:' + (med.color || COLORS[0]) + '"></div>' +
       '<div class="mi" style="flex:1"><div class="mn">' + med.name +
       (med.active === false ? ' (off)' : '') + '</div>' +
-      '<div class="md">' + (med.dose || 'No dose') + '</div>' +
+            '<div class="md">' + (med.dose || 'No dose') +
+      (med.rxnum ? ' &nbsp;\u2022&nbsp; RX: ' + med.rxnum : '') + '</div>' +
+      (med.treatment ? '<div style="font-size:11px;color:var(--warn);margin-top:2px">' +
+      'For: ' + med.treatment + '</div>' : '') +
       '<div style="font-size:11px;color:var(--text2);margin-top:4px">' +
       (med.times || []).map(function(t) { return f12(t); }).join(', ') +
       dayStr + '</div></div>' +
@@ -983,6 +987,8 @@ function openModal(eid) {
   _ms = {
     name: med ? med.name : '',
     dose: med ? (med.dose || '') : '',
+    rxnum: med ? (med.rxnum || '') : '',
+    treatment: med ? (med.treatment || '') : '',
     instr: med ? (med.instr || '') : '',
     times: med ? (med.times || []).slice() : [],
     days: med ? (med.days || [0,1,2,3,4,5,6]).slice() : [0,1,2,3,4,5,6],
@@ -1048,7 +1054,15 @@ function openModal(eid) {
       '<input id="f-dose" value="' + _ms.dose.replace(/"/g, '&quot;') +
       '" placeholder="e.g. 800mg, 1 tablet, 5ml"></div>' +
 
-      '<div class="fg"><label>Instructions (optional)</label>' +
+            '<div class="fg"><label>RX Number</label>' +
+      '<input id="f-rxnum" value="' + _ms.rxnum.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. RX-7234891"></div>' +
+
+      '<div class="fg"><label>Treatment For</label>' +
+      '<input id="f-treatment" value="' + _ms.treatment.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. Pain, Inflammation, Blood pressure"></div>' +
+
+      '<div class="fg"><label>Additional Info (optional)</label>' +
       '<input id="f-instr" value="' + _ms.instr.replace(/"/g, '&quot;') +
       '" placeholder="e.g. Take with food, on empty stomach"></div>' +
 
@@ -1096,12 +1110,16 @@ function openModal(eid) {
   }
 
   // Global function to capture fields before any re-render
-  window.capF = function() {
+    window.capF = function() {
     var n = document.getElementById('f-name');
     var d = document.getElementById('f-dose');
+    var rx = document.getElementById('f-rxnum');
+    var tr = document.getElementById('f-treatment');
     var ins = document.getElementById('f-instr');
     if (n) _ms.name = n.value;
     if (d) _ms.dose = d.value;
+    if (rx) _ms.rxnum = rx.value;
+    if (tr) _ms.treatment = tr.value;
     if (ins) _ms.instr = ins.value;
   };
 
@@ -1128,9 +1146,11 @@ function saveMF(eid) {
   // Capture latest field values
   if (window.capF) window.capF();
 
-  var name = _ms.name.trim();
-  var dose = _ms.dose.trim();
-  var instr = _ms.instr.trim();
+    var name = _ms.name.trim();
+    var dose = _ms.dose.trim();
+    var rxnum = _ms.rxnum.trim();
+    var treatment = _ms.treatment.trim();
+    var instr = _ms.instr.trim();
 
   if (!name) {
     alert('Please enter the medication name');
@@ -1149,9 +1169,11 @@ function saveMF(eid) {
     _ms.days = [0,1,2,3,4,5,6];
   }
 
-  var d = {
+    var d = {
     name: name,
     dose: dose,
+    rxnum: rxnum,
+    treatment: treatment,
     instr: instr,
     times: _ms.times.slice(),
     days: _ms.days.slice().sort(),
