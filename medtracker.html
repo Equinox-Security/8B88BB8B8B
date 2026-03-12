@@ -178,10 +178,16 @@ color:var(--text)}
 
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);
+background:var(--success);color:#fff;padding:14px 28px;border-radius:12px;
+font-size:14px;font-weight:600;z-index:400;opacity:0;transition:opacity .3s;
+pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);text-align:center}
+.toast.show{opacity:1}
+.days-info{font-size:11px;color:var(--primary);margin-top:6px}
 </style>
 </head>
 <body>
-
+<div class="toast" id="toast"></div>
 <div class="header">
 <h1>💊 MedTracker</h1>
 <div class="sub" id="hdr-sub">Loading...</div>
@@ -960,7 +966,14 @@ function impD(ev) {
 }
 
 // ===================== MED MODAL =====================
-var _ms = {};
+
+function showToast(msg, dur) {
+  dur = dur || 2500;
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, dur);
+}
 
 function openModal(eid) {
   var med = null;
@@ -968,76 +981,180 @@ function openModal(eid) {
   var isE = !!med;
 
   _ms = {
+    name: med ? med.name : '',
+    dose: med ? (med.dose || '') : '',
+    instr: med ? (med.instr || '') : '',
     times: med ? (med.times || []).slice() : [],
     days: med ? (med.days || [0,1,2,3,4,5,6]).slice() : [0,1,2,3,4,5,6],
     color: med ? (med.color || COLORS[0]) : COLORS[0]
   };
 
+  function captureFields() {
+    var n = document.getElementById('f-name');
+    var d = document.getElementById('f-dose');
+    var ins = document.getElementById('f-instr');
+    if (n) _ms.name = n.value;
+    if (d) _ms.dose = d.value;
+    if (ins) _ms.instr = ins.value;
+  }
+
+  function getDaysLabel() {
+    if (_ms.days.length === 0) return 'No days selected!';
+    if (_ms.days.length === 7) return 'Every day (daily)';
+    var sorted = _ms.days.slice().sort();
+    return sorted.map(function(d) { return DAYNAMES[d]; }).join(', ');
+  }
+
   function rM() {
     var timeChips = _ms.times.map(function(t, i) {
       return '<div class="chip">' + f12(t) +
-        '<button onclick="_ms.times.splice(' + i + ',1);window._rMM()">&times;</button></div>';
+        '<button onclick="capF();_ms.times.splice(' + i + ',1);window._rMM()">&times;</button></div>';
     }).join('');
 
     var dayBtns = DAYNAMES.map(function(d, i) {
-      return '<button type="button" class="day-btn ' + (_ms.days.indexOf(i) >= 0 ? 'active' : '') + '"' +
-        ' onclick="var x=_ms.days.indexOf(' + i + ');if(x>=0)_ms.days.splice(x,1);else _ms.days.push(' + i + ');window._rMM()">' + d + '</button>';
+      var isActive = _ms.days.indexOf(i) >= 0;
+      return '<button type="button" class="day-btn ' + (isActive ? 'active' : '') + '"' +
+        ' onclick="capF();var x=_ms.days.indexOf(' + i + ');' +
+        'if(x>=0)_ms.days.splice(x,1);else _ms.days.push(' + i + ');window._rMM()">' +
+        d + '</button>';
     }).join('');
 
     var colorDots = COLORS.map(function(c) {
       return '<div class="co ' + (_ms.color === c ? 'active' : '') + '"' +
-        ' style="background:' + c + '" onclick="_ms.color=\'' + c + '\';window._rMM()"></div>';
+        ' style="background:' + c + '"' +
+        ' onclick="capF();_ms.color=\'' + c + '\';window._rMM()"></div>';
     }).join('');
 
     var activeToggle = '';
     if (isE) {
-      activeToggle = '<div class="si" style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px">' +
+      activeToggle = '<div class="si" style="border-top:1px solid var(--border);' +
+        'margin-top:8px;padding-top:14px">' +
         '<div style="font-size:14px">Active</div>' +
-        '<button class="tog ' + (med.active !== false ? 'on' : '') + '" id="f-act" onclick="this.classList.toggle(\'on\')"></button></div>';
+        '<button class="tog ' + (med.active !== false ? 'on' : '') +
+        '" id="f-act" onclick="this.classList.toggle(\'on\')"></button></div>';
     }
+
+    var daysLabel = getDaysLabel();
+    var daysColor = _ms.days.length === 0 ? 'var(--danger)' : 'var(--primary)';
 
     document.getElementById('mo-c').innerHTML =
       '<h2>' + (isE ? 'Edit' : 'Add') + ' Medication</h2>' +
+
       '<div class="fg"><label>Name *</label>' +
-      '<input id="f-name" value="' + (med ? med.name : '') + '" placeholder="e.g. Ibuprofen"></div>' +
+      '<input id="f-name" value="' + _ms.name.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. Ibuprofen"></div>' +
+
       '<div class="fg"><label>Dose</label>' +
-      '<input id="f-dose" value="' + (med ? (med.dose || '') : '') + '" placeholder="e.g. 500mg"></div>' +
-      '<div class="fg"><label>Instructions</label>' +
-      '<input id="f-instr" value="' + (med ? (med.instr || '') : '') + '" placeholder="e.g. Take with food"></div>' +
-      '<div class="fg"><label>Schedule Times</label>' +
+      '<input id="f-dose" value="' + _ms.dose.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. 800mg, 1 tablet, 5ml"></div>' +
+
+      '<div class="fg"><label>Instructions (optional)</label>' +
+      '<input id="f-instr" value="' + _ms.instr.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. Take with food, on empty stomach"></div>' +
+
+      '<div class="fg"><label>Schedule Times *</label>' +
       '<div class="tc">' + timeChips +
-      '<button class="add-t" onclick="document.getElementById(\'nt\').style.display=\'block\';' +
-      'document.getElementById(\'nt\').focus()">+ Add Time</button></div>' +
+      '<button class="add-t" onclick="capF();' +
+      'var el=document.getElementById(\'nt\');el.style.display=\'block\';el.focus();el.click()">' +
+      '+ Add Time</button></div>' +
+      (_ms.times.length === 0 ?
+        '<div style="font-size:11px;color:var(--danger);margin-top:4px">' +
+        'Tap "+ Add Time" to set when to take this med</div>' : '') +
       '<input type="time" id="nt" style="display:none;margin-top:8px"' +
-      ' onchange="if(this.value){_ms.times.push(this.value);_ms.times.sort();this.value=\'\';this.style.display=\'none\';window._rMM()}">' +
+      ' onchange="if(this.value){capF();_ms.times.push(this.value);_ms.times.sort();' +
+      'this.value=\'\';this.style.display=\'none\';window._rMM()}">' +
       '</div>' +
-      '<div class="fg"><label>Days</label><div class="days-row">' + dayBtns + '</div></div>' +
-      '<div class="fg"><label>Color</label><div class="cr">' + colorDots + '</div></div>' +
+
+      '<div class="fg"><label>Days of Week</label>' +
+      '<div class="days-row">' + dayBtns + '</div>' +
+      '<div class="days-info" style="color:' + daysColor + '">' +
+      (_ms.days.length === 7 ? '\u2713 ' : _ms.days.length === 0 ? '\u26A0 ' : '') +
+      daysLabel + '</div>' +
+      '<div style="margin-top:6px;display:flex;gap:8px">' +
+      '<button style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);' +
+      'background:var(--card2);color:var(--primary);cursor:pointer"' +
+      ' onclick="capF();_ms.days=[0,1,2,3,4,5,6];window._rMM()">All Days</button>' +
+      '<button style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);' +
+      'background:var(--card2);color:var(--text2);cursor:pointer"' +
+      ' onclick="capF();_ms.days=[1,2,3,4,5];window._rMM()">Weekdays</button>' +
+      '<button style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);' +
+      'background:var(--card2);color:var(--text2);cursor:pointer"' +
+      ' onclick="capF();_ms.days=[];window._rMM()">None</button>' +
+      '</div></div>' +
+
+      '<div class="fg"><label>Color</label>' +
+      '<div class="cr">' + colorDots + '</div></div>' +
+
       activeToggle +
+
       '<div style="display:flex;gap:8px;margin-top:20px">' +
-      '<button class="btn btn-o" style="flex:1;justify-content:center" onclick="closeM()">Cancel</button>' +
-      '<button class="btn btn-p" style="flex:1;justify-content:center" onclick="saveMF(\'' + (eid || '') + '\')">' +
-      (isE ? 'Save' : 'Add') + '</button></div>';
+      '<button class="btn btn-o" style="flex:1;justify-content:center"' +
+      ' onclick="closeM()">Cancel</button>' +
+      '<button class="btn btn-p" style="flex:1;justify-content:center"' +
+      ' onclick="saveMF(\'' + (eid || '') + '\')">' +
+      (isE ? '\u2713 Save Changes' : '\u2713 Add Medication') + '</button></div>';
   }
 
-  window._rMM = rM;
+  // Global function to capture fields before any re-render
+  window.capF = function() {
+    var n = document.getElementById('f-name');
+    var d = document.getElementById('f-dose');
+    var ins = document.getElementById('f-instr');
+    if (n) _ms.name = n.value;
+    if (d) _ms.dose = d.value;
+    if (ins) _ms.instr = ins.value;
+  };
+
+  window._rMM = function() {
+    captureFields();
+    rM();
+  };
+
   rM();
   document.getElementById('med-mo').classList.add('show');
+
+  // Auto-focus the name field after a brief delay
+  setTimeout(function() {
+    var n = document.getElementById('f-name');
+    if (n && !_ms.name) n.focus();
+  }, 300);
 }
 
-function closeM() { document.getElementById('med-mo').classList.remove('show'); }
+function closeM() {
+  document.getElementById('med-mo').classList.remove('show');
+}
 
 function saveMF(eid) {
-  var name = document.getElementById('f-name').value.trim();
-  if (!name) { alert('Enter medication name'); return; }
-  if (!_ms.times.length) { alert('Add at least one time'); return; }
+  // Capture latest field values
+  if (window.capF) window.capF();
+
+  var name = _ms.name.trim();
+  var dose = _ms.dose.trim();
+  var instr = _ms.instr.trim();
+
+  if (!name) {
+    alert('Please enter the medication name');
+    var n = document.getElementById('f-name');
+    if (n) n.focus();
+    return;
+  }
+  if (!_ms.times.length) {
+    alert('Please add at least one schedule time.\n\nTap "+ Add Time" and select when this medication should be taken.');
+    return;
+  }
+  if (!_ms.days.length) {
+    if (!confirm('No days are selected. This medication won\'t appear on any day.\n\nDo you want to set it to daily?')) {
+      return;
+    }
+    _ms.days = [0,1,2,3,4,5,6];
+  }
 
   var d = {
     name: name,
-    dose: document.getElementById('f-dose').value.trim(),
-    instr: document.getElementById('f-instr').value.trim(),
+    dose: dose,
+    instr: instr,
     times: _ms.times.slice(),
-    days: _ms.days.slice(),
+    days: _ms.days.slice().sort(),
     color: _ms.color,
     active: true
   };
@@ -1050,21 +1167,30 @@ function saveMF(eid) {
       d.active = at ? at.classList.contains('on') : true;
       d.id = eid;
       meds[i] = d;
+      sM();
+      closeM();
+      render();
+      showToast('\u2713 ' + name + ' updated!');
     }
   } else {
     d.id = gid();
     meds.push(d);
+    sM();
+    closeM();
+    render();
+    showToast('\u2713 ' + name + ' added!');
   }
-  sM(); closeM(); render();
 }
 
 function delMed(id) {
   var m = null;
   meds.forEach(function(x) { if (x.id === id) m = x; });
   if (!m) return;
-  if (!confirm('Delete "' + m.name + '"?')) return;
+  if (!confirm('Delete "' + m.name + '"?\n\nThis cannot be undone.')) return;
   meds = meds.filter(function(x) { return x.id !== id; });
-  sM(); render();
+  sM();
+  render();
+  showToast(m.name + ' deleted');
 }
 
 // ===================== ALARM CHECK =====================
