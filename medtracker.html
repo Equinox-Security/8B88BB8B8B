@@ -150,33 +150,34 @@ justify-content:space-between;align-items:center}
 .dn button{background:var(--card2);border:1px solid var(--border);color:var(--text);
 width:32px;height:32px;border-radius:8px;cursor:pointer}
 
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .sound-opt{background:var(--card2);border:2px solid var(--border);border-radius:12px;
-  padding:14px 8px 10px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+padding:14px 8px 10px;text-align:center;cursor:pointer;transition:.2s;position:relative}
 .sound-opt.active{border-color:var(--primary);background:rgba(108,99,255,.12)}
 .sound-opt .si2{font-size:24px;display:block;margin-bottom:4px}
 .sound-opt .sn{font-size:10px;color:var(--text2);display:block}
 .sound-opt.active .sn{color:var(--primary);font-weight:600}
 .sound-prev{position:absolute;top:4px;right:4px;background:var(--primary);border:none;
-  color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;line-height:1}
+color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;cursor:pointer;
+display:flex;align-items:center;justify-content:center;line-height:1}
 .sound-prev:active{transform:scale(.9)}
 .vol-row{display:flex;align-items:center;gap:10px;padding:8px 0}
 .vol-row input[type=range]{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;
-  background:var(--border);outline:none}
+background:var(--border);outline:none}
 .vol-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;
-  height:22px;border-radius:50%;background:var(--primary);cursor:pointer;
-  box-shadow:0 2px 8px rgba(108,99,255,.4)}
+height:22px;border-radius:50%;background:var(--primary);cursor:pointer;
+box-shadow:0 2px 8px rgba(108,99,255,.4)}
 .vol-row input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
-  background:var(--primary);cursor:pointer;border:none}
+background:var(--primary);cursor:pointer;border:none}
 .vol-val{font-size:13px;color:var(--text2);min-width:38px;text-align:right}
 .cust-file{display:flex;align-items:center;gap:8px;background:var(--card2);
-  border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px}
+border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px}
 .cust-file .cf-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  color:var(--text)}
+color:var(--text)}
 .cust-file button{background:none;border:none;color:var(--danger);font-size:18px;cursor:pointer}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
 </head>
 <body>
@@ -226,702 +227,929 @@ Settings</button>
 <div class="ao" id="alarm-ov"></div>
 
 <script>
-// ========== DATA ==========
-const SK={m:'mt_m',l:'mt_l',s:'mt_s'};
-const COLORS=['#6c63ff','#00c853','#ff9100','#ff1744','#00bcd4','#e91e63','#ffeb3b','#8bc34a'];
-const DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+// ===================== DATA =====================
+var SK = {m:'mt_m', l:'mt_l', s:'mt_s'};
+var COLORS = ['#6c63ff','#00c853','#ff9100','#ff1744','#00bcd4','#e91e63','#ffeb3b','#8bc34a'];
+var DAYNAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
-function sv(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function ld(k) { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
+function sv(k,v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-let meds=ld(SK.m)||[];
-let log=ld(SK.l)||{};
-let S=ld(SK.s)||{
-  topic:'',alertMin:60,sound:true,vib:true,caregiver:'',
-  notifyConf:true,notifyMiss:true,snooze:10,patient:'Patient',
-  alarmSound:'classic',alarmVol:80,customFile:''
+var meds = ld(SK.m) || [];
+var log = ld(SK.l) || {};
+var S = ld(SK.s) || {
+  topic:'', alertMin:60, sound:true, vib:true, caregiver:'',
+  notifyConf:true, notifyMiss:true, snooze:10, patient:'Patient',
+  alarmSound:'classic', alarmVol:80, customFile:''
 };
 
-function sM(){sv(SK.m,meds)}
-function sL(){sv(SK.l,log)}
-function sS(){sv(SK.s,S)}
+function sM() { sv(SK.m, meds); }
+function sL() { sv(SK.l, log); }
+function sS() { sv(SK.s, S); }
 
-// ========== UTIL ==========
-function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
-function td(){return new Date().toISOString().slice(0,10)}
-function pad(n){return String(n).padStart(2,'0')}
-function ct(){const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())}
-function f12(t){let[h,m]=t.split(':').map(Number);const a=h>=12?'PM':'AM';h=h%12||12;return h+':'+pad(m)+' '+a}
-function fD(s){return new Date(s+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}
-function tM(t){const[h,m]=t.split(':').map(Number);return h*60+m}
-function mN(){const d=new Date();return d.getHours()*60+d.getMinutes()}
+// ===================== UTIL =====================
+function gid() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function today() { return new Date().toISOString().slice(0,10); }
+function pad(n) { return String(n).padStart(2,'0'); }
+function f12(t) {
+  var p = t.split(':');
+  var h = parseInt(p[0]);
+  var m = p[1];
+  var a = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return h + ':' + m + ' ' + a;
+}
+function fD(s) {
+  return new Date(s + 'T12:00:00').toLocaleDateString('en-US',
+    {weekday:'short', month:'short', day:'numeric'});
+}
+function tM(t) { var p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
+function mN() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
 
-function getSched(ds){
-  ds=ds||td();
-  const dow=new Date(ds+'T12:00:00').getDay();
-  const sc={};
-  meds.filter(m=>m.active!==false).forEach(med=>{
-    if(med.days&&med.days.length>0&&med.days.length<7&&!med.days.includes(dow))return;
-    (med.times||[]).forEach(t=>{if(!sc[t])sc[t]=[];sc[t].push(med)});
+function getSched(ds) {
+  ds = ds || today();
+  var dow = new Date(ds + 'T12:00:00').getDay();
+  var sc = {};
+  meds.forEach(function(med) {
+    if (med.active === false) return;
+    if (med.days && med.days.length > 0 && med.days.length < 7 && med.days.indexOf(dow) === -1) return;
+    (med.times || []).forEach(function(t) {
+      if (!sc[t]) sc[t] = [];
+      sc[t].push(med);
+    });
   });
-  return Object.entries(sc).sort((a,b)=>a[0].localeCompare(b[0]));
+  return Object.keys(sc).sort().map(function(k) { return [k, sc[k]]; });
 }
 
-function lk(d,t,id){return d+'|'+t+'|'+id}
-function isConf(d,t,id){return!!log[lk(d,t,id)]}
-function doConf(d,t,id){
-  log[lk(d,t,id)]={at:new Date().toISOString(),time:t,medId:id,date:d};sL();
+function lk(d,t,id) { return d + '|' + t + '|' + id; }
+function isConf(d,t,id) { return !!log[lk(d,t,id)]; }
+function doConf(d,t,id) {
+  log[lk(d,t,id)] = {at: new Date().toISOString(), time:t, medId:id, date:d};
+  sL();
 }
 
-// ========== AUDIO ENGINE ==========
-let actx=null,aInt=null,isAl=false,custEl=null,custURL=null;
+// ===================== AUDIO ENGINE =====================
+var actx = null;
+var aInt = null;
+var isAl = false;
+var custEl = null;
+var custURL = null;
 
-function gAC(){
-  if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
-  if(actx.state==='suspended')actx.resume();
+function gAC() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') actx.resume();
   return actx;
 }
 
-// --- 6 Built-in alarm presets ---
-const ALARMS={
-  classic:{
-    name:'Classic Alarm',icon:'⏰',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      for(let i=0;i<12;i++){
-        const o=c.createOscillator(),g=c.createGain();
-        o.connect(g);g.connect(c.destination);
-        o.type='square';
-        o.frequency.value=i%2?780:1000;
-        const t=n+i*0.14;
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(vol*0.4,t+0.008);
-        g.gain.setValueAtTime(vol*0.4,t+0.09);
-        g.gain.linearRampToValueAtTime(0,t+0.13);
-        o.start(t);o.stop(t+0.14);
+var ALARMS = {
+  classic: {
+    name: 'Classic Alarm', icon: '⏰',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      for (var i = 0; i < 12; i++) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type = 'square';
+        o.frequency.value = (i % 2) ? 780 : 1000;
+        var t = n + i * 0.14;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol * 0.4, t + 0.008);
+        g.gain.setValueAtTime(vol * 0.4, t + 0.09);
+        g.gain.linearRampToValueAtTime(0, t + 0.13);
+        o.start(t); o.stop(t + 0.14);
       }
     }
   },
-  siren:{
-    name:'Urgent Siren',icon:'🚨',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      for(let w=0;w<2;w++){
-        const o=c.createOscillator(),g=c.createGain();
-        o.connect(g);g.connect(c.destination);
-        o.type='sawtooth';
-        g.gain.value=vol*0.28;
-        const base=n+w*1.0;
-        o.frequency.setValueAtTime(400,base);
-        o.frequency.exponentialRampToValueAtTime(1500,base+0.5);
-        o.frequency.exponentialRampToValueAtTime(400,base+1.0);
-        g.gain.setValueAtTime(vol*0.28,base);
-        g.gain.linearRampToValueAtTime(0,base+0.98);
-        o.start(base);o.stop(base+1.0);
+  siren: {
+    name: 'Urgent Siren', icon: '🚨',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      for (var w = 0; w < 2; w++) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type = 'sawtooth';
+        g.gain.value = vol * 0.28;
+        var base = n + w * 1.0;
+        o.frequency.setValueAtTime(400, base);
+        o.frequency.exponentialRampToValueAtTime(1500, base + 0.5);
+        o.frequency.exponentialRampToValueAtTime(400, base + 1.0);
+        g.gain.setValueAtTime(vol * 0.28, base);
+        g.gain.linearRampToValueAtTime(0, base + 0.98);
+        o.start(base); o.stop(base + 1.0);
       }
     }
   },
-  medical:{
-    name:'Medical Alert',icon:'🏥',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      // IEC-style: 3 beeps, pause, 3 beeps
-      const times=[0,.22,.44,.88,1.1,1.32];
-      times.forEach(off=>{
-        const o=c.createOscillator(),g=c.createGain();
-        o.connect(g);g.connect(c.destination);
-        o.type='sine';o.frequency.value=925;
-        const t=n+off;
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(vol*0.5,t+0.01);
-        g.gain.setValueAtTime(vol*0.5,t+0.12);
-        g.gain.linearRampToValueAtTime(0,t+0.17);
-        o.start(t);o.stop(t+0.2);
+  medical: {
+    name: 'Medical Alert', icon: '🏥',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      var times = [0, 0.22, 0.44, 0.88, 1.1, 1.32];
+      times.forEach(function(off) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type = 'sine'; o.frequency.value = 925;
+        var t = n + off;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol * 0.5, t + 0.01);
+        g.gain.setValueAtTime(vol * 0.5, t + 0.12);
+        g.gain.linearRampToValueAtTime(0, t + 0.17);
+        o.start(t); o.stop(t + 0.2);
       });
     }
   },
-  buzzer:{
-    name:'Harsh Buzzer',icon:'📢',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      for(let i=0;i<5;i++){
-        const o=c.createOscillator(),o2=c.createOscillator();
-        const g=c.createGain();
-        o.connect(g);o2.connect(g);g.connect(c.destination);
-        o.type='square';o.frequency.value=175;
-        o2.type='square';o2.frequency.value=178; // beat frequency = harsh
-        const t=n+i*0.4;
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(vol*0.32,t+0.01);
-        g.gain.setValueAtTime(vol*0.32,t+0.25);
-        g.gain.linearRampToValueAtTime(0,t+0.32);
-        o.start(t);o.stop(t+0.35);
-        o2.start(t);o2.stop(t+0.35);
+  buzzer: {
+    name: 'Harsh Buzzer', icon: '📢',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      for (var i = 0; i < 5; i++) {
+        var o = c.createOscillator(), o2 = c.createOscillator();
+        var g = c.createGain();
+        o.connect(g); o2.connect(g); g.connect(c.destination);
+        o.type = 'square'; o.frequency.value = 175;
+        o2.type = 'square'; o2.frequency.value = 178;
+        var t = n + i * 0.4;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol * 0.32, t + 0.01);
+        g.gain.setValueAtTime(vol * 0.32, t + 0.25);
+        g.gain.linearRampToValueAtTime(0, t + 0.32);
+        o.start(t); o.stop(t + 0.35);
+        o2.start(t); o2.stop(t + 0.35);
       }
     }
   },
-  escalating:{
-    name:'Escalating',icon:'📈',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      for(let i=0;i<10;i++){
-        const o=c.createOscillator(),g=c.createGain();
-        o.connect(g);g.connect(c.destination);
-        o.type=i<5?'sine':i<8?'triangle':'square';
-        o.frequency.value=300+i*80;
-        const t=n+i*0.2;
-        const v=vol*(0.06+i*0.035);
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(Math.min(v,vol*0.45),t+0.01);
-        g.gain.setValueAtTime(Math.min(v,vol*0.45),t+0.12);
-        g.gain.linearRampToValueAtTime(0,t+0.18);
-        o.start(t);o.stop(t+0.2);
+  escalating: {
+    name: 'Escalating', icon: '📈',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      for (var i = 0; i < 10; i++) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type = i < 5 ? 'sine' : i < 8 ? 'triangle' : 'square';
+        o.frequency.value = 300 + i * 80;
+        var t = n + i * 0.2;
+        var v = vol * (0.06 + i * 0.035);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(Math.min(v, vol * 0.45), t + 0.01);
+        g.gain.setValueAtTime(Math.min(v, vol * 0.45), t + 0.12);
+        g.gain.linearRampToValueAtTime(0, t + 0.18);
+        o.start(t); o.stop(t + 0.2);
       }
     }
   },
-  chime:{
-    name:'Gentle Chime',icon:'🔔',
-    play(vol){
-      const c=gAC(),n=c.currentTime;
-      [659,784,659,784,659,784,880,784].forEach((f,i)=>{
-        const o=c.createOscillator(),g=c.createGain();
-        o.connect(g);g.connect(c.destination);
-        o.frequency.value=f;o.type='sine';
-        const t=n+i*0.25;
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(vol*0.3,t+0.05);
-        g.gain.linearRampToValueAtTime(0,t+0.2);
-        o.start(t);o.stop(t+0.25);
+  chime: {
+    name: 'Gentle Chime', icon: '🔔',
+    play: function(vol) {
+      var c = gAC(), n = c.currentTime;
+      [659,784,659,784,659,784,880,784].forEach(function(f, i) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.frequency.value = f; o.type = 'sine';
+        var t = n + i * 0.25;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol * 0.3, t + 0.05);
+        g.gain.linearRampToValueAtTime(0, t + 0.2);
+        o.start(t); o.stop(t + 0.25);
       });
     }
   }
 };
 
-// --- Play selected preset ---
-function playAlarmOnce(){
-  if(!S.sound)return;
-  const vol=(S.alarmVol!=null?S.alarmVol:80)/100;
-  const sel=S.alarmSound||'classic';
-  if(sel==='custom')return; // custom handled separately
-  if(ALARMS[sel])ALARMS[sel].play(vol);
+function playAlarmOnce() {
+  if (!S.sound) return;
+  var vol = (S.alarmVol != null ? S.alarmVol : 80) / 100;
+  var sel = S.alarmSound || 'classic';
+  if (sel === 'custom') return;
+  if (ALARMS[sel]) ALARMS[sel].play(vol);
 }
 
-// --- Custom audio loop ---
-function playCustLoop(){
-  if(!custURL||!isAl)return;
-  if(custEl){try{custEl.pause()}catch(e){}}
-  custEl=new Audio(custURL);
-  custEl.volume=(S.alarmVol!=null?S.alarmVol:80)/100;
-  custEl.onended=()=>{
-    if(isAl){
-      if(S.vib&&navigator.vibrate)navigator.vibrate([300,100,300]);
-      setTimeout(playCustLoop,1200);
+function playCustLoop() {
+  if (!custURL || !isAl) return;
+  if (custEl) { try { custEl.pause(); } catch(e) {} }
+  custEl = new Audio(custURL);
+  custEl.volume = (S.alarmVol != null ? S.alarmVol : 80) / 100;
+  custEl.onended = function() {
+    if (isAl) {
+      if (S.vib && navigator.vibrate) navigator.vibrate([300,100,300]);
+      setTimeout(playCustLoop, 1200);
     }
   };
-  custEl.play().catch(e=>console.warn('Custom audio play failed:',e));
+  custEl.play().catch(function(e) { console.warn('Custom audio play failed:', e); });
 }
 
-// --- Preview any sound (for settings) ---
-function prevSound(key){
+function prevSound(key) {
   stopA();
-  const vol=(S.alarmVol!=null?S.alarmVol:80)/100;
-  if(key==='custom'&&custURL){
-    const a=new Audio(custURL);a.volume=vol;
-    a.play().catch(()=>{});
-    setTimeout(()=>{try{a.pause();a.currentTime=0}catch(e){}},5000);
-  }else if(ALARMS[key]){
+  var vol = (S.alarmVol != null ? S.alarmVol : 80) / 100;
+  if (key === 'custom' && custURL) {
+    var a = new Audio(custURL);
+    a.volume = vol;
+    a.play().catch(function(){});
+    setTimeout(function() { try { a.pause(); a.currentTime = 0; } catch(e) {} }, 5000);
+  } else if (ALARMS[key]) {
     ALARMS[key].play(vol);
   }
 }
 
-// --- Start alarm ---
-function startA(){
-  if(isAl)return;
-  isAl=true;
-  if(S.sound){
-    const sel=S.alarmSound||'classic';
-    if(sel==='custom'&&custURL){
+function startA() {
+  if (isAl) return;
+  isAl = true;
+  if (S.sound) {
+    var sel = S.alarmSound || 'classic';
+    if (sel === 'custom' && custURL) {
       playCustLoop();
-    }else{
+    } else {
       playAlarmOnce();
-      aInt=setInterval(()=>{
+      aInt = setInterval(function() {
         playAlarmOnce();
-        if(S.vib&&navigator.vibrate)navigator.vibrate([300,100,300]);
-      },3000);
+        if (S.vib && navigator.vibrate) navigator.vibrate([300,100,300]);
+      }, 3000);
     }
   }
-  if(S.vib&&navigator.vibrate)navigator.vibrate([500,200,500,200,500,200,500]);
+  if (S.vib && navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500]);
 }
 
-// --- Stop alarm ---
-function stopA(){
-  isAl=false;
-  if(aInt){clearInterval(aInt);aInt=null}
-  if(custEl){try{custEl.pause();custEl.currentTime=0}catch(e){}custEl=null}
-  if(navigator.vibrate)navigator.vibrate(0);
+function stopA() {
+  isAl = false;
+  if (aInt) { clearInterval(aInt); aInt = null; }
+  if (custEl) { try { custEl.pause(); custEl.currentTime = 0; } catch(e) {} custEl = null; }
+  if (navigator.vibrate) navigator.vibrate(0);
 }
 
-// ========== CUSTOM AUDIO STORAGE (IndexedDB) ==========
-const ADB={
-  db:null,
-  open(){
-    return new Promise((res,rej)=>{
-      const r=indexedDB.open('MedTrackerAudio',1);
-      r.onupgradeneeded=e=>e.target.result.createObjectStore('files');
-      r.onsuccess=e=>{ADB.db=e.target.result;res()};
-      r.onerror=e=>rej(e);
+// ===================== CUSTOM AUDIO STORAGE =====================
+var ADB = {
+  db: null,
+  open: function() {
+    return new Promise(function(res, rej) {
+      var r = indexedDB.open('MedTrackerAudio', 1);
+      r.onupgradeneeded = function(e) { e.target.result.createObjectStore('files'); };
+      r.onsuccess = function(e) { ADB.db = e.target.result; res(); };
+      r.onerror = function(e) { rej(e); };
     });
   },
-  save(blob){
-    return new Promise((res,rej)=>{
-      const tx=ADB.db.transaction('files','readwrite');
-      tx.objectStore('files').put(blob,'alarm');
-      tx.oncomplete=()=>res();
-      tx.onerror=e=>rej(e);
+  save: function(blob) {
+    return new Promise(function(res, rej) {
+      var tx = ADB.db.transaction('files', 'readwrite');
+      tx.objectStore('files').put(blob, 'alarm');
+      tx.oncomplete = function() { res(); };
+      tx.onerror = function(e) { rej(e); };
     });
   },
-  load(){
-    return new Promise(res=>{
-      const tx=ADB.db.transaction('files','readonly');
-      const r=tx.objectStore('files').get('alarm');
-      r.onsuccess=()=>res(r.result||null);
-      r.onerror=()=>res(null);
+  load: function() {
+    return new Promise(function(res) {
+      var tx = ADB.db.transaction('files', 'readonly');
+      var r = tx.objectStore('files').get('alarm');
+      r.onsuccess = function() { res(r.result || null); };
+      r.onerror = function() { res(null); };
     });
   },
-  del(){
-    return new Promise(res=>{
-      const tx=ADB.db.transaction('files','readwrite');
+  del: function() {
+    return new Promise(function(res) {
+      var tx = ADB.db.transaction('files', 'readwrite');
       tx.objectStore('files').delete('alarm');
-      tx.oncomplete=()=>res();
-      tx.onerror=()=>res();
+      tx.oncomplete = function() { res(); };
+      tx.onerror = function() { res(); };
     });
   }
 };
 
-async function initAudio(){
-  try{
-    await ADB.open();
-    const blob=await ADB.load();
-    if(blob){
-      if(custURL)URL.revokeObjectURL(custURL);
-      custURL=URL.createObjectURL(blob);
+function initAudio() {
+  return ADB.open().then(function() {
+    return ADB.load();
+  }).then(function(blob) {
+    if (blob) {
+      if (custURL) URL.revokeObjectURL(custURL);
+      custURL = URL.createObjectURL(blob);
     }
-  }catch(e){console.warn('IndexedDB init:',e)}
+  }).catch(function(e) {
+    console.warn('IndexedDB init:', e);
+  });
 }
 
-async function uploadSound(input){
-  const file=input.files[0];
-  if(!file)return;
-  if(!file.type.match(/^audio\//)){
+function uploadSound(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (!file.type.match(/^audio\//)) {
     alert('Please select an audio file (MP3, WAV, OGG, M4A, etc.)');
-    input.value='';return;
+    input.value = ''; return;
   }
-  if(file.size>10*1024*1024){
+  if (file.size > 10 * 1024 * 1024) {
     alert('File too large — please use a file under 10 MB.');
-    input.value='';return;
+    input.value = ''; return;
   }
-  try{
-    await ADB.save(file);
-    S.customFile=file.name;
-    S.alarmSound='custom';
+  ADB.save(file).then(function() {
+    S.customFile = file.name;
+    S.alarmSound = 'custom';
     sS();
-    if(custURL)URL.revokeObjectURL(custURL);
-    custURL=URL.createObjectURL(file);
+    if (custURL) URL.revokeObjectURL(custURL);
+    custURL = URL.createObjectURL(file);
     rSett();
-    setTimeout(()=>prevSound('custom'),300);
-  }catch(e){
+    setTimeout(function() { prevSound('custom'); }, 300);
+  }).catch(function(e) {
     alert('Error saving file. Try a smaller file.');
     console.error(e);
-  }
-  input.value='';
+  });
+  input.value = '';
 }
 
-async function delCustSound(){
-  if(!confirm('Remove custom sound?'))return;
-  try{
-    await ADB.del();
-    S.customFile='';
-    if(S.alarmSound==='custom')S.alarmSound='classic';
+function delCustSound() {
+  if (!confirm('Remove custom sound?')) return;
+  ADB.del().then(function() {
+    S.customFile = '';
+    if (S.alarmSound === 'custom') S.alarmSound = 'classic';
     sS();
-    if(custURL){URL.revokeObjectURL(custURL);custURL=null}
+    if (custURL) { URL.revokeObjectURL(custURL); custURL = null; }
     rSett();
-  }catch(e){console.error(e)}
+  }).catch(function(e) { console.error(e); });
 }
 
-// ========== NTFY ==========
-async function notify(title,msg,pri=3){
-  if(!S.topic)return;
-  try{
-    await fetch('https://ntfy.sh/'+S.topic,{
-      method:'POST',
-      headers:{'Title':title,'Priority':String(pri),'Tags':pri>=4?'warning':'pill'},
-      body:msg
-    });
-  }catch(e){console.error('ntfy err',e)}
+// ===================== NTFY =====================
+function notify(title, msg, pri) {
+  if (!S.topic) return;
+  pri = pri || 3;
+  fetch('https://ntfy.sh/' + S.topic, {
+    method: 'POST',
+    headers: {'Title': title, 'Priority': String(pri), 'Tags': pri >= 4 ? 'warning' : 'pill'},
+    body: msg
+  }).catch(function(e) { console.error('ntfy err', e); });
 }
 
-// ========== NAV ==========
-let CP='schedule',VD=td();
+// ===================== NAV =====================
+var CP = 'schedule';
+var VD = today();
 
-function go(p){
-  CP=p;
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  document.getElementById('pg-'+p).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('n-'+p).classList.add('active');
-  document.getElementById('fab').style.display=p==='meds'?'':'none';
+function go(p) {
+  CP = p;
+  document.querySelectorAll('.page').forEach(function(e) { e.classList.remove('active'); });
+  document.getElementById('pg-' + p).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('n-' + p).classList.add('active');
+  document.getElementById('fab').style.display = (p === 'meds') ? '' : 'none';
   render();
 }
 
-function render(){
-  ({schedule:rSched,meds:rMeds,history:rHist,settings:rSett})[CP]();
-  const sc=getSched(),tot=sc.reduce((s,[,ms])=>s+ms.length,0),
-    conf=sc.reduce((s,[t,ms])=>s+ms.filter(m=>isConf(td(),t,m.id)).length,0);
-  document.getElementById('hdr-sub').textContent=fD(td())+' • '+conf+'/'+tot+' doses confirmed';
+function render() {
+  try {
+    var fn = {schedule: rSched, meds: rMeds, history: rHist, settings: rSett};
+    if (fn[CP]) fn[CP]();
+    var sc = getSched();
+    var tot = 0, conf = 0;
+    sc.forEach(function(pair) {
+      tot += pair[1].length;
+      pair[1].forEach(function(m) { if (isConf(today(), pair[0], m.id)) conf++; });
+    });
+    document.getElementById('hdr-sub').textContent = fD(today()) + ' \u2022 ' + conf + '/' + tot + ' doses confirmed';
+  } catch(e) {
+    console.error('Render error:', e);
+    document.getElementById('hdr-sub').textContent = 'Error - check console';
+  }
 }
 
-// ========== SCHEDULE ==========
-function rSched(){
-  const pg=document.getElementById('pg-schedule'),sc=getSched(VD),isT=VD===td(),nm=mN();
-  let h=`<div class="dh"><span>${fD(VD)}${isT?' (Today)':''}</span>
-    <div class="dn"><button onclick="chD(-1)">◀</button>
-    <button onclick="VD=td();rSched()">⦿</button>
-    <button onclick="chD(1)">▶</button></div></div>`;
+// ===================== SCHEDULE =====================
+function rSched() {
+  var pg = document.getElementById('pg-schedule');
+  var sc = getSched(VD);
+  var isT = (VD === today());
+  var nm = mN();
 
-  if(!sc.length){
-    h+=`<div class="empty"><div class="icon">💊</div><p>No meds scheduled${isT?' today':''}.</p>
-    <br><button class="btn btn-p" onclick="go('meds')">Add Medications</button></div>`;
-    pg.innerHTML=h;return;
+  var h = '<div class="dh"><span>' + fD(VD) + (isT ? ' (Today)' : '') + '</span>' +
+    '<div class="dn"><button onclick="chD(-1)">\u25C0</button>' +
+    '<button onclick="VD=today();rSched()">\u29BF</button>' +
+    '<button onclick="chD(1)">\u25B6</button></div></div>';
+
+  if (!sc.length) {
+    h += '<div class="empty"><div class="icon">\uD83D\uDC8A</div><p>No meds scheduled' +
+      (isT ? ' today' : '') + '.</p><br><button class="btn btn-p" onclick="go(\'meds\')">Add Medications</button></div>';
+    pg.innerHTML = h; return;
   }
 
-  sc.forEach(([time,ms])=>{
-    const tm=tM(time),past=isT&&nm>tm+5,due=isT&&Math.abs(nm-tm)<=5,
-      allC=ms.every(m=>isConf(VD,time,m.id));
-    h+=`<div class="time-group"><div class="time-label">
-      <span class="dot" style="background:${allC?'var(--success)':due?'var(--warn)':past?'var(--danger)':'var(--primary)'}"></span>
-      ${f12(time)} ${allC?' ✅':due?' ⏰ NOW':past&&!allC?' ⚠️':''}</div>`;
+  sc.forEach(function(pair) {
+    var time = pair[0], ms = pair[1];
+    var tm = tM(time);
+    var past = isT && nm > tm + 5;
+    var due = isT && Math.abs(nm - tm) <= 5;
+    var allC = ms.every(function(m) { return isConf(VD, time, m.id); });
 
-    ms.forEach(med=>{
-      const cf=isConf(VD,time,med.id),mi=past&&!cf,
-        cls=cf?'confirmed':due?'due':mi?'missed':'';
-      h+=`<div class="sc ${cls}">
-        <div class="mc" style="background:${med.color||COLORS[0]}"></div>
-        <div class="mi"><div class="mn">${med.name}</div>
-        <div class="md">${med.dose||''}</div>
-        ${med.instr?'<div class="mx">'+med.instr+'</div>':''}</div>`;
+    h += '<div class="time-group"><div class="time-label">' +
+      '<span class="dot" style="background:' +
+      (allC ? 'var(--success)' : due ? 'var(--warn)' : past ? 'var(--danger)' : 'var(--primary)') +
+      '"></span>' + f12(time) +
+      (allC ? ' \u2705' : due ? ' \u23F0 NOW' : (past && !allC) ? ' \u26A0\uFE0F' : '') + '</div>';
 
-      if(cf){
-        const le=log[lk(VD,time,med.id)],
-          ct2=le?new Date(le.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
-        h+=`<div class="cb taken">✓ ${ct2}</div>`;
-      }else if(isT||VD<=td()){
-        h+=`<button class="cb take" onclick="hConf('${VD}','${time}','${med.id}')">Take</button>`;
+    ms.forEach(function(med) {
+      var cf = isConf(VD, time, med.id);
+      var mi = past && !cf;
+      var cls = cf ? 'confirmed' : due ? 'due' : mi ? 'missed' : '';
+
+      h += '<div class="sc ' + cls + '">' +
+        '<div class="mc" style="background:' + (med.color || COLORS[0]) + '"></div>' +
+        '<div class="mi"><div class="mn">' + med.name + '</div>' +
+        '<div class="md">' + (med.dose || '') + '</div>' +
+        (med.instr ? '<div class="mx">' + med.instr + '</div>' : '') + '</div>';
+
+      if (cf) {
+        var le = log[lk(VD, time, med.id)];
+        var ct2 = le ? new Date(le.at).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '';
+        h += '<div class="cb taken">\u2713 ' + ct2 + '</div>';
+      } else if (isT || VD <= today()) {
+        h += '<button class="cb take" onclick="hConf(\'' + VD + '\',\'' + time + '\',\'' + med.id + '\')">Take</button>';
       }
-      h+='</div>';
+      h += '</div>';
     });
-    h+='</div>';
+    h += '</div>';
   });
-  pg.innerHTML=h;
+  pg.innerHTML = h;
 }
 
-function chD(d){const dt=new Date(VD+'T12:00:00');dt.setDate(dt.getDate()+d);
-  VD=dt.toISOString().slice(0,10);rSched()}
+function chD(d) {
+  var dt = new Date(VD + 'T12:00:00');
+  dt.setDate(dt.getDate() + d);
+  VD = dt.toISOString().slice(0, 10);
+  rSched();
+}
 
-function hConf(ds,time,id){
-  const med=meds.find(m=>m.id===id);if(!med)return;
-  doConf(ds,time,id);stopA();render();
-  if(S.notifyConf&&S.topic){
-    notify('✅ '+S.patient+' took medication',
-      med.name+' '+(med.dose||'')+' confirmed at '+f12(time)+
-      ' ('+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+')',2);
+function hConf(ds, time, id) {
+  var med = meds.find(function(m) { return m.id === id; });
+  if (!med) return;
+  doConf(ds, time, id);
+  stopA();
+  render();
+  if (S.notifyConf && S.topic) {
+    notify('\u2705 ' + S.patient + ' took medication',
+      med.name + ' ' + (med.dose || '') + ' confirmed at ' + f12(time) +
+      ' (' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) + ')', 2);
   }
 }
 
-// ========== MEDS PAGE ==========
-function rMeds(){
-  const pg=document.getElementById('pg-meds');
-  if(!meds.length){
-    pg.innerHTML=`<div class="empty"><div class="icon">💊</div>
-    <p>No medications added yet.</p><p style="font-size:13px;margin-top:8px">
-    Tap + to add one.</p></div>`;return;
+// ===================== MEDS PAGE =====================
+function rMeds() {
+  var pg = document.getElementById('pg-meds');
+  if (!meds.length) {
+    pg.innerHTML = '<div class="empty"><div class="icon">\uD83D\uDC8A</div>' +
+      '<p>No medications added yet.</p><p style="font-size:13px;margin-top:8px">' +
+      'Tap + to add one.</p></div>';
+    return;
   }
-  let h='<h3 style="margin-bottom:12px;font-size:16px">Medications</h3>';
-  meds.forEach(med=>{
-    h+=`<div class="ml" style="opacity:${med.active===false?'.5':'1'}">
-      <div class="mc" style="background:${med.color||COLORS[0]}"></div>
-      <div class="mi" style="flex:1">
-        <div class="mn">${med.name}${med.active===false?' (off)':''}</div>
-        <div class="md">${med.dose||'No dose'}</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:4px">
-          ${(med.times||[]).map(t=>f12(t)).join(', ')}
-          ${med.days&&med.days.length<7?' • '+med.days.map(d=>DAYNAMES[d]).join(', '):' • Daily'}
-        </div>
-      </div>
-      <div class="acts">
-        <button onclick="openModal('${med.id}')">✏️</button>
-        <button onclick="delMed('${med.id}')">🗑️</button>
-      </div></div>`;
+  var h = '<h3 style="margin-bottom:12px;font-size:16px">Medications</h3>';
+  meds.forEach(function(med) {
+    var dayStr = (med.days && med.days.length < 7) ?
+      ' \u2022 ' + med.days.map(function(d) { return DAYNAMES[d]; }).join(', ') : ' \u2022 Daily';
+    h += '<div class="ml" style="opacity:' + (med.active === false ? '.5' : '1') + '">' +
+      '<div class="mc" style="background:' + (med.color || COLORS[0]) + '"></div>' +
+      '<div class="mi" style="flex:1"><div class="mn">' + med.name +
+      (med.active === false ? ' (off)' : '') + '</div>' +
+      '<div class="md">' + (med.dose || 'No dose') + '</div>' +
+      '<div style="font-size:11px;color:var(--text2);margin-top:4px">' +
+      (med.times || []).map(function(t) { return f12(t); }).join(', ') +
+      dayStr + '</div></div>' +
+      '<div class="acts">' +
+      '<button onclick="openModal(\'' + med.id + '\')">\u270F\uFE0F</button>' +
+      '<button onclick="delMed(\'' + med.id + '\')">\uD83D\uDDD1\uFE0F</button>' +
+      '</div></div>';
   });
-  pg.innerHTML=h;
+  pg.innerHTML = h;
 }
 
-// ========== HISTORY ==========
-function rHist(){
-  const pg=document.getElementById('pg-history'),
-    ent=Object.entries(log).sort((a,b)=>b[1].at.localeCompare(a[1].at));
-  if(!ent.length){pg.innerHTML='<div class="empty"><div class="icon">📋</div><p>No history yet.</p></div>';return}
+// ===================== HISTORY =====================
+function rHist() {
+  var pg = document.getElementById('pg-history');
+  var keys = Object.keys(log);
+  if (!keys.length) {
+    pg.innerHTML = '<div class="empty"><div class="icon">\uD83D\uDCCB</div><p>No history yet.</p></div>';
+    return;
+  }
 
-  let h='<h3 style="margin-bottom:12px;font-size:16px">Confirmation History</h3>';
-  const byD={};
-  ent.forEach(([k,e])=>{
-    const d=e.date||k.split('|')[0];if(!byD[d])byD[d]=[];
-    const med=meds.find(m=>m.id===e.medId);
-    byD[d].push({...e,mn:med?med.name:'Unknown',mdose:med?med.dose:''});
+  var h = '<h3 style="margin-bottom:12px;font-size:16px">Confirmation History</h3>';
+  var byD = {};
+  keys.forEach(function(k) {
+    var e = log[k];
+    var d = e.date || k.split('|')[0];
+    if (!byD[d]) byD[d] = [];
+    var med = meds.find(function(m) { return m.id === e.medId; });
+    byD[d].push({at: e.at, time: e.time, mn: med ? med.name : 'Unknown', mdose: med ? med.dose : ''});
   });
 
-  Object.entries(byD).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14).forEach(([d,de])=>{
-    h+=`<div class="card"><div class="card-hdr"><strong>${fD(d)}</strong>
-      <span style="font-size:12px;color:var(--text2)">${de.length} doses</span></div>`;
-    de.sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(e=>{
-      const ct2=new Date(e.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
-      h+=`<div class="le"><span>✅ ${e.mn} ${e.mdose||''} — ${f12(e.time||'00:00')}</span>
-        <span style="color:var(--text2);font-size:12px">✓ ${ct2}</span></div>`;
+  Object.keys(byD).sort().reverse().slice(0, 14).forEach(function(d) {
+    var de = byD[d];
+    h += '<div class="card"><div class="card-hdr"><strong>' + fD(d) + '</strong>' +
+      '<span style="font-size:12px;color:var(--text2)">' + de.length + ' doses</span></div>';
+    de.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); }).forEach(function(e) {
+      var ct2 = new Date(e.at).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+      h += '<div class="le"><span>\u2705 ' + e.mn + ' ' + (e.mdose || '') + ' \u2014 ' +
+        f12(e.time || '00:00') + '</span>' +
+        '<span style="color:var(--text2);font-size:12px">\u2713 ' + ct2 + '</span></div>';
     });
-    h+='</div>';
+    h += '</div>';
   });
 
-  h+=`<div style="text-align:center;margin-top:16px">
-    <button class="btn btn-o" onclick="if(confirm('Clear all history?')){log={};sL();rHist()}">
-    Clear History</button></div>`;
-  pg.innerHTML=h;
+  h += '<div style="text-align:center;margin-top:16px">' +
+    '<button class="btn btn-o" onclick="if(confirm(\'Clear all history?\')){log={};sL();rHist()}">' +
+    'Clear History</button></div>';
+  pg.innerHTML = h;
 }
 
-// ========== SETTINGS ==========
-function rSett(){
+// ===================== SETTINGS =====================
+function rSett() {
+  var pg = document.getElementById('pg-settings');
+  var sel = S.alarmSound || 'classic';
+  var vol = (S.alarmVol != null) ? S.alarmVol : 80;
 
-function testN(){
-  if(!S.topic){alert('Enter a ntfy.sh topic first!');return}
-  notify('🧪 Test from MedTracker',
-    'Notifications for '+(S.patient||'patient')+' are connected!',3);
+  var soundGrid = '';
+  var alarmKeys = Object.keys(ALARMS);
+  alarmKeys.forEach(function(key) {
+    var s = ALARMS[key];
+    soundGrid += '<div class="sound-opt ' + (sel === key ? 'active' : '') + '"' +
+      ' onclick="S.alarmSound=\'' + key + '\';sS();rSett()">' +
+      '<span class="si2">' + s.icon + '</span>' +
+      '<span class="sn">' + s.name + '</span>' +
+      '<button class="sound-prev" onclick="event.stopPropagation();prevSound(\'' + key + '\')">\u25B6</button>' +
+      '</div>';
+  });
+  // Custom option
+  soundGrid += '<div class="sound-opt ' + (sel === 'custom' ? 'active' : '') + '"' +
+    ' onclick="' + (custURL ? "S.alarmSound=\'custom\';sS();rSett()" : "document.getElementById(\'snd-up\').click()") + '">' +
+    '<span class="si2">\uD83C\uDFB5</span>' +
+    '<span class="sn">Custom</span>' +
+    (custURL ? '<button class="sound-prev" onclick="event.stopPropagation();prevSound(\'custom\')">\u25B6</button>' : '') +
+    '</div>';
+
+  var custSection = '';
+  if (custURL && S.customFile) {
+    custSection = '<div class="cust-file"><span>\uD83C\uDFB5</span>' +
+      '<span class="cf-name">' + S.customFile + '</span>' +
+      '<button onclick="document.getElementById(\'snd-up\').click()" title="Change">\uD83D\uDCC1</button>' +
+      '<button onclick="delCustSound()" title="Remove">&times;</button></div>';
+  } else {
+    custSection = '<button class="btn btn-o" style="width:100%;justify-content:center;font-size:12px;margin-bottom:12px"' +
+      ' onclick="document.getElementById(\'snd-up\').click()">\uD83D\uDCC1 Upload Custom Sound (MP3, WAV, OGG\u2026)</button>';
+  }
+
+  pg.innerHTML =
+    '<h3 style="margin-bottom:16px;font-size:16px">Settings</h3>' +
+
+    '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">\uD83D\uDC64 Patient</h4>' +
+    '<div class="fg"><label>Patient Name</label>' +
+    '<input value="' + (S.patient || '') + '" onchange="S.patient=this.value;sS()" placeholder="Name"></div>' +
+    '</div>' +
+
+    '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">\uD83D\uDD0A Alarm Sound</h4>' +
+    '<div class="sound-grid">' + soundGrid + '</div>' +
+    '<input type="file" id="snd-up" accept="audio/*" style="display:none" onchange="uploadSound(this)">' +
+    custSection +
+    '<div class="vol-row"><span style="font-size:18px">\uD83D\uDD08</span>' +
+    '<input type="range" min="0" max="100" value="' + vol + '"' +
+    ' oninput="S.alarmVol=parseInt(this.value);sS();document.getElementById(\'vol-v\').textContent=this.value+\'%\'">' +
+    '<span style="font-size:18px">\uD83D\uDD0A</span>' +
+    '<span class="vol-val" id="vol-v">' + vol + '%</span></div>' +
+    '<div class="si"><div><div style="font-size:14px">Sound Enabled</div>' +
+    '<div style="font-size:11px;color:var(--text2)">Play audio on alarm</div></div>' +
+    '<button class="tog ' + (S.sound ? 'on' : '') + '" onclick="S.sound=!S.sound;sS();rSett()"></button></div>' +
+    '<div class="si"><div><div style="font-size:14px">Vibration</div>' +
+    '<div style="font-size:11px;color:var(--text2)">Vibrate on alarm</div></div>' +
+    '<button class="tog ' + (S.vib ? 'on' : '') + '" onclick="S.vib=!S.vib;sS();rSett()"></button></div>' +
+    '<div class="fg" style="margin-top:12px"><label>Snooze (minutes)</label>' +
+    '<input type="number" value="' + (S.snooze || 10) + '" min="1" max="30"' +
+    ' onchange="S.snooze=parseInt(this.value);sS()"></div>' +
+    '</div>' +
+
+    '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">\uD83D\uDD14 Caregiver Notifications</h4>' +
+    '<p style="font-size:12px;color:var(--text2);margin-bottom:12px">' +
+    'Uses <a href="https://ntfy.sh" target="_blank" style="color:var(--primary)">ntfy.sh</a> (free). ' +
+    'Install ntfy app on caregiver phone \u2192 subscribe to the topic below.</p>' +
+    '<div class="fg"><label>ntfy.sh Topic (unique secret name)</label>' +
+    '<input value="' + (S.topic || '') + '" onchange="S.topic=this.value;sS()"' +
+    ' placeholder="e.g. medtracker-smith-7749"></div>' +
+    '<div class="fg"><label>Caregiver Name</label>' +
+    '<input value="' + (S.caregiver || '') + '" onchange="S.caregiver=this.value;sS()"></div>' +
+    '<div class="si"><div><div style="font-size:14px">Notify on Confirmation</div>' +
+    '<div style="font-size:11px;color:var(--text2)">Alert when med is taken</div></div>' +
+    '<button class="tog ' + (S.notifyConf ? 'on' : '') + '" onclick="S.notifyConf=!S.notifyConf;sS();rSett()"></button></div>' +
+    '<div class="si"><div><div style="font-size:14px">Notify on Missed Dose</div>' +
+    '<div style="font-size:11px;color:var(--text2)">Alert when not confirmed in time</div></div>' +
+    '<button class="tog ' + (S.notifyMiss !== false ? 'on' : '') + '" onclick="S.notifyMiss=!S.notifyMiss;sS();rSett()"></button></div>' +
+    '<div class="fg" style="margin-top:12px"><label>Alert after (minutes without confirmation)</label>' +
+    '<input type="number" value="' + (S.alertMin || 60) + '" min="5" max="180"' +
+    ' onchange="S.alertMin=parseInt(this.value);sS()"></div>' +
+    '<button class="btn btn-o" style="width:100%;justify-content:center;margin-top:8px"' +
+    ' onclick="testN()">\uD83D\uDCE4 Send Test Notification</button>' +
+    '</div>' +
+
+    '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">\uD83D\uDCBE Data</h4>' +
+    '<div style="display:flex;gap:8px">' +
+    '<button class="btn btn-o" style="flex:1;justify-content:center" onclick="expD()">Export</button>' +
+    '<button class="btn btn-o" style="flex:1;justify-content:center"' +
+    ' onclick="document.getElementById(\'imp\').click()">Import</button>' +
+    '<input type="file" id="imp" accept=".json" style="display:none" onchange="impD(event)">' +
+    '</div></div>' +
+
+    '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">\u2139\uFE0F How It Works</h4>' +
+    '<div style="font-size:12px;color:var(--text2);line-height:1.6">' +
+    '<p>1. Add meds with doses & schedule times</p>' +
+    '<p>2. Alarms sound at each scheduled time</p>' +
+    '<p>3. Tap "Take" to confirm medication taken</p>' +
+    '<p>4. Caregiver gets a push when confirmed</p>' +
+    '<p>5. If not confirmed within ' + (S.alertMin || 60) + ' min \u2192 caregiver gets urgent alert</p>' +
+    '<p style="margin-top:8px;color:var(--warn)"><strong>Keep this page open</strong> for alarms. ' +
+    'On iPhone: Share \u2192 Add to Home Screen.</p></div></div>';
+}
+
+function testN() {
+  if (!S.topic) { alert('Enter a ntfy.sh topic first!'); return; }
+  notify('\uD83E\uDDEA Test from MedTracker',
+    'Notifications for ' + (S.patient || 'patient') + ' are connected!', 3);
   alert('Sent! Check the ntfy app.');
 }
-function expD(){
-  const b=new Blob([JSON.stringify({meds,log,settings:S,exported:new Date().toISOString()},null,2)],
-    {type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='medtracker-'+td()+'.json';a.click();
-}
-function impD(ev){
-  const f=ev.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{try{
-    const d=JSON.parse(e.target.result);
-    if(d.meds){meds=d.meds;sM()}if(d.log){log=d.log;sL()}
-    if(d.settings){S={...S,...d.settings};sS()}
-    alert('Imported!');render();
-  }catch(err){alert('Invalid file')}};
-  r.readAsText(f);ev.target.value='';
+
+function expD() {
+  var data = JSON.stringify({meds:meds, log:log, settings:S, exported:new Date().toISOString()}, null, 2);
+  var b = new Blob([data], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'medtracker-' + today() + '.json';
+  a.click();
 }
 
-// ========== MED MODAL ==========
-let _ms={};
+function impD(ev) {
+  var f = ev.target.files[0];
+  if (!f) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    try {
+      var d = JSON.parse(e.target.result);
+      if (d.meds) { meds = d.meds; sM(); }
+      if (d.log) { log = d.log; sL(); }
+      if (d.settings) { Object.keys(d.settings).forEach(function(k) { S[k] = d.settings[k]; }); sS(); }
+      alert('Imported!');
+      render();
+    } catch(err) { alert('Invalid file'); }
+  };
+  r.readAsText(f);
+  ev.target.value = '';
+}
 
-function openModal(eid){
-  const med=eid?meds.find(m=>m.id===eid):null,isE=!!med;
-  _ms={
-    times:med?[...(med.times||[])]:[],
-    days:med?[...(med.days||[0,1,2,3,4,5,6])]:[0,1,2,3,4,5,6],
-    color:med?med.color:COLORS[0]
+// ===================== MED MODAL =====================
+var _ms = {};
+
+function openModal(eid) {
+  var med = null;
+  if (eid) med = meds.find(function(m) { return m.id === eid; });
+  var isE = !!med;
+
+  _ms = {
+    times: med ? (med.times || []).slice() : [],
+    days: med ? (med.days || [0,1,2,3,4,5,6]).slice() : [0,1,2,3,4,5,6],
+    color: med ? (med.color || COLORS[0]) : COLORS[0]
   };
 
-  function rM(){
-    document.getElementById('mo-c').innerHTML=`
-    <h2>${isE?'Edit':'Add'} Medication</h2>
-    <div class="fg"><label>Name *</label>
-      <input id="f-name" value="${med?med.name:''}" placeholder="e.g. Ibuprofen"></div>
-    <div class="fg"><label>Dose</label>
-      <input id="f-dose" value="${med?(med.dose||''):''}" placeholder="e.g. 500mg"></div>
-    <div class="fg"><label>Instructions</label>
-      <input id="f-instr" value="${med?(med.instr||''):''}" placeholder="e.g. Take with food"></div>
-    <div class="fg"><label>Schedule Times</label>
-      <div class="tc">
-        ${_ms.times.map((t,i)=>`<div class="chip">${f12(t)}<button onclick="_ms.times.splice(${i},1);rMM()">&times;</button></div>`).join('')}
-        <button class="add-t" onclick="document.getElementById('nt').style.display='block';
-          document.getElementById('nt').focus();document.getElementById('nt').click()">+ Add Time</button>
-      </div>
-      <input type="time" id="nt" style="display:none;margin-top:8px"
-        onchange="if(this.value){_ms.times.push(this.value);_ms.times.sort();this.value='';this.style.display='none';rMM()}">
-    </div>
-    <div class="fg"><label>Days</label>
-      <div class="days-row">
-        ${DAYNAMES.map((d,i)=>`<button type="button" class="day-btn ${_ms.days.includes(i)?'active':''}"
-          onclick="const x=_ms.days.indexOf(${i});x>=0?_ms.days.splice(x,1):_ms.days.push(${i});rMM()">${d}</button>`).join('')}
-      </div>
-    </div>
-    <div class="fg"><label>Color</label>
-      <div class="cr">
-        ${COLORS.map(c=>`<div class="co ${_ms.color===c?'active':''}"
-          style="background:${c}" onclick="_ms.color='${c}';rMM()"></div>`).join('')}
-      </div>
-    </div>
-    ${isE?`<div class="si" style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px">
-      <div style="font-size:14px">Active</div>
-      <button class="tog ${med.active!==false?'on':''}" id="f-act" onclick="this.classList.toggle('on')"></button>
-    </div>`:''}
-    <div style="display:flex;gap:8px;margin-top:20px">
-      <button class="btn btn-o" style="flex:1;justify-content:center" onclick="closeM()">Cancel</button>
-      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="saveMF('${eid||''}')">${isE?'Save':'Add'}</button>
-    </div>`;
+  function rM() {
+    var timeChips = _ms.times.map(function(t, i) {
+      return '<div class="chip">' + f12(t) +
+        '<button onclick="_ms.times.splice(' + i + ',1);window._rMM()">&times;</button></div>';
+    }).join('');
+
+    var dayBtns = DAYNAMES.map(function(d, i) {
+      return '<button type="button" class="day-btn ' + (_ms.days.indexOf(i) >= 0 ? 'active' : '') + '"' +
+        ' onclick="var x=_ms.days.indexOf(' + i + ');if(x>=0)_ms.days.splice(x,1);else _ms.days.push(' + i + ');window._rMM()">' + d + '</button>';
+    }).join('');
+
+    var colorDots = COLORS.map(function(c) {
+      return '<div class="co ' + (_ms.color === c ? 'active' : '') + '"' +
+        ' style="background:' + c + '" onclick="_ms.color=\'' + c + '\';window._rMM()"></div>';
+    }).join('');
+
+    var activeToggle = '';
+    if (isE) {
+      activeToggle = '<div class="si" style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px">' +
+        '<div style="font-size:14px">Active</div>' +
+        '<button class="tog ' + (med.active !== false ? 'on' : '') + '" id="f-act" onclick="this.classList.toggle(\'on\')"></button></div>';
+    }
+
+    document.getElementById('mo-c').innerHTML =
+      '<h2>' + (isE ? 'Edit' : 'Add') + ' Medication</h2>' +
+      '<div class="fg"><label>Name *</label>' +
+      '<input id="f-name" value="' + (med ? med.name : '') + '" placeholder="e.g. Ibuprofen"></div>' +
+      '<div class="fg"><label>Dose</label>' +
+      '<input id="f-dose" value="' + (med ? (med.dose || '') : '') + '" placeholder="e.g. 500mg"></div>' +
+      '<div class="fg"><label>Instructions</label>' +
+      '<input id="f-instr" value="' + (med ? (med.instr || '') : '') + '" placeholder="e.g. Take with food"></div>' +
+      '<div class="fg"><label>Schedule Times</label>' +
+      '<div class="tc">' + timeChips +
+      '<button class="add-t" onclick="document.getElementById(\'nt\').style.display=\'block\';' +
+      'document.getElementById(\'nt\').focus()">+ Add Time</button></div>' +
+      '<input type="time" id="nt" style="display:none;margin-top:8px"' +
+      ' onchange="if(this.value){_ms.times.push(this.value);_ms.times.sort();this.value=\'\';this.style.display=\'none\';window._rMM()}">' +
+      '</div>' +
+      '<div class="fg"><label>Days</label><div class="days-row">' + dayBtns + '</div></div>' +
+      '<div class="fg"><label>Color</label><div class="cr">' + colorDots + '</div></div>' +
+      activeToggle +
+      '<div style="display:flex;gap:8px;margin-top:20px">' +
+      '<button class="btn btn-o" style="flex:1;justify-content:center" onclick="closeM()">Cancel</button>' +
+      '<button class="btn btn-p" style="flex:1;justify-content:center" onclick="saveMF(\'' + (eid || '') + '\')">' +
+      (isE ? 'Save' : 'Add') + '</button></div>';
   }
 
-  window.rMM=rM;rM();
+  window._rMM = rM;
+  rM();
   document.getElementById('med-mo').classList.add('show');
 }
 
-function closeM(){document.getElementById('med-mo').classList.remove('show')}
+function closeM() { document.getElementById('med-mo').classList.remove('show'); }
 
-function saveMF(eid){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){alert('Enter medication name');return}
-  if(!_ms.times.length){alert('Add at least one time');return}
+function saveMF(eid) {
+  var name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Enter medication name'); return; }
+  if (!_ms.times.length) { alert('Add at least one time'); return; }
 
-  const d={
-    name,
-    dose:document.getElementById('f-dose').value.trim(),
-    instr:document.getElementById('f-instr').value.trim(),
-    times:[..._ms.times],days:[..._ms.days],color:_ms.color,active:true
+  var d = {
+    name: name,
+    dose: document.getElementById('f-dose').value.trim(),
+    instr: document.getElementById('f-instr').value.trim(),
+    times: _ms.times.slice(),
+    days: _ms.days.slice(),
+    color: _ms.color,
+    active: true
   };
 
-  if(eid){
-    const i=meds.findIndex(m=>m.id===eid);
-    if(i>=0){
-      const at=document.getElementById('f-act');
-      d.active=at?at.classList.contains('on'):true;
-      d.id=eid;meds[i]=d;
+  if (eid) {
+    var i = -1;
+    meds.forEach(function(m, idx) { if (m.id === eid) i = idx; });
+    if (i >= 0) {
+      var at = document.getElementById('f-act');
+      d.active = at ? at.classList.contains('on') : true;
+      d.id = eid;
+      meds[i] = d;
     }
-  }else{d.id=gid();meds.push(d)}
-  sM();closeM();render();
+  } else {
+    d.id = gid();
+    meds.push(d);
+  }
+  sM(); closeM(); render();
 }
 
-function delMed(id){
-  const m=meds.find(x=>x.id===id);if(!m)return;
-  if(!confirm('Delete "'+m.name+'"?'))return;
-  meds=meds.filter(x=>x.id!==id);sM();render();
+function delMed(id) {
+  var m = null;
+  meds.forEach(function(x) { if (x.id === id) m = x; });
+  if (!m) return;
+  if (!confirm('Delete "' + m.name + '"?')) return;
+  meds = meds.filter(function(x) { return x.id !== id; });
+  sM(); render();
 }
 
-// ========== ALARM CHECK ==========
-let missN={},snzU={};
+// ===================== ALARM CHECK =====================
+var missN = {};
+var snzU = {};
 
-function chkAlarm(){
-  const ds=td(),sc=getSched(ds),nm=mN();
-  let shouldA=false,aMeds=[];
+function chkAlarm() {
+  var ds = today();
+  var sc = getSched(ds);
+  var nm = mN();
+  var shouldA = false;
+  var aMeds = [];
 
-  sc.forEach(([time,ms])=>{
-    const tm=tM(time);
+  sc.forEach(function(pair) {
+    var time = pair[0], ms = pair[1];
+    var tm = tM(time);
 
-    // Alarm trigger: within 1 minute of scheduled time
-    if(Math.abs(nm-tm)<=1){
-      const unc=ms.filter(m=>!isConf(ds,time,m.id));
-      if(unc.length>0){
-        const sk=ds+'|'+time;
-        if(snzU[sk]&&nm<snzU[sk])return;
-        shouldA=true;aMeds.push({time,meds:unc});
+    if (Math.abs(nm - tm) <= 1) {
+      var unc = ms.filter(function(m) { return !isConf(ds, time, m.id); });
+      if (unc.length > 0) {
+        var sk = ds + '|' + time;
+        if (snzU[sk] && nm < snzU[sk]) return;
+        shouldA = true;
+        aMeds.push({time: time, meds: unc});
       }
     }
 
-    // Missed dose check
-    const am=S.alertMin||60;
-    if(nm>tm+am&&S.notifyMiss!==false){
-      ms.forEach(med=>{
-        const mk=lk(ds,time,med.id);
-        if(!isConf(ds,time,med.id)&&!missN[mk]){
-          missN[mk]=true;
-          notify('⚠️ MISSED: '+med.name,
-            (S.patient||'Patient')+' has NOT confirmed '+med.name+' '+
-            (med.dose||'')+' scheduled for '+f12(time)+'. '+am+'+ min have passed.',5);
+    var am = S.alertMin || 60;
+    if (nm > tm + am && S.notifyMiss !== false) {
+      ms.forEach(function(med) {
+        var mk = lk(ds, time, med.id);
+        if (!isConf(ds, time, med.id) && !missN[mk]) {
+          missN[mk] = true;
+          notify('\u26A0\uFE0F MISSED: ' + med.name,
+            (S.patient || 'Patient') + ' has NOT confirmed ' + med.name + ' ' +
+            (med.dose || '') + ' scheduled for ' + f12(time) + '. ' + am + '+ min have passed.', 5);
         }
       });
     }
   });
 
-  if(shouldA){
-    showAO(aMeds);startA();
-    if('Notification' in window&&Notification.permission==='granted'){
-      new Notification('💊 Medication Time!',{
-        body:aMeds.map(g=>g.meds.map(m=>m.name).join(', ')).join(' | '),
-        requireInteraction:true
+  if (shouldA) {
+    showAO(aMeds);
+    startA();
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('\uD83D\uDC8A Medication Time!', {
+        body: aMeds.map(function(g) {
+          return g.meds.map(function(m) { return m.name; }).join(', ');
+        }).join(' | '),
+        requireInteraction: true
       });
     }
   }
-  if(CP==='schedule'&&VD===td())rSched();
+  if (CP === 'schedule' && VD === today()) rSched();
 }
 
-function showAO(am){
-  const ov=document.getElementById('alarm-ov');
-  let h=`<h2>⏰ Medication Time!</h2>
-    <div class="at">${am.map(g=>f12(g.time)).join(', ')}</div><div class="am">`;
-  am.forEach(g=>g.meds.forEach(m=>{
-    h+=`<div class="ami" style="color:${m.color||COLORS[0]}">
-      ${m.name}${m.dose?' — '+m.dose:''}
-      ${m.instr?'<br><small style="color:var(--text2)">'+m.instr+'</small>':''}</div>`;
-  }));
-  h+=`</div><button class="abtn conf" onclick="confAll()">✓ TAKEN</button>
-    <button class="abtn snz" onclick="snoozeA()">Snooze<br>${S.snooze||10}m</button>`;
+function showAO(am) {
+  var ov = document.getElementById('alarm-ov');
+  var h = '<h2>\u23F0 Medication Time!</h2>' +
+    '<div class="at">' + am.map(function(g) { return f12(g.time); }).join(', ') + '</div><div class="am">';
+  am.forEach(function(g) {
+    g.meds.forEach(function(m) {
+      h += '<div class="ami" style="color:' + (m.color || COLORS[0]) + '">' +
+        m.name + (m.dose ? ' \u2014 ' + m.dose : '') +
+        (m.instr ? '<br><small style="color:var(--text2)">' + m.instr + '</small>' : '') + '</div>';
+    });
+  });
+  h += '</div><button class="abtn conf" onclick="confAll()">\u2713 TAKEN</button>' +
+    '<button class="abtn snz" onclick="snoozeA()">Snooze<br>' + (S.snooze || 10) + 'm</button>';
 
-  window._cAM=am;ov.innerHTML=h;ov.classList.add('show');
+  window._cAM = am;
+  ov.innerHTML = h;
+  ov.classList.add('show');
 
-  // Request wake lock
-  if('wakeLock' in navigator){
-    navigator.wakeLock.request('screen').catch(()=>{});
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').catch(function(){});
   }
 }
 
-function confAll(){
-  const ds=td();
-  if(window._cAM){
-    window._cAM.forEach(g=>g.meds.forEach(m=>{
-      if(!isConf(ds,g.time,m.id)){
-        doConf(ds,g.time,m.id);
-        if(S.notifyConf&&S.topic)
-          notify('✅ '+S.patient+' took '+m.name,
-            m.name+' '+(m.dose||'')+' confirmed at '+f12(g.time),2);
-      }
-    }));
+function confAll() {
+  var ds = today();
+  if (window._cAM) {
+    window._cAM.forEach(function(g) {
+      g.meds.forEach(function(m) {
+        if (!isConf(ds, g.time, m.id)) {
+          doConf(ds, g.time, m.id);
+          if (S.notifyConf && S.topic)
+            notify('\u2705 ' + S.patient + ' took ' + m.name,
+              m.name + ' ' + (m.dose || '') + ' confirmed at ' + f12(g.time), 2);
+        }
+      });
+    });
   }
-  stopA();document.getElementById('alarm-ov').classList.remove('show');render();
-}
-
-function snoozeA(){
-  const ds=td(),sm=S.snooze||10;
-  if(window._cAM)window._cAM.forEach(g=>{snzU[ds+'|'+g.time]=mN()+sm});
-  stopA();document.getElementById('alarm-ov').classList.remove('show');
-}
-
-// ========== INIT ==========
-function init(){
-  initAudio();
-
-  if('Notification' in window&&Notification.permission==='default')
-    Notification.requestPermission();
-
+  stopA();
+  document.getElementById('alarm-ov').classList.remove('show');
   render();
-  setInterval(chkAlarm,30000);
-  setTimeout(chkAlarm,2000);
+}
 
-  document.addEventListener('click',function ia(){gAC();document.removeEventListener('click',ia)},{once:true});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden){chkAlarm();render()}});
-  document.getElementById('med-mo').addEventListener('click',function(e){if(e.target===this)closeM()});
+function snoozeA() {
+  var ds = today();
+  var sm = S.snooze || 10;
+  if (window._cAM) {
+    window._cAM.forEach(function(g) {
+      snzU[ds + '|' + g.time] = mN() + sm;
+    });
+  }
+  stopA();
+  document.getElementById('alarm-ov').classList.remove('show');
+}
 
-  // Reset missed notifications at midnight
-  setInterval(()=>{
-    const h=new Date().getHours(),m=new Date().getMinutes();
-    if(h===0&&m===0){missN={};snzU={}}
-  },60000);
+// ===================== INIT =====================
+function init() {
+  try {
+    if ('Notification' in window && Notification.permission === 'default')
+      Notification.requestPermission();
 
-  if(!S.topic&&!meds.length){
-    setTimeout(()=>{
-      if(confirm('Welcome! Set up caregiver notifications first?'))go('settings');
-    },500);
+    render();
+
+    setInterval(chkAlarm, 30000);
+    setTimeout(chkAlarm, 2000);
+
+    document.addEventListener('click', function ia() {
+      try { gAC(); } catch(e) {}
+      document.removeEventListener('click', ia);
+    }, {once: true});
+
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) { chkAlarm(); render(); }
+    });
+
+    document.getElementById('med-mo').addEventListener('click', function(e) {
+      if (e.target === this) closeM();
+    });
+
+    setInterval(function() {
+      var h = new Date().getHours(), m = new Date().getMinutes();
+      if (h === 0 && m === 0) { missN = {}; snzU = {}; }
+    }, 60000);
+
+    // Init audio DB in background
+    initAudio().then(function() {
+      console.log('Audio DB ready');
+    }).catch(function(e) {
+      console.warn('Audio DB init failed (non-critical):', e);
+    });
+
+    if (!S.topic && !meds.length) {
+      setTimeout(function() {
+        if (confirm('Welcome! Set up caregiver notifications first?')) go('settings');
+      }, 500);
+    }
+  } catch(e) {
+    console.error('Init error:', e);
+    document.getElementById('hdr-sub').textContent = 'Error: ' + e.message;
   }
 }
 
