@@ -563,21 +563,26 @@ function delCustSound() {
 
 // ===================== NTFY =====================
 function notify(title, msg, pri) {
-  if (!S.topic) return Promise.resolve(false);
+  var topic = (S.topic || '').trim();
+  if (!topic) return Promise.resolve(false);
   pri = pri || 3;
-  var topicClean = S.topic.trim().toLowerCase();
-  return fetch('https://ntfy.sh/' + topicClean, {
+
+  return fetch('https://ntfy.sh/', {
     method: 'POST',
-    headers: {
-      'Title': title,
-      'Priority': String(pri),
-      'Tags': pri >= 4 ? 'warning' : 'pill'
-    },
-    body: msg
-  }).then(function(resp) {
-    if (!resp.ok) {
-      console.error('ntfy error: HTTP ' + resp.status);
-      return false;
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      topic: topic,
+      title: title,
+      message: msg,
+      priority: pri,
+      tags: [pri >= 4 ? 'warning' : 'pill']
+    })
+  }).then(function(r) {
+    if (!r.ok) {
+      return r.text().then(function(t) {
+        console.error('ntfy error:', r.status, t);
+        return false;
+      });
     }
     console.log('ntfy sent OK');
     return true;
@@ -588,64 +593,49 @@ function notify(title, msg, pri) {
 }
 
 function testN() {
-  var topic = (S.topic || '').trim().toLowerCase();
+  var topic = (S.topic || '').trim();
+  if (!topic) { alert('Enter a ntfy.sh topic first!'); return; }
 
-  if (!topic) {
-    alert('Enter a ntfy.sh topic first!');
-    return;
-  }
-
-  // Clean and save the trimmed topic
   S.topic = topic;
   sS();
 
-  // Show what we're sending to
-  var info = 'Sending to: ntfy.sh/' + topic + '\n\nPlease wait...';
-  
-  // Try the notification
-  fetch('https://ntfy.sh/' + topic, {
+  var msg = 'Test from MedTracker for ' + (S.patient || 'patient') +
+    ' at ' + new Date().toLocaleTimeString();
+
+  fetch('https://ntfy.sh/', {
     method: 'POST',
-    headers: {
-      'Title': '🧪 MedTracker Test',
-      'Priority': '3',
-      'Tags': 'pill,test_tube'
-    },
-    body: 'Notifications for ' + (S.patient || 'patient') + ' are connected! If you see this, it works.'
-  }).then(function(resp) {
-    if (resp.ok) {
-      return resp.json().then(function(data) {
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      topic: topic,
+      title: 'MedTracker Test',
+      message: msg,
+      priority: 3,
+      tags: ['pill', 'test_tube']
+    })
+  }).then(function(r) {
+    if (r.ok) {
+      return r.json().then(function(data) {
         alert(
-          '✅ SUCCESS!\n\n' +
-          'Sent to topic: ' + topic + '\n' +
+          'SUCCESS!\n\n' +
+          'Topic: ' + topic + '\n' +
           'Message ID: ' + (data.id || 'unknown') + '\n\n' +
-          'Check the ntfy app now.\n\n' +
-          'If you don\'t see it:\n' +
-          '1. Open ntfy app\n' +
-          '2. Make sure you subscribed to EXACTLY:\n   ' + topic + '\n' +
-          '3. Topic names are case-sensitive!\n' +
-          '4. Check ntfy app notification permissions'
+          'Check the ntfy app now!'
         );
-      }).catch(function() {
-        alert('✅ Sent successfully to: ' + topic + '\n\nCheck the ntfy app now.');
       });
     } else {
-      return resp.text().then(function(body) {
+      return r.text().then(function(body) {
         alert(
-          '❌ FAILED - HTTP ' + resp.status + '\n\n' +
-          'Response: ' + body + '\n\n' +
-          'Topic used: ' + topic + '\n\n' +
-          'Try a simpler topic name (letters, numbers, hyphens only).'
+          'FAILED - HTTP ' + r.status + '\n\n' +
+          'Response: ' + body + '\n' +
+          'Topic: ' + topic
         );
       });
     }
   }).catch(function(err) {
     alert(
-      '❌ CONNECTION FAILED\n\n' +
+      'CONNECTION ERROR\n\n' +
       'Error: ' + err.message + '\n\n' +
-      'Possible causes:\n' +
-      '1. No internet connection\n' +
-      '2. ntfy.sh might be blocked\n' +
-      '3. Try opening https://ntfy.sh/' + topic + ' in your browser'
+      'Topic: ' + topic
     );
   });
 }
