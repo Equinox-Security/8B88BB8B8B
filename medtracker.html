@@ -152,6 +152,31 @@ width:32px;height:32px;border-radius:8px;cursor:pointer}
 
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sound-opt{background:var(--card2);border:2px solid var(--border);border-radius:12px;
+  padding:14px 8px 10px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.sound-opt.active{border-color:var(--primary);background:rgba(108,99,255,.12)}
+.sound-opt .si2{font-size:24px;display:block;margin-bottom:4px}
+.sound-opt .sn{font-size:10px;color:var(--text2);display:block}
+.sound-opt.active .sn{color:var(--primary);font-weight:600}
+.sound-prev{position:absolute;top:4px;right:4px;background:var(--primary);border:none;
+  color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;line-height:1}
+.sound-prev:active{transform:scale(.9)}
+.vol-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.vol-row input[type=range]{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;
+  background:var(--border);outline:none}
+.vol-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;
+  height:22px;border-radius:50%;background:var(--primary);cursor:pointer;
+  box-shadow:0 2px 8px rgba(108,99,255,.4)}
+.vol-row input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--primary);cursor:pointer;border:none}
+.vol-val{font-size:13px;color:var(--text2);min-width:38px;text-align:right}
+.cust-file{display:flex;align-items:center;gap:8px;background:var(--card2);
+  border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px}
+.cust-file .cf-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--text)}
+.cust-file button{background:none;border:none;color:var(--danger);font-size:18px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -213,7 +238,8 @@ let meds=ld(SK.m)||[];
 let log=ld(SK.l)||{};
 let S=ld(SK.s)||{
   topic:'',alertMin:60,sound:true,vib:true,caregiver:'',
-  notifyConf:true,notifyMiss:true,snooze:10,patient:'Patient'
+  notifyConf:true,notifyMiss:true,snooze:10,patient:'Patient',
+  alarmSound:'classic',alarmVol:80,customFile:''
 };
 
 function sM(){sv(SK.m,meds)}
@@ -247,23 +273,280 @@ function doConf(d,t,id){
   log[lk(d,t,id)]={at:new Date().toISOString(),time:t,medId:id,date:d};sL();
 }
 
-// ========== AUDIO ==========
-let actx=null,aInt=null,isAl=false;
-function gAC(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx}
-function pTone(f,dur,st){
-  const c=gAC(),o=c.createOscillator(),g=c.createGain();
-  o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';
-  g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.3,st+.05);
-  g.gain.linearRampToValueAtTime(0,st+dur-.05);o.start(st);o.stop(st+dur);
+// ========== AUDIO ENGINE ==========
+let actx=null,aInt=null,isAl=false,custEl=null,custURL=null;
+
+function gAC(){
+  if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();
+  return actx;
 }
-function playAS(){
-  if(!S.sound)return;const c=gAC(),t=c.currentTime;
-  [659,784,659,784,659,784,880,784].forEach((f,i)=>pTone(f,.2,t+i*.25));
+
+// --- 6 Built-in alarm presets ---
+const ALARMS={
+  classic:{
+    name:'Classic Alarm',icon:'⏰',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      for(let i=0;i<12;i++){
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type='square';
+        o.frequency.value=i%2?780:1000;
+        const t=n+i*0.14;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(vol*0.4,t+0.008);
+        g.gain.setValueAtTime(vol*0.4,t+0.09);
+        g.gain.linearRampToValueAtTime(0,t+0.13);
+        o.start(t);o.stop(t+0.14);
+      }
+    }
+  },
+  siren:{
+    name:'Urgent Siren',icon:'🚨',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      for(let w=0;w<2;w++){
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type='sawtooth';
+        g.gain.value=vol*0.28;
+        const base=n+w*1.0;
+        o.frequency.setValueAtTime(400,base);
+        o.frequency.exponentialRampToValueAtTime(1500,base+0.5);
+        o.frequency.exponentialRampToValueAtTime(400,base+1.0);
+        g.gain.setValueAtTime(vol*0.28,base);
+        g.gain.linearRampToValueAtTime(0,base+0.98);
+        o.start(base);o.stop(base+1.0);
+      }
+    }
+  },
+  medical:{
+    name:'Medical Alert',icon:'🏥',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      // IEC-style: 3 beeps, pause, 3 beeps
+      const times=[0,.22,.44,.88,1.1,1.32];
+      times.forEach(off=>{
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type='sine';o.frequency.value=925;
+        const t=n+off;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(vol*0.5,t+0.01);
+        g.gain.setValueAtTime(vol*0.5,t+0.12);
+        g.gain.linearRampToValueAtTime(0,t+0.17);
+        o.start(t);o.stop(t+0.2);
+      });
+    }
+  },
+  buzzer:{
+    name:'Harsh Buzzer',icon:'📢',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      for(let i=0;i<5;i++){
+        const o=c.createOscillator(),o2=c.createOscillator();
+        const g=c.createGain();
+        o.connect(g);o2.connect(g);g.connect(c.destination);
+        o.type='square';o.frequency.value=175;
+        o2.type='square';o2.frequency.value=178; // beat frequency = harsh
+        const t=n+i*0.4;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(vol*0.32,t+0.01);
+        g.gain.setValueAtTime(vol*0.32,t+0.25);
+        g.gain.linearRampToValueAtTime(0,t+0.32);
+        o.start(t);o.stop(t+0.35);
+        o2.start(t);o2.stop(t+0.35);
+      }
+    }
+  },
+  escalating:{
+    name:'Escalating',icon:'📈',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      for(let i=0;i<10;i++){
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type=i<5?'sine':i<8?'triangle':'square';
+        o.frequency.value=300+i*80;
+        const t=n+i*0.2;
+        const v=vol*(0.06+i*0.035);
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(Math.min(v,vol*0.45),t+0.01);
+        g.gain.setValueAtTime(Math.min(v,vol*0.45),t+0.12);
+        g.gain.linearRampToValueAtTime(0,t+0.18);
+        o.start(t);o.stop(t+0.2);
+      }
+    }
+  },
+  chime:{
+    name:'Gentle Chime',icon:'🔔',
+    play(vol){
+      const c=gAC(),n=c.currentTime;
+      [659,784,659,784,659,784,880,784].forEach((f,i)=>{
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.frequency.value=f;o.type='sine';
+        const t=n+i*0.25;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(vol*0.3,t+0.05);
+        g.gain.linearRampToValueAtTime(0,t+0.2);
+        o.start(t);o.stop(t+0.25);
+      });
+    }
+  }
+};
+
+// --- Play selected preset ---
+function playAlarmOnce(){
+  if(!S.sound)return;
+  const vol=(S.alarmVol!=null?S.alarmVol:80)/100;
+  const sel=S.alarmSound||'classic';
+  if(sel==='custom')return; // custom handled separately
+  if(ALARMS[sel])ALARMS[sel].play(vol);
 }
-function startA(){if(isAl)return;isAl=true;playAS();aInt=setInterval(playAS,3000);
-  if(S.vib&&navigator.vibrate)navigator.vibrate([500,200,500,200,500])}
-function stopA(){isAl=false;if(aInt){clearInterval(aInt);aInt=null}
-  if(navigator.vibrate)navigator.vibrate(0)}
+
+// --- Custom audio loop ---
+function playCustLoop(){
+  if(!custURL||!isAl)return;
+  if(custEl){try{custEl.pause()}catch(e){}}
+  custEl=new Audio(custURL);
+  custEl.volume=(S.alarmVol!=null?S.alarmVol:80)/100;
+  custEl.onended=()=>{
+    if(isAl){
+      if(S.vib&&navigator.vibrate)navigator.vibrate([300,100,300]);
+      setTimeout(playCustLoop,1200);
+    }
+  };
+  custEl.play().catch(e=>console.warn('Custom audio play failed:',e));
+}
+
+// --- Preview any sound (for settings) ---
+function prevSound(key){
+  stopA();
+  const vol=(S.alarmVol!=null?S.alarmVol:80)/100;
+  if(key==='custom'&&custURL){
+    const a=new Audio(custURL);a.volume=vol;
+    a.play().catch(()=>{});
+    setTimeout(()=>{try{a.pause();a.currentTime=0}catch(e){}},5000);
+  }else if(ALARMS[key]){
+    ALARMS[key].play(vol);
+  }
+}
+
+// --- Start alarm ---
+function startA(){
+  if(isAl)return;
+  isAl=true;
+  if(S.sound){
+    const sel=S.alarmSound||'classic';
+    if(sel==='custom'&&custURL){
+      playCustLoop();
+    }else{
+      playAlarmOnce();
+      aInt=setInterval(()=>{
+        playAlarmOnce();
+        if(S.vib&&navigator.vibrate)navigator.vibrate([300,100,300]);
+      },3000);
+    }
+  }
+  if(S.vib&&navigator.vibrate)navigator.vibrate([500,200,500,200,500,200,500]);
+}
+
+// --- Stop alarm ---
+function stopA(){
+  isAl=false;
+  if(aInt){clearInterval(aInt);aInt=null}
+  if(custEl){try{custEl.pause();custEl.currentTime=0}catch(e){}custEl=null}
+  if(navigator.vibrate)navigator.vibrate(0);
+}
+
+// ========== CUSTOM AUDIO STORAGE (IndexedDB) ==========
+const ADB={
+  db:null,
+  open(){
+    return new Promise((res,rej)=>{
+      const r=indexedDB.open('MedTrackerAudio',1);
+      r.onupgradeneeded=e=>e.target.result.createObjectStore('files');
+      r.onsuccess=e=>{ADB.db=e.target.result;res()};
+      r.onerror=e=>rej(e);
+    });
+  },
+  save(blob){
+    return new Promise((res,rej)=>{
+      const tx=ADB.db.transaction('files','readwrite');
+      tx.objectStore('files').put(blob,'alarm');
+      tx.oncomplete=()=>res();
+      tx.onerror=e=>rej(e);
+    });
+  },
+  load(){
+    return new Promise(res=>{
+      const tx=ADB.db.transaction('files','readonly');
+      const r=tx.objectStore('files').get('alarm');
+      r.onsuccess=()=>res(r.result||null);
+      r.onerror=()=>res(null);
+    });
+  },
+  del(){
+    return new Promise(res=>{
+      const tx=ADB.db.transaction('files','readwrite');
+      tx.objectStore('files').delete('alarm');
+      tx.oncomplete=()=>res();
+      tx.onerror=()=>res();
+    });
+  }
+};
+
+async function initAudio(){
+  try{
+    await ADB.open();
+    const blob=await ADB.load();
+    if(blob){
+      if(custURL)URL.revokeObjectURL(custURL);
+      custURL=URL.createObjectURL(blob);
+    }
+  }catch(e){console.warn('IndexedDB init:',e)}
+}
+
+async function uploadSound(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(!file.type.match(/^audio\//)){
+    alert('Please select an audio file (MP3, WAV, OGG, M4A, etc.)');
+    input.value='';return;
+  }
+  if(file.size>10*1024*1024){
+    alert('File too large — please use a file under 10 MB.');
+    input.value='';return;
+  }
+  try{
+    await ADB.save(file);
+    S.customFile=file.name;
+    S.alarmSound='custom';
+    sS();
+    if(custURL)URL.revokeObjectURL(custURL);
+    custURL=URL.createObjectURL(file);
+    rSett();
+    setTimeout(()=>prevSound('custom'),300);
+  }catch(e){
+    alert('Error saving file. Try a smaller file.');
+    console.error(e);
+  }
+  input.value='';
+}
+
+async function delCustSound(){
+  if(!confirm('Remove custom sound?'))return;
+  try{
+    await ADB.del();
+    S.customFile='';
+    if(S.alarmSound==='custom')S.alarmSound='classic';
+    sS();
+    if(custURL){URL.revokeObjectURL(custURL);custURL=null}
+    rSett();
+  }catch(e){console.error(e)}
+}
 
 // ========== NTFY ==========
 async function notify(title,msg,pri=3){
@@ -415,75 +698,6 @@ function rHist(){
 
 // ========== SETTINGS ==========
 function rSett(){
-  const pg=document.getElementById('pg-settings');
-  pg.innerHTML=`
-  <h3 style="margin-bottom:16px;font-size:16px">Settings</h3>
-  <div class="card">
-    <h4 style="font-size:14px;margin-bottom:12px">👤 Patient</h4>
-    <div class="fg"><label>Patient Name</label>
-    <input value="${S.patient||''}" onchange="S.patient=this.value;sS()" placeholder="Name"></div>
-  </div>
-
-  <div class="card">
-    <h4 style="font-size:14px;margin-bottom:12px">🔔 Caregiver Notifications</h4>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:12px">
-      Uses <a href="https://ntfy.sh" target="_blank" style="color:var(--primary)">ntfy.sh</a> (free).
-      Install ntfy app on caregiver's phone → subscribe to the topic below.</p>
-    <div class="fg"><label>ntfy.sh Topic (pick a unique secret name)</label>
-    <input value="${S.topic||''}" onchange="S.topic=this.value;sS()"
-      placeholder="e.g. medtracker-smith-7749"></div>
-    <div class="fg"><label>Caregiver Name</label>
-    <input value="${S.caregiver||''}" onchange="S.caregiver=this.value;sS()"></div>
-
-    <div class="si"><div><div style="font-size:14px">Notify on Confirmation</div>
-      <div style="font-size:11px;color:var(--text2)">Alert when med is taken</div></div>
-      <button class="tog ${S.notifyConf?'on':''}" onclick="S.notifyConf=!S.notifyConf;sS();rSett()"></button></div>
-    <div class="si"><div><div style="font-size:14px">Notify on Missed Dose</div>
-      <div style="font-size:11px;color:var(--text2)">Alert when not confirmed in time</div></div>
-      <button class="tog ${S.notifyMiss!==false?'on':''}" onclick="S.notifyMiss=!S.notifyMiss;sS();rSett()"></button></div>
-    <div class="fg" style="margin-top:12px"><label>Alert after (minutes without confirmation)</label>
-      <input type="number" value="${S.alertMin||60}" min="5" max="180"
-        onchange="S.alertMin=parseInt(this.value);sS()"></div>
-    <button class="btn btn-o" style="width:100%;justify-content:center;margin-top:8px"
-      onclick="testN()">📤 Send Test Notification</button>
-  </div>
-
-  <div class="card">
-    <h4 style="font-size:14px;margin-bottom:12px">🔊 Alarm</h4>
-    <div class="si"><div style="font-size:14px">Sound</div>
-      <button class="tog ${S.sound?'on':''}" onclick="S.sound=!S.sound;sS();rSett()"></button></div>
-    <div class="si"><div style="font-size:14px">Vibration</div>
-      <button class="tog ${S.vib?'on':''}" onclick="S.vib=!S.vib;sS();rSett()"></button></div>
-    <div class="fg" style="margin-top:12px"><label>Snooze (minutes)</label>
-      <input type="number" value="${S.snooze||10}" min="1" max="30"
-        onchange="S.snooze=parseInt(this.value);sS()"></div>
-    <button class="btn btn-o" style="width:100%;justify-content:center;margin-top:8px"
-      onclick="playAS()">🔊 Test Sound</button>
-  </div>
-
-  <div class="card">
-    <h4 style="font-size:14px;margin-bottom:12px">💾 Data</h4>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-o" style="flex:1;justify-content:center" onclick="expD()">Export</button>
-      <button class="btn btn-o" style="flex:1;justify-content:center"
-        onclick="document.getElementById('imp').click()">Import</button>
-      <input type="file" id="imp" accept=".json" style="display:none" onchange="impD(event)">
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 style="font-size:14px;margin-bottom:12px">ℹ️ How It Works</h4>
-    <div style="font-size:12px;color:var(--text2);line-height:1.6">
-      <p>1. Add meds with doses & schedule times</p>
-      <p>2. Alarms sound at each scheduled time</p>
-      <p>3. Tap "Take" to confirm medication taken</p>
-      <p>4. Caregiver gets a push when confirmed</p>
-      <p>5. If not confirmed within ${S.alertMin||60} min → caregiver gets urgent alert</p>
-      <p style="margin-top:8px;color:var(--warn)"><strong>Keep this page open</strong> for alarms.
-        On iPhone: Share → Add to Home Screen.</p>
-    </div>
-  </div>`;
-}
 
 function testN(){
   if(!S.topic){alert('Enter a ntfy.sh topic first!');return}
@@ -685,6 +899,8 @@ function snoozeA(){
 
 // ========== INIT ==========
 function init(){
+  initAudio();
+
   if('Notification' in window&&Notification.permission==='default')
     Notification.requestPermission();
 
