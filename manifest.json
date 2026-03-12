@@ -2,7 +2,7 @@
   "name": "MedTracker",
   "short_name": "MedTracker",
   "description": "Medication tracking and reminders",
-  "start_url": "./index.html",
+  "start_url": "./manifest.html",
   "display": "standalone",
   "background_color": "#0a0e1a",
   "theme_color": "#0a0e1a",
@@ -15,4 +15,5 @@
       "purpose": "any"
     }
   ]
+
 }
