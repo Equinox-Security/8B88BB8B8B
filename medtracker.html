@@ -1192,38 +1192,58 @@ function openModal(eid) {
     if (gr) _ms.group = gr.value;
   };
 
-  window.setFreq = function(hours) {
+    window.setFreq = function(hours) {
     capF();
     if (hours === 0) {
       _ms.times = [];
       window._rMM();
       return;
     }
+    // Create a temporary time picker for start time
+    var existing = document.getElementById('freq-pick');
+    if (existing) existing.remove();
 
-    // Ask for start time
-    var startInput = document.getElementById('nt');
-    var startHour = 8; // default start at 8 AM
+    var wrap = document.createElement('div');
+    wrap.id = 'freq-pick';
+    wrap.style.cssText = 'margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--primary);border-radius:10px';
+    wrap.innerHTML =
+      '<div style="font-size:13px;margin-bottom:8px;color:var(--primary)">Every ' + hours + 'h — pick start time:</div>' +
+      '<div style="display:flex;gap:8px;align-items:center">' +
+      '<input type="time" id="freq-time" value="08:00" style="flex:1;padding:10px;border-radius:8px;' +
+      'border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:16px">' +
+      '<button onclick="applyFreq(' + hours + ')" style="padding:10px 16px;border-radius:8px;' +
+      'background:var(--primary);color:#fff;border:none;font-weight:600;font-size:14px;cursor:pointer">Set</button>' +
+      '<button onclick="document.getElementById(\'freq-pick\').remove()" style="padding:10px 12px;' +
+      'border-radius:8px;background:var(--card);color:var(--text2);border:1px solid var(--border);' +
+      'font-size:14px;cursor:pointer">X</button>' +
+      '</div>';
 
-    var start = prompt(
-      'Every ' + hours + ' hours\n\n' +
-      'Enter start hour (0-23):\n' +
-      '8 = 8:00 AM\n' +
-      '6 = 6:00 AM\n' +
-      '9 = 9:00 AM',
-      '8'
-    );
+    var freqRow = document.querySelector('.freq-row');
+    if (freqRow) {
+      freqRow.parentNode.insertBefore(wrap, freqRow.nextSibling);
+      var ti = document.getElementById('freq-time');
+      if (ti) { ti.focus(); ti.click(); }
+    }
+  };
 
-    if (start === null) return;
-    startHour = parseInt(start) || 8;
-    if (startHour < 0) startHour = 0;
-    if (startHour > 23) startHour = 23;
+  window.applyFreq = function(hours) {
+    var ti = document.getElementById('freq-time');
+    if (!ti || !ti.value) return;
+    var parts = ti.value.split(':');
+    var startH = parseInt(parts[0]);
+    var startM = parseInt(parts[1]);
+    var totalMin = startH * 60 + startM;
+    var intervalMin = hours * 60;
 
     _ms.times = [];
-    var h = startHour;
-    while (h < 24) {
-      _ms.times.push(pad(h) + ':00');
-      h += hours;
+    var m = totalMin;
+    while (m < 1440) {
+      _ms.times.push(pad(Math.floor(m / 60)) + ':' + pad(m % 60));
+      m += intervalMin;
     }
+
+    var pick = document.getElementById('freq-pick');
+    if (pick) pick.remove();
     window._rMM();
   };
 
