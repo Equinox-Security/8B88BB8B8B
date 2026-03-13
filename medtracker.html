@@ -185,6 +185,21 @@ font-size:14px;font-weight:600;z-index:400;opacity:0;transition:opacity .3s;
 pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);text-align:center}
 .toast.show{opacity:1}
 .days-info{font-size:11px;color:var(--primary);margin-top:6px}
+.ta-btn{width:100%;padding:12px;border-radius:12px;border:2px solid var(--success);
+background:rgba(0,200,83,.1);color:var(--success);font-weight:700;font-size:15px;
+cursor:pointer;margin-bottom:8px;transition:.2s}
+.ta-btn:active{transform:scale(.97);background:rgba(0,200,83,.2)}
+.ta-btn.done{background:rgba(0,200,83,.2);border-style:solid}
+
+.grp-badge{display:inline-block;background:var(--card2);border:1px solid var(--border);
+border-radius:8px;padding:2px 8px;font-size:10px;color:var(--plight);margin-left:6px}
+
+.freq-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.freq-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);
+background:var(--card2);color:var(--text2);font-size:11px;cursor:pointer;transition:.2s}
+.freq-btn:active{border-color:var(--primary);color:var(--primary)}
+
+.time-hint{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -686,7 +701,7 @@ function rSched() {
 
   var h = '<div class="dh"><span>' + fD(VD) + (isT ? ' (Today)' : '') + '</span>' +
     '<div class="dn"><button onclick="chD(-1)">\u25C0</button>' +
-    '<button onclick="VD=today();rSched()">\u29BF</button>' +
+    '<button onclick="VD=today();render()">\u29BF</button>' +
     '<button onclick="chD(1)">\u25B6</button></div></div>';
 
   if (!sc.length) {
@@ -701,12 +716,21 @@ function rSched() {
     var past = isT && nm > tm + 5;
     var due = isT && Math.abs(nm - tm) <= 5;
     var allC = ms.every(function(m) { return isConf(VD, time, m.id); });
+    var noneC = ms.every(function(m) { return !isConf(VD, time, m.id); });
+    var confCount = ms.filter(function(m) { return isConf(VD, time, m.id); }).length;
 
     h += '<div class="time-group"><div class="time-label">' +
       '<span class="dot" style="background:' +
       (allC ? 'var(--success)' : due ? 'var(--warn)' : past ? 'var(--danger)' : 'var(--primary)') +
       '"></span>' + f12(time) +
+      ' <span style="font-size:11px;color:var(--text2)">(' + confCount + '/' + ms.length + ')</span>' +
       (allC ? ' \u2705' : due ? ' \u23F0 NOW' : (past && !allC) ? ' \u26A0\uFE0F' : '') + '</div>';
+
+    // TAKE ALL button if more than 1 med and not all confirmed
+    if (ms.length > 1 && !allC && (isT || VD <= today())) {
+      h += '<button class="ta-btn" onclick="takeAll(\'' + VD + '\',\'' + time + '\')">' +
+        '\u2713 TAKE ALL ' + ms.length + ' MEDICATIONS</button>';
+    }
 
     ms.forEach(function(med) {
       var cf = isConf(VD, time, med.id);
@@ -715,9 +739,11 @@ function rSched() {
 
       h += '<div class="sc ' + cls + '">' +
         '<div class="mc" style="background:' + (med.color || COLORS[0]) + '"></div>' +
-        '<div class="mi"><div class="mn">' + med.name + '</div>' +
+        '<div class="mi"><div class="mn">' + med.name +
+        (med.group ? '<span class="grp-badge">' + med.group + '</span>' : '') +
+        '</div>' +
         '<div class="md">' + (med.dose || '') + '</div>' +
-                (med.treatment ? '<div class="mx">For: ' + med.treatment + '</div>' : '') +
+        (med.treatment ? '<div class="mx">For: ' + med.treatment + '</div>' : '') +
         (med.instr ? '<div class="mx">' + med.instr + '</div>' : '') + '</div>';
 
       if (cf) {
@@ -733,7 +759,31 @@ function rSched() {
   });
   pg.innerHTML = h;
 }
+function takeAll(ds, time) {
+  var sc = getSched(ds);
+  var pair = null;
+  sc.forEach(function(p) { if (p[0] === time) pair = p; });
+  if (!pair) return;
 
+  var unconf = pair[1].filter(function(m) { return !isConf(ds, time, m.id); });
+  if (!unconf.length) return;
+
+  var names = unconf.map(function(m) { return m.name + ' ' + (m.dose || ''); }).join('\n');
+  if (!confirm('Confirm ALL ' + unconf.length + ' medications taken?\n\n' + names)) return;
+
+  unconf.forEach(function(med) {
+    doConf(ds, time, med.id);
+    if (S.notifyConf && S.topic) {
+      notify('\u2705 ' + S.patient + ' took ' + med.name,
+        med.name + ' ' + (med.dose || '') + ' confirmed at ' + f12(time) +
+        ' (' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) + ')', 2);
+    }
+  });
+
+  stopA();
+  render();
+  showToast('\u2713 All ' + unconf.length + ' meds confirmed!');
+}
 function chD(d) {
   var dt = new Date(VD + 'T12:00:00');
   dt.setDate(dt.getDate() + d);
@@ -773,8 +823,10 @@ function rMeds() {
       (med.active === false ? ' (off)' : '') + '</div>' +
             '<div class="md">' + (med.dose || 'No dose') +
       (med.rxnum ? ' &nbsp;\u2022&nbsp; RX: ' + med.rxnum : '') + '</div>' +
-      (med.treatment ? '<div style="font-size:11px;color:var(--warn);margin-top:2px">' +
+            (med.treatment ? '<div style="font-size:11px;color:var(--warn);margin-top:2px">' +
       'For: ' + med.treatment + '</div>' : '') +
+      (med.group ? '<div style="font-size:11px;color:var(--plight);margin-top:2px">' +
+      '\uD83D\uDCE6 Group: ' + med.group + '</div>' : '') +
       '<div style="font-size:11px;color:var(--text2);margin-top:4px">' +
       (med.times || []).map(function(t) { return f12(t); }).join(', ') +
       dayStr + '</div></div>' +
@@ -991,6 +1043,7 @@ function openModal(eid) {
     rxnum: med ? (med.rxnum || '') : '',
     treatment: med ? (med.treatment || '') : '',
     instr: med ? (med.instr || '') : '',
+    group: med ? (med.group || '') : '',
     times: med ? (med.times || []).slice() : [],
     days: med ? (med.days || [0,1,2,3,4,5,6]).slice() : [0,1,2,3,4,5,6],
     color: med ? (med.color || COLORS[0]) : COLORS[0]
@@ -1063,22 +1116,35 @@ function openModal(eid) {
       '<input id="f-treatment" value="' + _ms.treatment.replace(/"/g, '&quot;') +
       '" placeholder="e.g. Pain, Inflammation, Blood pressure"></div>' +
 
-      '<div class="fg"><label>Additional Info (optional)</label>' +
+            '<div class="fg"><label>Additional Info (optional)</label>' +
       '<input id="f-instr" value="' + _ms.instr.replace(/"/g, '&quot;') +
       '" placeholder="e.g. Take with food, on empty stomach"></div>' +
 
-      '<div class="fg"><label>Schedule Times *</label>' +
+      '<div class="fg"><label>Group (optional)</label>' +
+      '<input id="f-group" value="' + _ms.group.replace(/"/g, '&quot;') +
+      '" placeholder="e.g. Morning Pills, Evening Pills"></div>' +
+
+            '<div class="fg"><label>Schedule Times *</label>' +
       '<div class="tc">' + timeChips +
       '<button class="add-t" onclick="capF();' +
       'var el=document.getElementById(\'nt\');el.style.display=\'block\';el.focus();el.click()">' +
       '+ Add Time</button></div>' +
       (_ms.times.length === 0 ?
         '<div style="font-size:11px;color:var(--danger);margin-top:4px">' +
-        'Tap "+ Add Time" to set when to take this med</div>' : '') +
+        'Add times when this medication should be taken</div>' :
+        '<div class="time-hint">\u2713 ' + _ms.times.length +
+        ' time' + (_ms.times.length > 1 ? 's' : '') + ' set: ' +
+        _ms.times.map(function(t) { return f12(t); }).join(', ') + '</div>') +
       '<input type="time" id="nt" style="display:none;margin-top:8px"' +
       ' onchange="if(this.value){capF();_ms.times.push(this.value);_ms.times.sort();' +
       'this.value=\'\';this.style.display=\'none\';window._rMM()}">' +
-      '</div>' +
+      '<div class="freq-row">' +
+      '<button class="freq-btn" onclick="capF();setFreq(4)">Every 4h</button>' +
+      '<button class="freq-btn" onclick="capF();setFreq(6)">Every 6h</button>' +
+      '<button class="freq-btn" onclick="capF();setFreq(8)">Every 8h</button>' +
+      '<button class="freq-btn" onclick="capF();setFreq(12)">Every 12h</button>' +
+      '<button class="freq-btn" onclick="capF();setFreq(0)">Clear Times</button>' +
+      '</div></div>' +
 
       '<div class="fg"><label>Days of Week</label>' +
       '<div class="days-row">' + dayBtns + '</div>' +
@@ -1111,17 +1177,54 @@ function openModal(eid) {
   }
 
   // Global function to capture fields before any re-render
-    window.capF = function() {
+      window.capF = function() {
     var n = document.getElementById('f-name');
     var d = document.getElementById('f-dose');
     var rx = document.getElementById('f-rxnum');
     var tr = document.getElementById('f-treatment');
     var ins = document.getElementById('f-instr');
+    var gr = document.getElementById('f-group');
     if (n) _ms.name = n.value;
     if (d) _ms.dose = d.value;
     if (rx) _ms.rxnum = rx.value;
     if (tr) _ms.treatment = tr.value;
     if (ins) _ms.instr = ins.value;
+    if (gr) _ms.group = gr.value;
+  };
+
+  window.setFreq = function(hours) {
+    capF();
+    if (hours === 0) {
+      _ms.times = [];
+      window._rMM();
+      return;
+    }
+
+    // Ask for start time
+    var startInput = document.getElementById('nt');
+    var startHour = 8; // default start at 8 AM
+
+    var start = prompt(
+      'Every ' + hours + ' hours\n\n' +
+      'Enter start hour (0-23):\n' +
+      '8 = 8:00 AM\n' +
+      '6 = 6:00 AM\n' +
+      '9 = 9:00 AM',
+      '8'
+    );
+
+    if (start === null) return;
+    startHour = parseInt(start) || 8;
+    if (startHour < 0) startHour = 0;
+    if (startHour > 23) startHour = 23;
+
+    _ms.times = [];
+    var h = startHour;
+    while (h < 24) {
+      _ms.times.push(pad(h) + ':00');
+      h += hours;
+    }
+    window._rMM();
   };
 
   window._rMM = function() {
@@ -1170,12 +1273,14 @@ function saveMF(eid) {
     _ms.days = [0,1,2,3,4,5,6];
   }
 
-    var d = {
+      var group = _ms.group.trim();
+  var d = {
     name: name,
     dose: dose,
     rxnum: rxnum,
     treatment: treatment,
     instr: instr,
+    group: group,
     times: _ms.times.slice(),
     days: _ms.days.slice().sort(),
     color: _ms.color,
