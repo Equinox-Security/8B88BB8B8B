@@ -976,16 +976,20 @@ function rSett() {
     '<input type="file" id="imp" accept=".json" style="display:none" onchange="impD(event)">' +
     '</div></div>' +
 
-    '<div class="card">' +
-    '<h4 style="font-size:14px;margin-bottom:12px">\u2139\uFE0F How It Works</h4>' +
+        '<div class="card">' +
+    '<h4 style="font-size:14px;margin-bottom:12px">Help</h4>' +
+    '<a href="manual.pdf" target="_blank" class="btn btn-p" ' +
+    'style="width:100%;justify-content:center;text-decoration:none;margin-bottom:10px">' +
+    'Open User Manual (PDF)</a>' +
     '<div style="font-size:12px;color:var(--text2);line-height:1.6">' +
-    '<p>1. Add meds with doses & schedule times</p>' +
-    '<p>2. Alarms sound at each scheduled time</p>' +
-    '<p>3. Tap "Take" to confirm medication taken</p>' +
-    '<p>4. Caregiver gets a push when confirmed</p>' +
-    '<p>5. If not confirmed within ' + (S.alertMin || 60) + ' min \u2192 caregiver gets urgent alert</p>' +
+    '<p><strong>Quick Start:</strong></p>' +
+    '<p>1. Add meds (Meds tab, tap +)</p>' +
+    '<p>2. Set times and days for each med</p>' +
+    '<p>3. Alarms fire at scheduled times</p>' +
+    '<p>4. Tap "Take" or "Take All" to confirm</p>' +
+    '<p>5. Caregiver gets push notifications via ntfy</p>' +
     '<p style="margin-top:8px;color:var(--warn)"><strong>Keep this page open</strong> for alarms. ' +
-    'On iPhone: Share \u2192 Add to Home Screen.</p></div></div>';
+    'Add to Home Screen for best results.</p></div></div>';
 }
 
 function testN() {
